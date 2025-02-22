@@ -56,8 +56,7 @@ src/
 
 | Категория       | Компоненты                               |
 |-----------------|------------------------------------------|
-| **Бэкенд**      | ASP.NET Core 7, EF Core 7, MediatR       |
-| **Базы данных** | PostgreSQL 14, Redis 6, Elasticsearch 8 |
-| **Шаблоны**     | CQRS, Event Sourcing, Unit of Work      |
-| **Инфраструктура** | Docker, Kubernetes, RabbitMQ         |
-| **Мониторинг**  | Prometheus, Grafana, Seq                |
+| **Бэкенд**      | ASP.NET 9, EF Core, MediatR       |
+| **Базы данных** | PostgreSQL, Redis |
+| **Инфраструктура** | Docker, RabbitMQ         |
+| **Мониторинг**  | Grafana, Seq                |
