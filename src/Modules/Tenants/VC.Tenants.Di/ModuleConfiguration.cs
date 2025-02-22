@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Api.Endpoints;
+using VC.Tenants.Api.Endpoints.Tenants;
 
 namespace VC.Tenants.Di;
 
