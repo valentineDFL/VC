@@ -1,11 +1,16 @@
+using Microsoft.AspNetCore.Http;
+using VC.Utilities;
+using VC.Tenants.Api.Endpoints.Tenants.Models;
+using VC.Tenants.Application.Tenants;
+
 namespace VC.Tenants.Api.Endpoints.Tenants;
 
 public static partial class TenantsEndpoints
 {
-    private static Task CreateAsync(CreateTenantRequest request)
+    private static async Task<IResult> CreateAsync(CreateTenantRequest request, ITenantsService tenantsService)
     {
-        return Task.CompletedTask;
+        var result = await tenantsService.CreateAsync(request.ToCreateTenantParams());
+
+        return result.ToMinimalApi();
     }
 }
-
-public record CreateTenantRequest(string Name);

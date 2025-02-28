@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Tenants.Api", "src\Modul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Tenants.Di", "src\Modules\Tenants\VC.Tenants.Di\VC.Tenants.Di.csproj", "{B8795A5E-277B-49E2-9D7C-769881CE524C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "src\Common\Utilities\Utilities.csproj", "{0C528251-677C-40C2-BBB6-C12F0942FE18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Utilities", "src\Common\VC.Utilities\VC.Utilities.csproj", "{0C528251-677C-40C2-BBB6-C12F0942FE18}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Tenants.Application", "src\Modules\Tenants\VC.Tenants.Application\VC.Tenants.Application.csproj", "{33E66C71-3AFB-41BA-9EE7-A892CF764D84}"
 EndProject

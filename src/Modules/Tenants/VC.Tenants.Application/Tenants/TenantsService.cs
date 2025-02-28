@@ -5,7 +5,7 @@ namespace VC.Tenants.Application.Tenants;
 
 internal class TenantsService : ITenantsService
 {
-    public Task<Result> CreateAsync(CreateTenantDto dto)
+    public Task<Result> CreateAsync(CreateTenantParams @params)
     {
         throw new NotImplementedException();
     }

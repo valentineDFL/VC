@@ -4,5 +4,6 @@
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
         <PackageReference Include="FluentResults" Version="3.16.0" />
+        <PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />
     </ItemGroup>
 </Project>

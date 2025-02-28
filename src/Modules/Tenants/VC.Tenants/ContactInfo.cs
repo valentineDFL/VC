@@ -4,7 +4,7 @@ namespace VC.Tenants;
 /// Контактная информация.
 /// </summary>
 internal record ContactInfo(
-    string Email,
-    string Phone,
-    string Address
+    string? Email,
+    string? Phone,
+    string? Address
 );
