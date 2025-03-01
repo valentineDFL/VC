@@ -11,5 +11,15 @@
             <_Parameter1>VC.Tenants.Di</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
+      <ProjectReference Include="..\VC.Tenants.Integration\VC.Tenants.Integration.csproj" />
+      <ProjectReference Include="..\VC.Tenants\VC.Tenants.csproj" />
+    </ItemGroup>
     
 </Project>
