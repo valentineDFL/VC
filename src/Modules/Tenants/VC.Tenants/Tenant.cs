@@ -3,7 +3,7 @@ namespace VC.Tenants;
 /// <summary>
 /// Арендатор.
 /// </summary>
-internal class Tenant
+public class Tenant
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

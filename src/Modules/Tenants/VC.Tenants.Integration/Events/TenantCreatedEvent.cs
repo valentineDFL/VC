@@ -1,6 +1,6 @@
 namespace VC.Tenants.Integration.Events;
 
-public class TenantDisabledEvent
+public class TenantCreatedEvent
 {
     
 }

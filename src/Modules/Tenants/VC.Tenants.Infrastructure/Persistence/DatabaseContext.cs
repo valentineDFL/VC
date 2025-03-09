@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace VC.Tenants.Infrastructure.Persistence.Repositories;
+namespace VC.Tenants.Infrastructure.Persistence;
 
 public class DatabaseContext : DbContext
 {

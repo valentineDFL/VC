@@ -5,7 +5,8 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5056/scalar/v1",
+      "applicationUrl": "http://localhost:5056",
+      "launchUrl": "scalar/home",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -11,10 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Persistence\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\VC.Tenants\VC.Tenants.csproj" />
     </ItemGroup>
 
