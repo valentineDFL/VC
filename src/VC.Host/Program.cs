@@ -1,8 +1,14 @@
 using Asp.Versioning;
 using OpenTelemetry.Metrics;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpLogging();
+builder.Services.AddHealthChecks();
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddOpenApi("home", opts =>
 {
@@ -37,7 +43,6 @@ builder.Services.AddOpenTelemetry()
         b.AddPrometheusExporter();
     });
 
-builder.Services.AddHealthChecks();
 
 builder.Services.AddApiVersioning(options =>
     {
@@ -60,7 +65,7 @@ VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configura
 var app = builder.Build();
 
 app.MapPrometheusScrapingEndpoint();
-app.MapHealthChecks("/health"); 
+app.MapHealthChecks("/health");
 app.MapOpenApi();
 app.MapScalarApiReference(opts =>
 {
@@ -69,6 +74,7 @@ app.MapScalarApiReference(opts =>
     opts.ShowSidebar = true;
 });
 
+app.UseHttpLogging();
 VC.Tenants.Di.ModuleConfiguration.MapEndpoints(app);
 VC.Bookings.Di.ModuleConfiguration.MapEndpoints(app);
 
