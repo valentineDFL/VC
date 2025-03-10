@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>VC.Tenants.Di</_Parameter1>
-        </AssemblyAttribute>
+      <ProjectReference Include="..\VC.Tenants.Api\VC.Tenants.Api.csproj" />
+      <ProjectReference Include="..\VC.Tenants.Application\VC.Tenants.Application.csproj" />
+      <ProjectReference Include="..\VC.Tenants\VC.Tenants.csproj" />
     </ItemGroup>
 
 </Project>

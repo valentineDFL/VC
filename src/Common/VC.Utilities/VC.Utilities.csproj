@@ -7,9 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>VC.Tenants.Di</_Parameter1>
-        </AssemblyAttribute>
+      <PackageReference Include="OpenTelemetry.Exporter.Prometheus.HttpListener" Version="1.11.0-beta.1" />
     </ItemGroup>
 
 </Project>
