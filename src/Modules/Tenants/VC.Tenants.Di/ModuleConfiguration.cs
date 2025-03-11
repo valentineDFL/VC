@@ -10,6 +10,8 @@ public static class ModuleConfiguration
 {
     public static IServiceCollection Configure(this IServiceCollection services, IConfiguration configuration)
     {
+
+
         ApplicationConfiguration.Configure(services, configuration);
         return services
             .ConfigureOpenApi(configuration);

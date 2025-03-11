@@ -3,8 +3,9 @@ namespace VC.Tenants;
 /// <summary>
 /// Контактная информация.
 /// </summary>
-public record ContactInfo(
-    string? Email,
-    string? Phone,
-    string? Address
-);
+public class ContactInfo
+{
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+}

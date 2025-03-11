@@ -5,5 +5,5 @@ namespace VC.Tenants.Application.Tenants;
 
 public interface ITenantsService
 {
-    Task<Result> CreateAsync(CreateTenantParams @params);
+    public Task<Result> CreateAsync(CreateTenantParams @params);
 }
