@@ -1,9 +1,20 @@
+using VC.Tenants.Models;
+
 namespace VC.Tenants.Application.Tenants.Models;
 
-public class CreateTenantParams(string name, string slug, string timeZoneId, ContactDto contact)
+public class CreateTenantParams(string name, string slug, 
+    TenantConfigurationDto tenantConfig, TenantStatus tenantStatus,
+    ContactDto contactDto, TenantWeekWorkSheduleDto workSheduleDto)
 {
     public string Name { get; } = name;
     public string Slug { get; } = slug;
-    public string TimeZoneId { get; } = timeZoneId;
-    public ContactDto Contact { get; } = contact;
+
+    public TenantConfigurationDto TenantConfig { get; } = tenantConfig;
+
+    public TenantStatus TenantStatus { get; } = tenantStatus;
+
+    public ContactDto Contact { get; } = contactDto;
+
+    public TenantWeekWorkSheduleDto WorkSchedule { get; } = workSheduleDto;
 }
+

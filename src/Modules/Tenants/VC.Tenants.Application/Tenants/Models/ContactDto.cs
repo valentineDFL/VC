@@ -1,8 +1,15 @@
-namespace VC.Tenants.Application.Tenants.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class ContactDto(string email, string phone, string address)
+namespace VC.Tenants.Application.Tenants.Models
 {
-    public string Email { get; } = email;
-    public string Phone { get; } = phone;
-    public string Address { get; } = address;
+    public class ContactDto(string Email, string Phone, string Address)
+    {
+        public string Email { get; } = Email;
+        public string Phone { get; } = Phone;
+        public string Address { get; } = Address;
+    }
 }

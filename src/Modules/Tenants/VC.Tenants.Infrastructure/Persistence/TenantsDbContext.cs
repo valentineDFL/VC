@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VC.Tenants.Models;
 
 namespace VC.Tenants.Infrastructure.Persistence;
 
@@ -15,7 +16,6 @@ public class TenantsDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema("tenants");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantsDbContext).Assembly);
-
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,4 +1,4 @@
-namespace VC.Tenants;
+namespace VC.Tenants.Models;
 
 /// <summary>
 /// Контактная информация.

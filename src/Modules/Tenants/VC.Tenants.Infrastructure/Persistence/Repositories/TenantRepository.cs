@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VC.Tenants.Models;
 using VC.Tenants.Repositories;
 
 namespace VC.Tenants.Infrastructure.Persistence.Repositories
@@ -22,9 +23,11 @@ namespace VC.Tenants.Infrastructure.Persistence.Repositories
             await _dbContext.Tenants.AddAsync(entity);
         }
 
+
         public async Task<Tenant> GetByIdAsync(Guid tenantId)
         {
-            return await _dbContext.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
+            return await _dbContext.Tenants
+                .FirstOrDefaultAsync(t => t.Id == tenantId);
         }
 
         public void Remove(Tenant entity)

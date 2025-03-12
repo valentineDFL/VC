@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VC.Tenants.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using VC.Tenants.Infrastructure.Persistence;
 namespace VC.Tenants.Infrastructure.Migrations
 {
     [DbContext(typeof(TenantsDbContext))]
-    partial class TenantsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312125431_Current")]
+    partial class Current
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,15 +123,6 @@ namespace VC.Tenants.Infrastructure.Migrations
                                         .HasColumnType("integer");
 
                                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("Day")
-                                        .HasColumnType("integer");
-
-                                    b2.Property<DateTime>("EndWork")
-                                        .HasColumnType("timestamp with time zone");
-
-                                    b2.Property<DateTime>("StartWork")
-                                        .HasColumnType("timestamp with time zone");
 
                                     b2.HasKey("TenantWorkScheduleTenantId", "Id");
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VC.Tenants.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using VC.Tenants.Infrastructure.Persistence;
 namespace VC.Tenants.Infrastructure.Migrations
 {
     [DbContext(typeof(TenantsDbContext))]
-    partial class TenantsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312051647_ChangedTenantLinks")]
+    partial class ChangedTenantLinks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +26,7 @@ namespace VC.Tenants.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VC.Tenants.Models.Tenant", b =>
+            modelBuilder.Entity("VC.Tenants.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,9 +48,9 @@ namespace VC.Tenants.Infrastructure.Migrations
                     b.ToTable("Tenants", "tenants");
                 });
 
-            modelBuilder.Entity("VC.Tenants.Models.Tenant", b =>
+            modelBuilder.Entity("VC.Tenants.Tenant", b =>
                 {
-                    b.OwnsOne("VC.Tenants.Models.ContactInfo", "ContactInfo", b1 =>
+                    b.OwnsOne("VC.Tenants.ContactInfo", "ContactInfo", b1 =>
                         {
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
@@ -69,7 +72,7 @@ namespace VC.Tenants.Infrastructure.Migrations
                                 .HasForeignKey("TenantId");
                         });
 
-                    b.OwnsOne("VC.Tenants.Models.TenantConfiguration", "Config", b1 =>
+                    b.OwnsOne("VC.Tenants.TenantConfiguration", "Config", b1 =>
                         {
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
@@ -98,56 +101,10 @@ namespace VC.Tenants.Infrastructure.Migrations
                                 .HasForeignKey("TenantId");
                         });
 
-                    b.OwnsOne("VC.Tenants.Models.TenantWorkSchedule", "WorkWeekSchedule", b1 =>
-                        {
-                            b1.Property<Guid>("TenantId")
-                                .HasColumnType("uuid");
-
-                            b1.HasKey("TenantId");
-
-                            b1.ToTable("Tenants", "tenants");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TenantId");
-
-                            b1.OwnsMany("VC.Tenants.Models.TenantDayWorkSchedule", "DaysSchedule", b2 =>
-                                {
-                                    b2.Property<Guid>("TenantWorkScheduleTenantId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("integer");
-
-                                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("Day")
-                                        .HasColumnType("integer");
-
-                                    b2.Property<DateTime>("EndWork")
-                                        .HasColumnType("timestamp with time zone");
-
-                                    b2.Property<DateTime>("StartWork")
-                                        .HasColumnType("timestamp with time zone");
-
-                                    b2.HasKey("TenantWorkScheduleTenantId", "Id");
-
-                                    b2.ToTable("TenantDayWorkSchedule", "tenants");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TenantWorkScheduleTenantId");
-                                });
-
-                            b1.Navigation("DaysSchedule");
-                        });
-
                     b.Navigation("Config")
                         .IsRequired();
 
                     b.Navigation("ContactInfo")
-                        .IsRequired();
-
-                    b.Navigation("WorkWeekSchedule")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

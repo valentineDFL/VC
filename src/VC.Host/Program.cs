@@ -10,11 +10,11 @@ using VC.Tenants.Di;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureInfrastructure(builder.Configuration);
+builder.Services.ConfigureApiExtensions();
+
+
 
 builder.Services.AddControllers().AddApplicationPart(typeof(TenantsController).Assembly);
-    //.PartManager
-    //.ApplicationParts
-    //.Add(new AssemblyPart(Assembly.Load("VC.Tenants.Api")));
 
 builder.Services.AddHttpLogging();
 builder.Services.AddHealthChecks();
