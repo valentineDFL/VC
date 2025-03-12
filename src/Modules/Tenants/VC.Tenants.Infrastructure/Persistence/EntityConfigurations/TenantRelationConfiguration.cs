@@ -1,40 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VC.Tenants.Models;
+using VC.Tenants.Entities;
 
-namespace VC.Tenants.Infrastructure.ModelConfigurations
+namespace VC.Tenants.Infrastructure.Persistence.EntityConfigurations;
+
+internal class TenantRelationConfiguration : IEntityTypeConfiguration<Tenant>
 {
-    internal class TenantRelationConfiguration : IEntityTypeConfiguration<Tenant>
+    public void Configure(EntityTypeBuilder<Tenant> builder)
     {
-        public void Configure(EntityTypeBuilder<Tenant> builder)
+        builder.HasKey(t => t.Id);
+        
+        builder.Property(t => t.Name)
+            .IsRequired();
+
+        builder.Property(t => t.Slug)
+            .IsRequired();
+
+        builder.OwnsOne(t => t.Config);
+        
+        builder.OwnsOne(t => t.ContactInfo);
+
+        builder.OwnsOne(t => t.WorkWeekSchedule, ws =>
         {
-            // id
-            builder.HasKey(t => t.Id);
-            
-            // name
-            builder.Property(t => t.Name)
-                .IsRequired();
-
-            //slug
-            builder.Property(t => t.Slug)
-                .IsRequired();
-
-            // config
-            builder.OwnsOne(t => t.Config);
-            
-            // contact info
-            builder.OwnsOne(t => t.ContactInfo);
-
-            // WorkWeekSchedule
-            builder.OwnsOne(t => t.WorkWeekSchedule, ws =>
-            {
-                ws.OwnsMany(x => x.DaysSchedule);
-            });
-        }
+            ws.OwnsMany(x => x.DaysSchedule);
+        });
     }
 }

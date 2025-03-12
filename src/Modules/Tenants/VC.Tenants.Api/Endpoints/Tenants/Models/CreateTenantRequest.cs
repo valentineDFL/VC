@@ -1,5 +1,5 @@
 using VC.Tenants.Application.Tenants.Models;
-using VC.Tenants.Models;
+using VC.Tenants.Entities;
 
 namespace VC.Tenants.Api.Endpoints.Tenants.Models;
 

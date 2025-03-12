@@ -1,4 +1,4 @@
-using VC.Tenants.Models;
+using VC.Tenants.Entities;
 
 namespace VC.Tenants.Application.Tenants.Models;
 

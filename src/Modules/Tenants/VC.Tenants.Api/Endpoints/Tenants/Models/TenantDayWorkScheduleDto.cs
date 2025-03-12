@@ -1,28 +1,25 @@
-﻿using System;
+﻿namespace VC.Tenants.Api.Endpoints.Tenants.Models;
 
-namespace VC.Tenants.Api.Endpoints.Tenants.Models
+public record TenantDayWorkScheduleDto(
+    DayOfWeek Day,
+    DateTime StartWork,
+    DateTime EndWork
+    );
+
+public static class TenantDayWorkScheduleMappers
 {
-    public record TenantDayWorkScheduleDto(
-        DayOfWeek Day,
-        DateTime StartWork,
-        DateTime EndWork
-        );
-
-    public static class TenantDayWorkScheduleMappers
+    public static List<VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto> ToTenantsDayWorkShedule(this List<TenantDayWorkScheduleDto> dtos)
     {
-        public static List<VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto> ToTenantsDayWorkShedule(this List<TenantDayWorkScheduleDto> dtos)
+        var result = new List<VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto>();
+
+        foreach(var dayWorkSchedule in dtos)
         {
-            var result = new List<VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto>();
-
-            foreach(var dayWorkSchedule in dtos)
-            {
-                result.Add(new VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto(
-                    dayWorkSchedule.Day,
-                    dayWorkSchedule.StartWork,
-                    dayWorkSchedule.EndWork));
-            }
-
-            return result;
+            result.Add(new VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto(
+                dayWorkSchedule.Day,
+                dayWorkSchedule.StartWork,
+                dayWorkSchedule.EndWork));
         }
+
+        return result;
     }
 }

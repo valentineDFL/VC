@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VC.Tenants.Models;
+﻿using VC.Tenants.Entities;
 
-namespace VC.Tenants.Repositories
+namespace VC.Tenants.Repositories;
+
+public interface ITenantRepository : IRepositoryBase<Tenant>
 {
-    public interface ITenantRepository : IRepositoryBase<Tenant>
-    {
-        public Task<Tenant> GetByIdAsync(Guid tenantId);
-    }
+    public Task<Tenant?> GetByIdAsync(Guid tenantId);
 }

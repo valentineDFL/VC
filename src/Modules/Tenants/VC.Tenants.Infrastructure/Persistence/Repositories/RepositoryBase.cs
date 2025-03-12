@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using VC.Tenants.Repositories;
 
 namespace VC.Tenants.Infrastructure.Persistence.Repositories;

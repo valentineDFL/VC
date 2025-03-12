@@ -1,94 +1,86 @@
 ﻿using FluentResults;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VC.Tenants.Api.Endpoints.Tenants.Models;
 using VC.Tenants.Application.Tenants;
-using VC.Tenants.Models;
-using VC.Tenants.Repositories;
-using VC.Tenants.UnitOfWork;
+using VC.Tenants.Entities;
 
-namespace VC.Tenants.Api.Controller
+namespace VC.Tenants.Api.Controller;
+
+[ApiController]
+[Route("[Controller]")]
+[ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
+public class TenantsController : ControllerBase
 {
-    [ApiController]
-    [Route("[Controller]")]
-    [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-    public class TenantsController : ControllerBase
+    private readonly ITenantsService _tenantService;
+    private readonly IValidator<CreateTenantRequest> _createTenantValidator;
+    private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
+
+    public TenantsController(ITenantsService tenantService,
+        IValidator<CreateTenantRequest> createTenantValidator,
+        IValidator<UpdateTenantRequest> updateTenantValidator)
     {
-        private readonly ITenantsService _tenantService;
-        private readonly IValidator<CreateTenantRequest> _createTenantValidator;
-        private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
+        _tenantService = tenantService;
+        _createTenantValidator = createTenantValidator;
+        _updateTenantValidator = updateTenantValidator;
+    }
 
-        public TenantsController(ITenantsService tenantService,
-            IValidator<CreateTenantRequest> createTenantValidator,
-            IValidator<UpdateTenantRequest> updateTenantValidator)
-        {
-            _tenantService = tenantService;
-            _createTenantValidator = createTenantValidator;
-            _updateTenantValidator = updateTenantValidator;
-        }
+    [HttpGet]
+    public async Task<ActionResult<Tenant>> GetByIdAsync([FromQuery] Guid id)
+    {
+        var response = await _tenantService.GetByIdAsync(id);
 
-        [HttpGet]
-        public async Task<ActionResult<Tenant>> GetByIdAsync([FromQuery] Guid id)
-        {
-            Result<Tenant> response = await _tenantService.GetByIdAsync(id);
+        if (response.IsSuccess)
+            return Ok(response);
 
-            if (response.IsSuccess)
-                return Ok(response);
+        return BadRequest(response);
+    }
 
-            return BadRequest(response);
-        }
+    [HttpPost]
+    public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
+    {
+        var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
-        [HttpPost]
-        public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
-        {
-            var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
 
-            if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors);
+        var mappedCreateDto = createRequest.ToCreateTenantParams();
 
-            var mappedCreateDto = createRequest.ToCreateTenantParams();
+        var response = await _tenantService.CreateAsync(mappedCreateDto);
 
-            var response = await _tenantService.CreateAsync(mappedCreateDto);
-
-            if (response.IsSuccess)
-                return Ok(response);
+        if (response.IsSuccess)
+            return Ok(response);
 
 
-            return BadRequest(response);
-        }
+        return BadRequest(response);
+    }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteByIdAsync([FromQuery] Guid id)
-        {
-            var response = await _tenantService.DeleteAsync(id);
+    [HttpPut]
+    public async Task<ActionResult> UpdateAsync(UpdateTenantRequest updateRequest)
+    {
+        var validationResult = await _updateTenantValidator.ValidateAsync(updateRequest);
 
-            if (response.IsSuccess)
-                return Ok();
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult);
 
-            return BadRequest(response);
-        }
+        var mappedUpdateDto = updateRequest.ToTenantUpdateDto();
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateAsync(UpdateTenantRequest updateRequest)
-        {
-            var validationResult = await _updateTenantValidator.ValidateAsync(updateRequest);
+        Result response = await _tenantService.UpdateAsync(mappedUpdateDto);
 
-            if (!validationResult.IsValid)
-                return BadRequest(validationResult);
+        if (response.IsSuccess)
+            return Ok(response);
 
-            var mappedUpdateDto = updateRequest.ToTenantUpdateDto();
+        return BadRequest(response);
+    }
 
-            Result response = await _tenantService.UpdateAsync(mappedUpdateDto);
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeleteByIdAsync([FromQuery] Guid id)
+    {
+        var response = await _tenantService.DeleteAsync(id);
 
-            if (response.IsSuccess)
-                return Ok(response);
+        if (response.IsSuccess)
+            return Ok();
 
-            return BadRequest(response);
-        }
+        return BadRequest(response);
     }
 }

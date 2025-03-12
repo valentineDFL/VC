@@ -1,7 +1,6 @@
 using FluentResults;
-using Microsoft.AspNetCore.Mvc;
 using VC.Tenants.Application.Tenants.Models;
-using VC.Tenants.Models;
+using VC.Tenants.Entities;
 using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
 
@@ -20,7 +19,7 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> CreateAsync(CreateTenantParams @params)
     {
-        Tenant tenant = BuildTenant(@params);
+        var tenant = BuildTenant(@params);
 
         await _tenantRepository.AddAsync(tenant);
         await _dbSaver.SaveAsync();
@@ -30,11 +29,11 @@ internal class TenantsService : ITenantsService
 
     private Tenant BuildTenant(CreateTenantParams @params)
     {
-        TenantConfiguration configuration = BuildConfiguration(@params.TenantConfig);
+        var configuration = BuildConfiguration(@params.TenantConfig);
 
-        ContactInfo contactInfo = BuildContactInfo(@params.Contact);
+        var contactInfo = BuildContactInfo(@params.Contact);
 
-        TenantWorkSchedule workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
+        var workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
 
         return new Tenant()
         {
@@ -50,11 +49,11 @@ internal class TenantsService : ITenantsService
 
     private Tenant BuildTenant(UpdateTenantParams @params)
     {
-        TenantConfiguration configuration = BuildConfiguration(@params.TenantConfig);
+        var configuration = BuildConfiguration(@params.TenantConfig);
 
-        ContactInfo contactInfo = BuildContactInfo(@params.Contact);
+        var contactInfo = BuildContactInfo(@params.Contact);
 
-        TenantWorkSchedule workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
+        var workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
 
         return new Tenant()
         {
@@ -91,7 +90,7 @@ internal class TenantsService : ITenantsService
 
     private TenantWorkSchedule BuildTenantWorkSchedule(TenantWeekWorkSheduleDto dto)
     {
-        List<TenantDayWorkSchedule> daysSchedule = new List<TenantDayWorkSchedule>();
+        var daysSchedule = new List<TenantDayWorkSchedule>();
 
         foreach (var day in dto.WorkDays)
         {
@@ -108,12 +107,12 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> DeleteAsync(Guid tenantId)
     {
-        var tenant = await _tenantRepository.GetByIdAsync(tenantId);
+        var existingTenant = await _tenantRepository.GetByIdAsync(tenantId);
 
-        if (tenant == null)
-            return Result.Fail("Not found");
+        if (existingTenant is null)
+            return Result.Fail("Tenant Not found");
 
-        _tenantRepository.Remove(tenant);
+        _tenantRepository.Remove(existingTenant);
 
         await _dbSaver.SaveAsync();
 
@@ -124,7 +123,7 @@ internal class TenantsService : ITenantsService
     {
         var tenant = await _tenantRepository.GetByIdAsync(tenantId);
 
-        if (tenant == null)
+        if (tenant is null)
             return Result.Fail("Tenant Not Found");
 
         return Result.Ok(tenant);
@@ -132,16 +131,16 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        var tenantWithTurnedId = await _tenantRepository.GetByIdAsync(@params.Id);
+        var existingTenant = await _tenantRepository.GetByIdAsync(@params.Id);
 
-        if (tenantWithTurnedId == null)
+        if (existingTenant is null)
             return Result.Fail("Tenant not found");
 
-        Tenant tenant = BuildTenant(@params);
+        var tenant = BuildTenant(@params);
 
-        UpdateFindedTenant(tenant, tenantWithTurnedId);
+        UpdateFindedTenant(tenant, existingTenant);
 
-        _tenantRepository.Update(tenantWithTurnedId);
+        _tenantRepository.Update(existingTenant);
         await _dbSaver.SaveAsync();
 
         return Result.Ok();
@@ -149,20 +148,15 @@ internal class TenantsService : ITenantsService
 
     private void UpdateFindedTenant(Tenant from, Tenant to)
     {
-        // name and slug update
         to.Name = from.Name;
         to.Slug = from.Slug;
 
-        // config update
         to.Config = from.Config;
 
-        // status update
         to.Status = from.Status;
 
-        // contact info update
         to.ContactInfo = from.ContactInfo;
 
-        // tenantWorkSchedule update
         to.WorkWeekSchedule = from.WorkWeekSchedule;
     }
 }
