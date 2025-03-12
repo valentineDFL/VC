@@ -1,4 +1,4 @@
-namespace VC.Tenants;
+namespace VC.Tenants.Models;
 
 public enum TenantStatus
 {

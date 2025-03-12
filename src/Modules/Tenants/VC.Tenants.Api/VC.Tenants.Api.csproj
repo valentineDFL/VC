@@ -23,8 +23,15 @@
 
     <ItemGroup>
       <Folder Include="Consumers\" />
+      <Folder Include="ResponseMappers\" />
     </ItemGroup>
 
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>VC.Host</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     </ItemGroup>

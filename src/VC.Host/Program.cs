@@ -1,12 +1,25 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using OpenTelemetry.Metrics;
 using Scalar.AspNetCore;
 using Serilog;
+using System.Reflection;
+using VC.Tenants.Api.Controller;
+using VC.Tenants.Di;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureInfrastructure(builder.Configuration);
+builder.Services.ConfigureApiExtensions();
+
+
+
+builder.Services.AddControllers().AddApplicationPart(typeof(TenantsController).Assembly);
+
 builder.Services.AddHttpLogging();
 builder.Services.AddHealthChecks();
+
+
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
@@ -74,8 +87,8 @@ app.MapScalarApiReference(opts =>
     opts.ShowSidebar = true;
 });
 
+app.MapControllers();
+
 app.UseHttpLogging();
-VC.Tenants.Di.ModuleConfiguration.MapEndpoints(app);
-VC.Bookings.Di.ModuleConfiguration.MapEndpoints(app);
 
 app.Run();
