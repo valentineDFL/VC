@@ -7,6 +7,7 @@ public class CreateTenantParams(string name, string slug,
     ContactDto contactDto, TenantWeekWorkSheduleDto workSheduleDto)
 {
     public string Name { get; } = name;
+
     public string Slug { get; } = slug;
 
     public TenantConfigurationDto TenantConfig { get; } = tenantConfig;

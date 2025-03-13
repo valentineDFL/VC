@@ -51,7 +51,6 @@ public class TenantsController : ControllerBase
         if (response.IsSuccess)
             return Ok(response);
 
-
         return BadRequest(response);
     }
 

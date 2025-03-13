@@ -44,7 +44,7 @@ internal class TenantsService : ITenantsService
             Status = @params.TenantStatus,
             ContactInfo = contactInfo,
             WorkWeekSchedule = workSchedule
-        }; ;
+        };
     }
 
     private Tenant BuildTenant(UpdateTenantParams @params)
@@ -64,7 +64,7 @@ internal class TenantsService : ITenantsService
             Status = @params.TenantStatus,
             ContactInfo = contactInfo,
             WorkWeekSchedule = workSchedule
-        }; ;
+        };
     }
 
     private TenantConfiguration BuildConfiguration(TenantConfigurationDto dto)

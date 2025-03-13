@@ -48,7 +48,6 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
                     .MinimumLength(2)
                     .MaximumLength(3)
                     .NotEmpty();
-
             });
 
         RuleFor(ctr => ctr.Status)
