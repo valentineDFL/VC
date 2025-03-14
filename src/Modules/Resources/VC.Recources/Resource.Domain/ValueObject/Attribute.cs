@@ -14,9 +14,9 @@ public class Attribute
     private static readonly Dictionary<AttributeType, Func<object, bool>> Validators =
         new()
         {
-            {AttributeType.String, v => v is string },
-            {AttributeType.Number, v => v is int or double },
-            {AttributeType.Booolean, v => v is bool}
+            { AttributeType.String, v => v is string },
+            { AttributeType.Number, v => v is int or double },
+            { AttributeType.Booolean, v => v is bool }
         };
 
     public Attribute(
@@ -32,18 +32,20 @@ public class Attribute
 
     private static bool IsValueValid(object value, AttributeType attributeType)
     {
-        return Validators.TryGetValue(attributeType, out var isValid)
-            ? isValid(value)
-            : false;
+        return Validators.TryGetValue(attributeType, out var isValid) && isValid(value);
     }
 
     public static Attribute CreateAttribute(string key, object value, AttributeType attributeType)
     {
         if (string.IsNullOrWhiteSpace(key))
+        {
             throw new DomainException("Ключ атрибута не может быть пустым.");
+        }
 
         if (!IsValueValid(value, attributeType))
+        {
             throw new DomainException($"Некорректное значение для типа {attributeType}.");
+        }
 
         return new Attribute(key, value, attributeType);
     }

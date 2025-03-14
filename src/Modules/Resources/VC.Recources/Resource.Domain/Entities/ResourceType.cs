@@ -19,7 +19,9 @@ public class ResourceType
     public void AddAttributeDefinition(AttributeDefinition resourceAttributeDefinitions)
     {
         if (_resourceAttributeDefinitions.Any(d => d.Key == resourceAttributeDefinitions.Key))
+        {
             throw new DomainException($"Атрибут {resourceAttributeDefinitions.Key} уже существует.");
+        }
 
         _resourceAttributeDefinitions.Add(resourceAttributeDefinitions);
     }
