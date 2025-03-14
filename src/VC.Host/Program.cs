@@ -4,9 +4,11 @@ using Scalar.AspNetCore;
 using Serilog;
 using VC.Tenants.Api.Controller;
 using VC.Tenants.Di;
+using VC.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureUtilities();
 builder.Services.ConfigureInfrastructure(builder.Configuration);
 builder.Services.ConfigureApiExtensions();
 

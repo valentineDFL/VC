@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VC.Tenants.Api.Endpoints.Tenants.Models;
 using VC.Tenants.Application.Tenants;
 using VC.Tenants.Entities;
+using VC.Utilities;
 
 namespace VC.Tenants.Api.Controller;
 
@@ -16,13 +17,25 @@ public class TenantsController : ControllerBase
     private readonly IValidator<CreateTenantRequest> _createTenantValidator;
     private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
 
+    private readonly ITenantResolver _tenantResolver;
+
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
-        IValidator<UpdateTenantRequest> updateTenantValidator)
+        IValidator<UpdateTenantRequest> updateTenantValidator,
+        ITenantResolver tenantResolver)
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
         _updateTenantValidator = updateTenantValidator;
+        _tenantResolver = tenantResolver;
+    }
+
+    [HttpGet("TEST")]
+    public async Task<ActionResult> TestGetAsync()
+    {
+        _tenantResolver.Resolve();
+
+        return Ok();
     }
 
     [HttpGet]

@@ -8,6 +8,8 @@ internal class TenantRelationConfiguration : IEntityTypeConfiguration<Tenant>
 {
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
+        builder.HasQueryFilter(x => EF.Property<string>(x, "TenantId") == );
+
         builder.HasKey(t => t.Id);
         
         builder.Property(t => t.Name)

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Api.Endpoints.Tenants.Models;
 using VC.Tenants.Api.Validation;
@@ -11,5 +12,6 @@ public static class ApiConfiguration
     {
         services.AddScoped<IValidator<CreateTenantRequest>, CreateTenantValidation>();
         services.AddScoped<IValidator<UpdateTenantRequest>, UpdateTenantValidation>();
+        services.AddHttpContextAccessor();
     }
 }
