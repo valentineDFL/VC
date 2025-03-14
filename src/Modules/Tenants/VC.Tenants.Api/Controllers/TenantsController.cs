@@ -38,8 +38,8 @@ public class TenantsController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
-    public async Task<ActionResult<Tenant>> GetByIdAsync([FromQuery] Guid id)
+    [HttpGet("/tenants/{id:guid}")]
+    public async Task<ActionResult<Tenant>> GetByIdAsync(Guid id)
     {
         var response = await _tenantService.GetByIdAsync(id);
 
@@ -86,7 +86,7 @@ public class TenantsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> DeleteByIdAsync([FromQuery] Guid id)
+    public async Task<ActionResult> DeleteByIdAsync(Guid id)
     {
         var response = await _tenantService.DeleteAsync(id);
 

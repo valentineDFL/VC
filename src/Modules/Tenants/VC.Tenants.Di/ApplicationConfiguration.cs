@@ -6,7 +6,7 @@ namespace VC.Tenants.Di;
 
 internal static class ApplicationConfiguration
 {
-    public static IServiceCollection Configure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureTenantsApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ITenantsService, TenantsService>();
         return services;

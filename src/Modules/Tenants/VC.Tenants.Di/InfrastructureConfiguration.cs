@@ -11,7 +11,7 @@ namespace VC.Tenants.Di;
 
 public static class InfrastructureConfiguration
 {
-    public static void ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureTenantsInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 

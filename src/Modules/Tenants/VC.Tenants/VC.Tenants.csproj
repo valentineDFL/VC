@@ -12,8 +12,4 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Volo.Abp.MultiTenancy" Version="9.0.0" />
-    </ItemGroup>
-
 </Project>
