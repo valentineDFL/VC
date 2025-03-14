@@ -21,11 +21,9 @@
       <ProjectReference Include="..\VC.Tenants.Application\VC.Tenants.Application.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Consumers\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
-    </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>VC.Host</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 </Project>

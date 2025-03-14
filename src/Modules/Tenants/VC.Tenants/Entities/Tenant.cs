@@ -1,4 +1,4 @@
-namespace VC.Tenants;
+namespace VC.Tenants.Entities;
 
 /// <summary>
 /// Арендатор.
@@ -6,6 +6,7 @@ namespace VC.Tenants;
 public class Tenant
 {
     public Guid Id { get; set; }
+
     public string Name { get; set; }
     
     /// <summary>
@@ -13,10 +14,11 @@ public class Tenant
     /// </summary>
     public string Slug { get; set; }
     
-    /// <remarks>https://en.wikipedia.org/wiki/List_of_tz_database_time_zones</remarks>
-    public string TimeZoneId { get; set; }
+    public TenantConfiguration Config { get; set; }
 
     public TenantStatus Status { get; set; }
 
     public ContactInfo ContactInfo { get; set; }
+
+    public TenantWorkSchedule WorkWeekSchedule { get; set; }
 }

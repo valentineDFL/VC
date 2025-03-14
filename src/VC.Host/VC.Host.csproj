@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>2ae52d4c-8ef3-46eb-8327-31849151a009</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
+      <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Api\VC.Tenants.Api.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Di\VC.Tenants.Di.csproj" />
     </ItemGroup>
 

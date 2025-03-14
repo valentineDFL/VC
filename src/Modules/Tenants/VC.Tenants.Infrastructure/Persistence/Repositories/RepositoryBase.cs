@@ -10,11 +10,26 @@ namespace VC.Tenants.Infrastructure.Persistence.Repositories;
 internal class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : class
 {
     protected readonly DbSet<TEntity> Query;
-    protected readonly DatabaseContext DbContext;
+    protected readonly TenantsDbContext DbContext;
 
-    public RepositoryBase(DatabaseContext dbContext)
+    public RepositoryBase(TenantsDbContext dbContext)
     {
         DbContext = dbContext;
         Query = DbContext.Set<TEntity>();
+    }
+
+    public virtual async Task AddAsync(TEntity entity)
+    {
+        await DbContext.AddAsync(entity);
+    }
+
+    public virtual void Remove(TEntity entity)
+    {
+        DbContext.Remove(entity);
+    }
+
+    public virtual void Update(TEntity entity)
+    {
+        DbContext.Update(entity);
     }
 }
