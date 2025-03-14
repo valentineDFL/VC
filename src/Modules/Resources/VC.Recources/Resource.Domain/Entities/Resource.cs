@@ -1,6 +1,4 @@
-﻿using VC.Recources.Resource.Domain.ValueObject;
-
-namespace VC.Recources.Resource.Domain;
+﻿namespace VC.Recources.Resource.Domain.Entities;
 
 public class Resource
 {
@@ -20,9 +18,9 @@ public class Resource
     
     public bool IsActive { get; set; }
 
-    private List<ResourceAttribute> _attributes = new List<ResourceAttribute>();
+    private List<ValueObject.Attribute> _attributes = new List<ValueObject.Attribute>();
 
-    public IReadOnlyCollection<ResourceAttribute> Attributes => _attributes.AsReadOnly();
+    public IReadOnlyCollection<ValueObject.Attribute> Attributes => _attributes.AsReadOnly();
 
     public Resource(Guid tenantId, string name, ResourceType resourceType)
     {
@@ -30,11 +28,6 @@ public class Resource
         TetnantId = tenantId;
         Name = name;
         ResourceType = resourceType;
-    }
-
-    public void AddAttribute(string key,object value)
-    {
-        _attributes.Add(new ResourceAttribute(key,value));
     }
 
     public void Deactivate()
