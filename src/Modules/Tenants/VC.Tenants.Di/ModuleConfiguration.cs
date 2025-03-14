@@ -10,7 +10,7 @@ public static class ModuleConfiguration
 {
     public static IServiceCollection Configure(this IServiceCollection services, IConfiguration configuration)
     {
-        ApplicationConfiguration.Configure(services, configuration);
+        ApplicationConfiguration.ConfigureTenantsApplication(services, configuration);
         return services
             .ConfigureOpenApi(configuration);
     }
@@ -20,4 +20,11 @@ public static class ModuleConfiguration
     
     public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder builder)
         =>  builder.AddTenantsEndpoints();
+
+    public static void ConfigureTenantsModule(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.ConfigureTenantsApiExtensions();
+        services.ConfigureTenantsApplication(configuration);
+        services.ConfigureTenantsInfrastructure(configuration);
+    }
 }
