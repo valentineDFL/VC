@@ -7,7 +7,7 @@ namespace VC.Tenants.Di;
 
 public static class ApiConfiguration
 {
-    public static void ConfigureApiExtensions(this IServiceCollection services)
+    public static void ConfigureTenantsApiExtensions(this IServiceCollection services)
     {
         services.AddScoped<IValidator<CreateTenantRequest>, CreateTenantValidation>();
         services.AddScoped<IValidator<UpdateTenantRequest>, UpdateTenantValidation>();

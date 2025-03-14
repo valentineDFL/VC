@@ -7,8 +7,7 @@ using VC.Tenants.Di;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureInfrastructure(builder.Configuration);
-builder.Services.ConfigureApiExtensions();
+builder.Services.ConfigureTenantsModule(builder.Configuration);
 
 builder.Services.AddControllers().AddApplicationPart(typeof(TenantsController).Assembly);
 

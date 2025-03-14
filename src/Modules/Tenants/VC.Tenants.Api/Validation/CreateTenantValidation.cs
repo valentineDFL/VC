@@ -23,51 +23,48 @@ internal class CreateTenantValidation : AbstractValidator<CreateTenantRequest>
         RuleFor(ctr => ctr.Config)
             .NotNull();
 
-        RuleFor(ctr => ctr)
-            .ChildRules(ctr =>
+        RuleFor(ctr => ctr.Config)
+            .ChildRules(tcd =>
             {
-                ctr.RuleFor(tcd => tcd.Config.About)
+                tcd.RuleFor(tcd => tcd.About)
                     .MinimumLength(16)
                     .MaximumLength(256)
                     .NotEmpty();
 
-                ctr.RuleFor(tcd => tcd.Config.Currency)
+                tcd.RuleFor(tcd => tcd.Currency)
                     .MinimumLength(3)
                     .MaximumLength(3)
                     .NotEmpty();
 
-                ctr.RuleFor(tcd => tcd.Config.Language)
+                tcd.RuleFor(tcd => tcd.Language)
                     .MinimumLength(2)
                     .MaximumLength(3)
                     .NotEmpty();
 
-                ctr.RuleFor(tcd => tcd.Config.TimeZoneId)
+                tcd.RuleFor(tcd => tcd.TimeZoneId)
                     .MinimumLength(2)
                     .MaximumLength(3)
                     .NotEmpty();
-
             });
 
         RuleFor(ctr => ctr.Status)
             .Must(ctr => ctr != Entities.TenantStatus.None)
             .IsInEnum();
 
-        RuleFor(ctr => ctr)
-            .NotNull();
-
-        RuleFor(ctr => ctr)
-            .ChildRules(ctr =>
+        RuleFor(ctr => ctr.Contact)
+            .ChildRules(con =>
             {
-                ctr.RuleFor(ctr => ctr.Contact.Email)
+                con.RuleFor(ctr => ctr.Email)
                 .MaximumLength(64)
-                .NotNull();
+                .NotNull()
+                .EmailAddress();
 
-                ctr.RuleFor(ctr => ctr.Contact.Phone)
+                con.RuleFor(ctr => ctr.Phone)
                 .MinimumLength(15)
                 .MaximumLength(16)
                 .NotEmpty();
 
-                ctr.RuleFor(ctr => ctr.Contact.Address)
+                con.RuleFor(ctr => ctr.Address)
                 .MinimumLength(8)
                 .MaximumLength(48);
             });
@@ -75,13 +72,13 @@ internal class CreateTenantValidation : AbstractValidator<CreateTenantRequest>
         RuleFor(ctr => ctr.WorkSchedule)
             .NotNull();
 
-        RuleFor(ctr => ctr)
-            .ChildRules(ctr =>
+        RuleFor(ctr => ctr.WorkSchedule)
+            .ChildRules(wc =>
             {
-                ctr.RuleFor(ctr => ctr.WorkSchedule.WeekDays)
+                wc.RuleFor(wc => wc.WeekDays)
                 .NotNull()
                 .Must(wk => wk.Count == 7)
-                .Must(x => DayRepeatChecker.IsDayRepeat(x) == false);
+                .Must(wk => wk.Distinct().Count() == wk.Count);
             });
     }
 }
