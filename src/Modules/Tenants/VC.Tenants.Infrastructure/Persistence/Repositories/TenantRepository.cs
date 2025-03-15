@@ -18,10 +18,10 @@ internal class TenantRepository : ITenantRepository
         await _dbContext.Tenants.AddAsync(entity);
     }
 
-    public async Task<Tenant?> GetByIdAsync(Guid tenantId)
+    public async Task<Tenant?> GetAsync()
     {
         return await _dbContext.Tenants
-            .FirstOrDefaultAsync(t => t.Id == tenantId);
+            .FirstOrDefaultAsync();
     }
 
     public void Remove(Tenant entity)

@@ -105,9 +105,9 @@ internal class TenantsService : ITenantsService
         return new TenantWorkSchedule() { DaysSchedule = daysSchedule };
     }
 
-    public async Task<Result> DeleteAsync(Guid tenantId)
+    public async Task<Result> DeleteAsync()
     {
-        var existingTenant = await _tenantRepository.GetByIdAsync(tenantId);
+        var existingTenant = await _tenantRepository.GetAsync();
 
         if (existingTenant is null)
             return Result.Fail("Tenant Not found");
@@ -119,9 +119,9 @@ internal class TenantsService : ITenantsService
         return Result.Ok();
     }
 
-    public async Task<Result<Tenant>> GetByIdAsync(Guid tenantId)
+    public async Task<Result<Tenant>> GetAsync()
     {
-        var tenant = await _tenantRepository.GetByIdAsync(tenantId);
+        var tenant = await _tenantRepository.GetAsync();
 
         if (tenant is null)
             return Result.Fail("Tenant Not Found");
@@ -131,7 +131,7 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        var existingTenant = await _tenantRepository.GetByIdAsync(@params.Id);
+        var existingTenant = await _tenantRepository.GetAsync();
 
         if (existingTenant is null)
             return Result.Fail("Tenant not found");
