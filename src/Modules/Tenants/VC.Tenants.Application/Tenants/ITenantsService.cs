@@ -8,9 +8,9 @@ public interface ITenantsService
 {
     public Task<Result> CreateAsync(CreateTenantParams @params);
 
-    public Task<Result> DeleteAsync(Guid tenantId);
+    public Task<Result> DeleteAsync();
 
-    public Task<Result<Tenant>> GetByIdAsync(Guid tenantId);
+    public Task<Result<Tenant>> GetAsync();
 
     public Task<Result> UpdateAsync(UpdateTenantParams @params);
 }

@@ -18,17 +18,18 @@ public class TenantsController : ControllerBase
 
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
-        IValidator<UpdateTenantRequest> updateTenantValidator)
+        IValidator<UpdateTenantRequest> updateTenantValidator
+        )
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
         _updateTenantValidator = updateTenantValidator;
     }
 
-    [HttpGet("/tenants/{id:guid}")]
-    public async Task<ActionResult<Tenant>> GetByIdAsync(Guid id)
+    [HttpGet]
+    public async Task<ActionResult<Tenant>> GetAsync()
     {
-        var response = await _tenantService.GetByIdAsync(id);
+        var response = await _tenantService.GetAsync();
 
         if (response.IsSuccess)
             return Ok(response);
@@ -72,10 +73,10 @@ public class TenantsController : ControllerBase
         return BadRequest(response);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> DeleteByIdAsync(Guid id)
+    [HttpDelete]
+    public async Task<ActionResult> DeleteByIdAsync()
     {
-        var response = await _tenantService.DeleteAsync(id);
+        var response = await _tenantService.DeleteAsync();
 
         if (response.IsSuccess)
             return Ok();
