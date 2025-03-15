@@ -29,8 +29,6 @@ public class TenantsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<Tenant>> GetAsync()
     {
-        HttpContext.Request.Headers.Add();
-
         var response = await _tenantService.GetAsync();
 
         if (response.IsSuccess)
