@@ -1,4 +1,4 @@
-﻿namespace VC.Utilities;
+﻿namespace VC.Utilities.Resolvers;
 
 public interface ITenantResolver
 {

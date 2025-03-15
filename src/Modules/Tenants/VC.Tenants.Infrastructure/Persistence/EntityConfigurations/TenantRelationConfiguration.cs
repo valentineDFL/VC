@@ -1,17 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VC.Tenants.Entities;
-
 namespace VC.Tenants.Infrastructure.Persistence.EntityConfigurations;
 
 internal class TenantRelationConfiguration : IEntityTypeConfiguration<Tenant>
 {
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
-        builder.HasQueryFilter(x => EF.Property<string>(x, "TenantId") == );
+        // зарегистрировать фильтр и получать id у resolver 
 
         builder.HasKey(t => t.Id);
-        
+
         builder.Property(t => t.Name)
             .IsRequired();
 

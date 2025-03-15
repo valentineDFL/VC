@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using VC.Tenants.Api.Endpoints.Tenants.Models;
 using VC.Tenants.Application.Tenants;
 using VC.Tenants.Entities;
-using VC.Utilities;
 
 namespace VC.Tenants.Api.Controller;
 
@@ -17,31 +16,20 @@ public class TenantsController : ControllerBase
     private readonly IValidator<CreateTenantRequest> _createTenantValidator;
     private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
 
-    private readonly ITenantResolver _tenantResolver;
-
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
-        IValidator<UpdateTenantRequest> updateTenantValidator,
-        ITenantResolver tenantResolver)
+        IValidator<UpdateTenantRequest> updateTenantValidator
+        )
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
         _updateTenantValidator = updateTenantValidator;
-        _tenantResolver = tenantResolver;
     }
 
-    [HttpGet("TEST")]
-    public async Task<ActionResult> TestGetAsync()
+    [HttpGet]
+    public async Task<ActionResult<Tenant>> GetAsync()
     {
-        _tenantResolver.Resolve();
-
-        return Ok();
-    }
-
-    [HttpGet("/tenants/{id:guid}")]
-    public async Task<ActionResult<Tenant>> GetByIdAsync(Guid id)
-    {
-        var response = await _tenantService.GetByIdAsync(id);
+        var response = await _tenantService.GetAsync();
 
         if (response.IsSuccess)
             return Ok(response);
@@ -85,10 +73,10 @@ public class TenantsController : ControllerBase
         return BadRequest(response);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> DeleteByIdAsync(Guid id)
+    [HttpDelete]
+    public async Task<ActionResult> DeleteByIdAsync()
     {
-        var response = await _tenantService.DeleteAsync(id);
+        var response = await _tenantService.DeleteAsync();
 
         if (response.IsSuccess)
             return Ok();

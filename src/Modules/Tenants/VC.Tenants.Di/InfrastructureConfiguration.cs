@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VC.Tenants.Entities;
 using VC.Tenants.Infrastructure;
 using VC.Tenants.Infrastructure.Persistence;
+using VC.Tenants.Infrastructure.Persistence.EntityConfigurations;
 using VC.Tenants.Infrastructure.Persistence.Repositories;
 using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;

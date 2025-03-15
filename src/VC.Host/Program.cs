@@ -8,15 +8,9 @@ using VC.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
-<<<<<<< HEAD
-builder.Services.ConfigureUtilities();
-builder.Services.ConfigureInfrastructure(builder.Configuration);
-builder.Services.ConfigureApiExtensions();
-=======
-builder.Services.ConfigureTenantsModule(builder.Configuration);
->>>>>>> dev
-
 builder.Services.AddControllers().AddApplicationPart(typeof(TenantsController).Assembly);
+builder.Services.ConfigureTenantsModule(builder.Configuration);
+builder.Services.ConfigureUtilities();
 
 builder.Services.AddHttpLogging();
 builder.Services.AddHealthChecks();
