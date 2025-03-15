@@ -12,6 +12,5 @@ public static class ApiConfiguration
     {
         services.AddScoped<IValidator<CreateTenantRequest>, CreateTenantValidation>();
         services.AddScoped<IValidator<UpdateTenantRequest>, UpdateTenantValidation>();
-        services.AddHttpContextAccessor();
     }
 }

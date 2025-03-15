@@ -2,5 +2,5 @@
 
 public static class CookieNames
 {
-    public static string AuthCookie => "Tasty-Cookie";
+    public const string AuthCookie = "Tasty-Cookie";
 }
