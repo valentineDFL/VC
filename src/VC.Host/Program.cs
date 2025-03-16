@@ -5,6 +5,7 @@ using Serilog;
 using VC.Resources.Api.Controllers;
 using VC.Tenants.Api.Controller;
 using VC.Tenants.Di;
+using VC.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(TenantsController).Assembly)
     .AddApplicationPart(typeof(ResourceController).Assembly);
+
+builder.Services.ConfigureTenantsModule(builder.Configuration);
+builder.Services.ConfigureUtilities();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
 builder.Services.AddHealthChecks();
@@ -36,7 +41,7 @@ builder.Services.AddOpenApi("home", opts =>
                               GitLab - https://gitlab.com/tech-power-partners/vclients/vc
                               """
             };
-            
+
             return Task.CompletedTask;
         }
     );

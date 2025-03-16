@@ -1,4 +1,4 @@
-﻿using System.Security.AccessControl;
+﻿using VC.Recources.Resource.Domain.Entities;
 
 namespace VC.Resources.Api.Endpoints;
 

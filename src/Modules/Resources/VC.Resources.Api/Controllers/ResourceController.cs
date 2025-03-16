@@ -24,8 +24,13 @@ public class ResourceController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetResourcesAsync(Guid id)
     {
+        var tenantResult = await _tenantService.GetAsync();
+
+        if (!tenantResult.IsSuccess)
+            return BadRequest(tenantResult);
+
         var resource = await _resourceSevice.GetResourceAsync(
-            _tenantService.GetByIdAsync(tenantId), id);
+            tenantResult.Value.Id, id);
 
         return Ok(resource);
     }
@@ -33,8 +38,13 @@ public class ResourceController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateResourcesAsync(CreateResourceRequest request)
     {
+        var tenantResult = await _tenantService.GetAsync();
+
+        if (!tenantResult.IsSuccess)
+            return BadRequest(tenantResult);
+
         var resource = await _resourceSevice.CreateResourceAsync(
-            _tenantService.GetByIdAsync(id),
+            tenantResult.Value.Id,
             request.Name,
             request.Description,
             request.ResourceType,
@@ -43,7 +53,6 @@ public class ResourceController : ControllerBase
 
         return CreatedAtAction(
             nameof(GetResourcesAsync),
-            new { id = request.Id },
             MapToResponse(resource));
     }
 
