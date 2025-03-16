@@ -14,10 +14,13 @@ builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(TenantsController).Assembly)
     .AddApplicationPart(typeof(ResourceController).Assembly);
+<<<<<<< HEAD
 
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities();
 builder.Services.AddHttpContextAccessor();
+=======
+>>>>>>> origin/feature/VC-8/ResourceModule
 
 builder.Services.AddHttpLogging();
 builder.Services.AddHealthChecks();
