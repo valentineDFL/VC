@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VC.Recources\VC.Recources.csproj" />
+  </ItemGroup>
+
 </Project>

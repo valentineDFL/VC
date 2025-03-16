@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VC.Recources.Resource.Domain.Entities;
-using VC.Resources.Api.Endpoints;
 using VC.Tenants.Application.Tenants;
+using VC.Recources.Application.Services;
+using VC.Resources.Api.Endpoints.Models.Request;
+using VC.Resources.Api.Endpoints.Models.Response;
+using VC.Resources.Api.Endpoints;
 
 namespace VC.Resources.Api.Controllers;
 
@@ -9,7 +11,7 @@ namespace VC.Resources.Api.Controllers;
 [Route("[controller]")]
 public class ResourceController : ControllerBase
 {
-    private readonly IResourceSevice _resourceSevice;
+    private readonly IResourceSevice _resourceService;
     private readonly ITenantsService _tenantService;
 
     public ResourceController(
@@ -17,81 +19,54 @@ public class ResourceController : ControllerBase
         ITenantsService tenantService
         )
     {
-        _resourceSevice = resourceSevice;
+        _resourceService = resourceSevice;
         _tenantService = tenantService;
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetResourcesAsync(Guid id)
+    public async Task<ActionResult<ResourceResponseDto>> GetResourceAsync(Guid id)
     {
-<<<<<<< HEAD
         var tenantResult = await _tenantService.GetAsync();
 
         if (!tenantResult.IsSuccess)
             return BadRequest(tenantResult);
 
-        var resource = await _resourceSevice.GetResourceAsync(
-            tenantResult.Value.Id, id);
-=======
-        var resource = await _resourceSevice.GetResourceAsync(
-            _tenantService.GetByIdAsync(tenantId), id);
->>>>>>> origin/feature/VC-8/ResourceModule
+        var response = await _resourceService.GetResourceAsync(tenantResult.Value.Id);
 
-        return Ok(resource);
+        if (!response.IsSuccess)
+            return BadRequest(response);
+
+        var mappedResource = response.Value.ToResponseDto();
+
+        return Ok(mappedResource);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateResourcesAsync(CreateResourceRequest request)
+    public async Task<ActionResult> CreateResourceAsync(CreateResourceRequest dto)
     {
-<<<<<<< HEAD
         var tenantResult = await _tenantService.GetAsync();
 
         if (!tenantResult.IsSuccess)
             return BadRequest(tenantResult);
 
-        var resource = await _resourceSevice.CreateResourceAsync(
-            tenantResult.Value.Id,
-=======
-        var resource = await _resourceSevice.CreateResourceAsync(
-            _tenantService.GetByIdAsync(id),
->>>>>>> origin/feature/VC-8/ResourceModule
-            request.Name,
-            request.Description,
-            request.ResourceType,
-            request.Attributes
-            );
+        var mappedDto = dto.ToCreateResourceDto();
+        var response = await _resourceService.CreateResourceAsync(mappedDto);
 
-        return CreatedAtAction(
-            nameof(GetResourcesAsync),
-<<<<<<< HEAD
-=======
-            new { id = request.Id },
->>>>>>> origin/feature/VC-8/ResourceModule
-            MapToResponse(resource));
+        if (!response.IsSuccess)
+            return BadRequest(response);
+
+        return Ok(response);
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateResourcesAsync(Guid id, UpdateResourceRequest request)
+    public async Task<ActionResult> UpdateResourceAsync(UpdateResourceRequest dto)
     {
-        var result = await _resourceSevice.UpdateResourceAsync(
-            id,
-            request.Name,
-            request.Description,
-            request.Attributes
-            );
+        var mappedDto = dto.ToUpdateResourceDto();
+        var response = await _resourceService.UpdateResourceAsync(mappedDto);
 
-        return result ? NoContent() : NotFound();
-    }
+        if (!response.IsSuccess)
+            return BadRequest(response);
 
-    private ResourceResponse MapToResponse(Resource resource)
-    {
-        return new()
-        {
-            Id = resource.Id,
-            Name = resource.Name,
-            Description = resource.Description,
-            ResourceType = resource.ResourceType,
-            Attributes = resource.Attributes
-        };
+        return Ok(response);
     }
 }
