@@ -2,6 +2,7 @@ using Asp.Versioning;
 using OpenTelemetry.Metrics;
 using Scalar.AspNetCore;
 using Serilog;
+using VC.Resources.Api.Controllers;
 using VC.Tenants.Api.Controller;
 using VC.Tenants.Di;
 
@@ -9,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 
-builder.Services.AddControllers().AddApplicationPart(typeof(TenantsController).Assembly);
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(TenantsController).Assembly)
+    .AddApplicationPart(typeof(ResourceController).Assembly);
 
 builder.Services.AddHttpLogging();
 builder.Services.AddHealthChecks();

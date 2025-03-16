@@ -5,8 +5,14 @@ namespace VC.Recources.Resource.Domain.ValueObject;
 
 public class AttributeDefinition
 {
+    /// <summary>
+    /// Уникальное имя атрибута (например, "skillLevel", "capacity").
+    /// </summary>
     public string Key { get; set; }
-    
+
+    /// <summary>
+    /// Один из вариантов enum AttributeType (String, Number, Boolean).
+    /// </summary>
     public AttributeType AttributeType { get; set; }
 
     public bool IsRequired { get; set; }

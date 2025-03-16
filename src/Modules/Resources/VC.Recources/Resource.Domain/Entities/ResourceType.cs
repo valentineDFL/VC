@@ -7,22 +7,22 @@ public class ResourceType
 {
     public string Name { get; set; }
 
-    public IReadOnlyCollection<AttributeDefinition> ResourceAttributeDefinitions => _resourceAttributeDefinitions.AsReadOnly();
+    public IReadOnlyCollection<AttributeDefinition> AttributeDefinitions => _attributeDefinitions.AsReadOnly();
 
-    private List<AttributeDefinition> _resourceAttributeDefinitions = new List<AttributeDefinition>();
+    private List<AttributeDefinition> _attributeDefinitions = new List<AttributeDefinition>();
 
     public ResourceType(string name)
     {
         Name = name;
     }
 
-    public void AddAttributeDefinition(AttributeDefinition resourceAttributeDefinitions)
+    public void AddAttributeDefinition(AttributeDefinition attributeDefinitions)
     {
-        if (_resourceAttributeDefinitions.Any(d => d.Key == resourceAttributeDefinitions.Key))
+        if (_attributeDefinitions.Any(d => d.Key == attributeDefinitions.Key))
         {
-            throw new DomainException($"Атрибут {resourceAttributeDefinitions.Key} уже существует.");
+            throw new DomainException($"Атрибут {attributeDefinitions.Key} уже существует.");
         }
 
-        _resourceAttributeDefinitions.Add(resourceAttributeDefinitions);
+        _attributeDefinitions.Add(attributeDefinitions);
     }
 }
