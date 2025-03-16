@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VC.Tenants.Entities;
 using VC.Tenants.Infrastructure;
 using VC.Tenants.Infrastructure.Persistence;
 using VC.Tenants.Infrastructure.Persistence.Repositories;
 using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
+using VC.Utilities;
 
 namespace VC.Tenants.Di;
 
@@ -15,7 +17,8 @@ public static class InfrastructureConfiguration
     {
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 
-        services.AddDbContext<TenantsDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddDbContext<TenantsDbContext>(options => options
+            .UseNpgsql(connectionString));
 
         ConfigureRepositories(services);
     }
