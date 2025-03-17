@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using VC.Tenants.Entities;
 using VC.Utilities;
 using VC.Utilities.Resolvers;
@@ -10,11 +11,16 @@ public class TenantsDbContext : DbContext
     public DbSet<Tenant> Tenants { get; set; }
 
     private readonly ITenantResolver _tenantResolver;
+    private readonly IOptions<Seeding> _seedingEnabled;
 
-    public TenantsDbContext(DbContextOptions<TenantsDbContext> options, ITenantResolver tenantResolver) : base(options)
+    public TenantsDbContext(
+        DbContextOptions<TenantsDbContext> options, 
+        ITenantResolver tenantResolver,
+        IOptions<Seeding> seedingEnabled) : base(options)
     {
-        Database.EnsureCreated();
         _tenantResolver = tenantResolver;
+        _seedingEnabled = seedingEnabled;
+        Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,6 +36,11 @@ public class TenantsDbContext : DbContext
     {
         optionsBuilder.UseSeeding((context, flag) =>
         {
+            bool status = _seedingEnabled.Value.SeedingEnabled;
+
+            if (status == false)
+                return;
+
             var findedTestTenant = context.Set<Tenant>()
                 .IgnoreQueryFilters()
                 .FirstOrDefault(t => t.Slug == Utilities.SeedingDataBaseKeys.SeedTenantSlug);
