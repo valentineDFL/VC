@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using VC.Utilities;
 
 namespace VC.Tenants.Api.OpenApi;
 
@@ -22,21 +25,9 @@ public class OpenApiConfig
             }
         );
 
-        opts.AddSchemaTransformer((schema, ctx, ctk) =>
+        opts.AddSchemaTransformer((schema, context, ctk) =>
         {
-            foreach (var property in schema.Properties)
-            {
-                var propertySchema = property.Value;
-
-                if (propertySchema.Type == typeof(int).Name.ToLower())
-                    propertySchema.Default = new Microsoft.OpenApi.Any.OpenApiInteger(0);
-
-                if (propertySchema.Type == typeof(string).Name.ToLower())
-                    propertySchema.Default = new Microsoft.OpenApi.Any.OpenApiString("string");
-
-                if (propertySchema.Type == typeof(DateTime).Name.ToLower())
-                    propertySchema.Default = new Microsoft.OpenApi.Any.OpenApiDateTime(DateTime.UtcNow);
-            }
+            OpenApiDefaultValuesConfigurator.SetDefaultValuesForTypes(schema, context);
 
             return Task.CompletedTask;
         });
