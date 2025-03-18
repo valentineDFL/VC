@@ -10,7 +10,7 @@ public class TenantsDbContext : DbContext
     public DbSet<Tenant> Tenants { get; set; }
 
     private readonly ITenantResolver _tenantResolver;
-    private readonly bool _seedingIsEnabled;
+    private readonly TenantsModuleSettings _tenantModuleOptions;
 
     public TenantsDbContext(
         DbContextOptions<TenantsDbContext> options, 
@@ -18,7 +18,7 @@ public class TenantsDbContext : DbContext
         IOptions<TenantsModuleSettings> tenantModuleSettings) : base(options)
     {
         _tenantResolver = tenantResolver;
-        _seedingIsEnabled = tenantModuleSettings.Value.SeedingSettings.IsEnabled;
+        _tenantModuleOptions = tenantModuleSettings.Value;
         Database.EnsureCreated();
     }
 
@@ -35,14 +35,14 @@ public class TenantsDbContext : DbContext
     {
         optionsBuilder.UseSeeding((context, flag) =>
         {
-            if (_seedingIsEnabled == false)
+            if (_tenantModuleOptions.SeedingSettings.IsEnabled == false)
                 return;
 
             var findedTestTenant = context.Set<Tenant>()
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (findedTestTenant != null)
+            if (!findedTestTenant)
                 return;
 
             var config = new TenantConfiguration
