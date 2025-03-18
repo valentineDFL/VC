@@ -1,4 +1,4 @@
-﻿namespace VC.Utilities;
+﻿namespace VC.Tenants;
 
 public static class SeedingDataBaseKeys
 {

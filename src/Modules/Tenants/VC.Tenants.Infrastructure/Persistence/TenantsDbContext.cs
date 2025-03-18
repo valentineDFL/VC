@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VC.Tenants.Entities;
-using VC.Utilities;
 using VC.Utilities.Resolvers;
 
 namespace VC.Tenants.Infrastructure.Persistence;
@@ -41,7 +40,7 @@ public class TenantsDbContext : DbContext
 
             var findedTestTenant = context.Set<Tenant>()
                 .IgnoreQueryFilters()
-                .Any(t => t.Slug == Utilities.SeedingDataBaseKeys.SeedTenantSlug);
+                .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
             if (findedTestTenant != null)
                 return;
