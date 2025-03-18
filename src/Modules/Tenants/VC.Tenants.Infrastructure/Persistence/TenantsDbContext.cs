@@ -35,14 +35,14 @@ public class TenantsDbContext : DbContext
     {
         optionsBuilder.UseSeeding((context, flag) =>
         {
-            if (_tenantModuleOptions.SeedingSettings.IsEnabled == false)
+            if (!_tenantModuleOptions.SeedingSettings.IsEnabled)
                 return;
 
-            var findedTestTenant = context.Set<Tenant>()
+            var isTenantExists = context.Set<Tenant>()
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (!findedTestTenant)
+            if (!isTenantExists)
                 return;
 
             var config = new TenantConfiguration
