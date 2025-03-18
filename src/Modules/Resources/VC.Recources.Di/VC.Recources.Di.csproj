@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
+    <ProjectReference Include="..\VC.Recources.Application\VC.Recources.Application.csproj" />
+    <ProjectReference Include="..\VC.Recources.Infrastructure\VC.Recources.Infrastructure.csproj" />
+    <ProjectReference Include="..\VC.Recources.Integration\VC.Recources.Integration.csproj" />
+    <ProjectReference Include="..\VC.Recources\VC.Recources.csproj" />
+    <ProjectReference Include="..\VC.Resources.Api\VC.Resources.Api.csproj" />
+  </ItemGroup>
+
 </Project>

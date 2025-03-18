@@ -1,4 +1,4 @@
-﻿namespace VC.Tenants.UnitOfWork;
+﻿namespace VC.Tenants.Infrastructure;
 
 public interface IDbSaver
 {

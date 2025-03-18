@@ -1,8 +1,8 @@
 using FluentResults;
 using VC.Tenants.Application.Tenants.Models;
 using VC.Tenants.Entities;
+using VC.Tenants.Infrastructure;
 using VC.Tenants.Repositories;
-using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Application.Tenants;
 

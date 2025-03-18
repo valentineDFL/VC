@@ -5,7 +5,6 @@ namespace VC.Recources.Application.Models;
 public record ResourceDto(
     Guid ResourceId,
     string Name,
-    ResourceType ResourceType,
     string Description,
-    Dictionary<string, object> Attribute
+    List<Skill> Skills
     );

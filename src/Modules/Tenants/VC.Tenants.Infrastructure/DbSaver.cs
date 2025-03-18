@@ -1,5 +1,4 @@
 ﻿using VC.Tenants.Infrastructure.Persistence;
-using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Infrastructure;
 

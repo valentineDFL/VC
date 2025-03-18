@@ -3,9 +3,9 @@
 namespace VC.Recources.Application.Models.Dto;
 
 public record CreateResourceDto(
+    Guid TenantId,
     string Name,
     string Description,
-    ResourceType ResourceType,
-    Dictionary<string,object> Attributes
+    List<Skill> Skills
     );
 

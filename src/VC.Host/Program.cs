@@ -2,6 +2,7 @@ using Asp.Versioning;
 using OpenTelemetry.Metrics;
 using Scalar.AspNetCore;
 using Serilog;
+using VC.Recources.Di;
 using VC.Resources.Api.Controllers;
 using VC.Tenants.Api.Controller;
 using VC.Tenants.Di;
@@ -16,6 +17,7 @@ builder.Services.AddControllers()
     .AddApplicationPart(typeof(ResourceController).Assembly);
 
 builder.Services.ConfigureTenantsModule(builder.Configuration);
+builder.Services.ConfigureResourceModule(builder.Configuration);
 builder.Services.ConfigureUtilities();
 builder.Services.AddHttpContextAccessor();
 
@@ -37,6 +39,7 @@ builder.Services.AddOpenApi("home", opts =>
                 Description = """
                               <a href="http://localhost:5056/scalar/tenants">Управление арендаторами</a><br/>
                               <a href="http://localhost:5056/scalar/bookings">Управление бронированиями</a><br/>
+                              <a href="http://localhost:5056/scalar/resources">Управление ресурсами</a><br/>
                          
                               GitLab - https://gitlab.com/tech-power-partners/vclients/vc
                               """

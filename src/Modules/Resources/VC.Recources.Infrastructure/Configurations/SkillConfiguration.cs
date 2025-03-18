@@ -1,0 +1,18 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VC.Recources.Resource.Domain.Entities;
+
+namespace VC.Recources.Infrastructure.Configurations;
+
+internal class SkillConfiguration : IEntityTypeConfiguration<Skill>
+{
+    public void Configure(EntityTypeBuilder<Skill> builder)
+    {
+        builder.HasKey(s => s.Id);
+
+        builder.Property(s => s.SkillName)
+            .HasMaxLength(64);
+
+        builder.OwnsOne(s => s.Expirience);
+    }
+}
