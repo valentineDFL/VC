@@ -4,14 +4,14 @@ using Microsoft.OpenApi.Models;
 
 namespace VC.Utilities;
 
-public class OpenApiDefaultValuesConfigurator
+public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
 {
     /// <summary>
     /// Конфигурирует в OpenApi Json значения по умолчанию (Как Сваггер)
     /// </summary>
     /// <param name="schema"></param>
     /// <param name="context"></param>
-    public static void SetDefaultValuesForTypes(OpenApiSchema schema, OpenApiSchemaTransformerContext context)
+    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         int i = 0;
         foreach (var property in schema.Properties)
@@ -19,25 +19,55 @@ public class OpenApiDefaultValuesConfigurator
             var type = context.JsonTypeInfo.Properties[i].PropertyType;
 
             SetDefaultValueForType(type, schema, property.Key);
+
             i++;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void SetDefaultValueForType(Type type, OpenApiSchema schema, string propertyKey)
+    {
+        var property = schema.Properties[propertyKey];
+
+        Console.WriteLine(schema.Properties[propertyKey].Default == null);
+
+        if (type == typeof(Guid))
+            property.Default = new OpenApiString(Guid.Empty.ToString());
+
+        else if (type == typeof(DateTime))
+            property.Default = new OpenApiString(DateTime.UtcNow.ToString());
+
+        else if (type == typeof(int))
+            property.Default = new OpenApiInteger(0);
+
+        else if (type == typeof(bool))
+            property.Default = new OpenApiString(false.ToString());
+
+        else if (type == typeof(string))
+        {
+            if(property.Default == null)
+               property.Default = new OpenApiString("string");
+
+            Console.WriteLine(property.Default == null);
+
+            //if(propertyVal == null)
+            //{
+            //    Console.WriteLine("Bad");
+            //    property.Default = new OpenApiString("string");
+            //    return;
+            //}
+
+            // property.Default = new OpenApiString(propertyVal.Value.ToString());
+
+            //property.Default = new OpenApiString("string");
+
+            //Console.WriteLine($"{propertyVal.Value}");
         }
     }
 
-    private static void SetDefaultValueForType(Type type, OpenApiSchema schema, string propertyKey)
+    private void ReWritePropertyDefaultValue()
     {
-        if (type == typeof(Guid))
-            schema.Properties[propertyKey].Default = new OpenApiString(Guid.Empty.ToString());
 
-        else if (type == typeof(DateTime))
-            schema.Properties[propertyKey].Default = new OpenApiString(DateTime.UtcNow.ToString());
-
-        else if (type == typeof(int))
-            schema.Properties[propertyKey].Default = new OpenApiInteger(0);
-
-        else if (type == typeof(bool))
-            schema.Properties[propertyKey].Default = new OpenApiString("false");
-
-        else 
-            schema.Properties[propertyKey].Default = new OpenApiString("string");
     }
 }

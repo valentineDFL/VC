@@ -25,12 +25,7 @@ public class OpenApiConfig
             }
         );
 
-        opts.AddSchemaTransformer((schema, context, ctk) =>
-        {
-            OpenApiDefaultValuesConfigurator.SetDefaultValuesForTypes(schema, context);
-
-            return Task.CompletedTask;
-        });
+        opts.AddSchemaTransformer<OpenApiDefaultValuesConfigurator>();
 
         return opts;
     }

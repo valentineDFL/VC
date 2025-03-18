@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace VC.Tenants.Entities;
 
 /// <summary>
@@ -7,6 +9,7 @@ public class Tenant
 {
     public Guid Id { get; set; }
 
+    [DefaultValue("Test")]
     public string Name { get; set; }
     
     /// <summary>
@@ -16,6 +19,7 @@ public class Tenant
     
     public TenantConfiguration Config { get; set; }
 
+    [DefaultValue(1)]
     public TenantStatus Status { get; set; }
 
     public ContactInfo ContactInfo { get; set; }
