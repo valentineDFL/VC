@@ -19,9 +19,6 @@ builder.Services.AddHealthChecks();
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services
-    .Configure<Seeding>(builder.Configuration.GetSection(nameof(Seeding)));
-
 builder.Services.AddOpenApi("home", opts =>
 {
     opts.ShouldInclude = description => description.GroupName == "Home API";

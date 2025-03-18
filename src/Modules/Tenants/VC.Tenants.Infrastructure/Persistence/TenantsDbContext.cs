@@ -11,15 +11,15 @@ public class TenantsDbContext : DbContext
     public DbSet<Tenant> Tenants { get; set; }
 
     private readonly ITenantResolver _tenantResolver;
-    private readonly IOptions<Seeding> _seedingEnabled;
+    private readonly bool _seedingIsEnabled;
 
     public TenantsDbContext(
         DbContextOptions<TenantsDbContext> options, 
         ITenantResolver tenantResolver,
-        IOptions<Seeding> seedingEnabled) : base(options)
+        IOptions<TenantsModuleSettings> tenantModuleSettings) : base(options)
     {
         _tenantResolver = tenantResolver;
-        _seedingEnabled = seedingEnabled;
+        _seedingIsEnabled = tenantModuleSettings.Value.SeedingSettings.IsEnabled;
         Database.EnsureCreated();
     }
 
@@ -36,19 +36,17 @@ public class TenantsDbContext : DbContext
     {
         optionsBuilder.UseSeeding((context, flag) =>
         {
-            bool status = _seedingEnabled.Value.SeedingEnabled;
-
-            if (status == false)
+            if (_seedingIsEnabled == false)
                 return;
 
             var findedTestTenant = context.Set<Tenant>()
                 .IgnoreQueryFilters()
-                .FirstOrDefault(t => t.Slug == Utilities.SeedingDataBaseKeys.SeedTenantSlug);
+                .Any(t => t.Slug == Utilities.SeedingDataBaseKeys.SeedTenantSlug);
 
             if (findedTestTenant != null)
                 return;
 
-            var config = new TenantConfiguration()
+            var config = new TenantConfiguration
             {
                 About = "Тестовые данные компании",
                 Currency = "USD",
@@ -56,7 +54,7 @@ public class TenantsDbContext : DbContext
                 TimeZoneId = "UTC"
             };
 
-            var contactInfo = new ContactInfo()
+            var contactInfo = new ContactInfo
             {
                 Address = "Ул. Пушкина Дом Колотушкина",
                 Email = "testMail@Gmail.com",
@@ -65,7 +63,7 @@ public class TenantsDbContext : DbContext
 
             var workSchedule = new TenantWorkSchedule()
             {
-                DaysSchedule = new List<TenantDayWorkSchedule>()
+                DaysSchedule = new List<TenantDayWorkSchedule>
                 {
                     new TenantDayWorkSchedule()
                     {
@@ -112,7 +110,7 @@ public class TenantsDbContext : DbContext
                 }
             };
 
-            var tenant = new Tenant()
+            var tenant = new Tenant
             {
                 Id = Guid.CreateVersion7(),
                 Name = "AdminTestTenant",
