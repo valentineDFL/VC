@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
@@ -7,16 +6,8 @@ namespace VC.Utilities;
 
 public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
 {
-    /// <summary>
-    /// Хранит состояние полей которые имею Data Annotations значение по умолчанию
-    /// </summary>
     private Dictionary<string, IOpenApiAny> _initializedKeys = new Dictionary<string, IOpenApiAny>();
 
-    /// <summary>
-    /// Конфигурирует в OpenApi Json значения по умолчанию (Как Сваггер)
-    /// </summary>
-    /// <param name="schema"></param>
-    /// <param name="context"></param>
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         int i = 0;
@@ -35,35 +26,29 @@ public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
     {
         var property = schema.Properties[propertyKey];
 
+        if (_initializedKeys.ContainsKey(propertyKey))
+        {
+            SetDefaultValueFromDefaultValueAtribute(property, propertyKey, type);
+            return;
+        }
+
         if (property.Default is not null && !_initializedKeys.ContainsKey(propertyKey))
         {
             _initializedKeys.Add(propertyKey, property.Default);
             return;
         }
-        else if (_initializedKeys.ContainsKey(propertyKey))
-        {
-            SetDefaultValueFromDataAnnotation(property, propertyKey, type);
-            return;
-        }
 
-        SetDefaultValueLikeSwagger(type, property);
+        SetDefaultTypesValue(type, property);
     }
 
-    /// <summary>
-    /// Устанавливает значение которое зарезервировано атрибутом [DefaultValue()]
-    /// </summary>
-    /// <param name="property"></param>
-    /// <param name="propertyKey"></param>
-    /// <param name="type"></param>
-    private void SetDefaultValueFromDataAnnotation(OpenApiSchema property, string propertyKey, Type type)
+    private void SetDefaultValueFromDefaultValueAtribute(OpenApiSchema property, string propertyKey, Type type)
     {
         var value = _initializedKeys[propertyKey];
 
         var stringValue = value as OpenApiString;
         if (stringValue is not null)
         {
-            SetValue(property, type, stringValue.Value);
-
+            SetStringValue(property, type, stringValue.Value);
             return;
         }
 
@@ -82,12 +67,7 @@ public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
         }
     }
 
-    /// <summary>
-    /// Если в Data Annotations атрибуте не стоит значение, то этот устанавливает своё значение по умолчанию
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="property"></param>
-    private static void SetDefaultValueLikeSwagger(Type type, OpenApiSchema property)
+    private static void SetDefaultTypesValue(Type type, OpenApiSchema property)
     {
         if (type == typeof(Guid))
             property.Default = new OpenApiString(Guid.Empty.ToString());
@@ -105,7 +85,7 @@ public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
             property.Default = new OpenApiString("string");
     }
 
-    private static void SetValue(OpenApiSchema property, Type type, string value)
+    private static void SetStringValue(OpenApiSchema property, Type type, string value)
     {
         if (type == typeof(Guid))
             property.Default = new OpenApiString(value);
