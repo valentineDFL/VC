@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using VC.Tenants.Application.Tenants.Models;
 using VC.Tenants.Entities;
 
