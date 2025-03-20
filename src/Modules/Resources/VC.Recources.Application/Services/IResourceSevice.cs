@@ -1,6 +1,6 @@
 ﻿using FluentResults;
-using VC.Recources.Application.Models;
 using VC.Recources.Application.Models.Dto;
+using VC.Recources.Application.Models.Response;
 
 namespace VC.Recources.Application.Services;
 

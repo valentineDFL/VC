@@ -27,7 +27,7 @@ public class ResourceController : ControllerBase
     public async Task<ActionResult<ResourceResponseDto>> GetResourceAsync(Guid id)
     {
         var tenantId = _tenantResolver.Resolve();
-            
+
         var response = await _resourceService.GetResourceAsync(tenantId);
 
         if (!response.IsSuccess)
