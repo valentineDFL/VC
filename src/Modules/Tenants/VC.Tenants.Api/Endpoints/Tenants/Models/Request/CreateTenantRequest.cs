@@ -13,15 +13,12 @@ public record CreateTenantRequest(
     TenantWeekWorkScheduleDto WorkSchedule
     )
 {
-    [DefaultValue("NameTest")]
     public string Name { get; init; } = Name;
 
-    [DefaultValue("SlugTest")]
     public string Slug { get; init; } = Slug;
 
     public TenantConfigurationDto Config { get; init; } = Config;
 
-    [DefaultValue(100000)]
     public TenantStatus Status { get; init; } = Status;
 
     public ContactInfoDto Contact { get; init; } = Contact;

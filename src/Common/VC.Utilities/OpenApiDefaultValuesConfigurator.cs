@@ -6,6 +6,15 @@ namespace VC.Utilities;
 
 public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
 {
+    private Dictionary<Type, IOpenApiAny> _typeToDefaultOpenApiValue = new()
+    {
+        { typeof(string), new OpenApiString("string") },
+        { typeof(bool), new OpenApiBoolean(false) },
+        { typeof(int), new OpenApiInteger(1) },
+        { typeof(Guid), new OpenApiString(Guid.Empty.ToString()) },
+        { typeof(DateTime), new OpenApiDateTime(DateTime.UtcNow) },
+    };
+
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         int i = 0;
@@ -13,37 +22,20 @@ public class OpenApiDefaultValuesConfigurator : IOpenApiSchemaTransformer
         {
             var type = context.JsonTypeInfo.Properties[i].PropertyType;
 
-            SetDefaultValueForType(type, schema, property.Key);
+            SetDefaultValueForProperty(type, property.Value);
             i++;
         }
         return Task.CompletedTask;
     }
 
-    private void SetDefaultValueForType(Type type, OpenApiSchema schema, string propertyKey)
+    private void SetDefaultValueForProperty(Type type, OpenApiSchema property)
     {
-        var property = schema.Properties[propertyKey];
-
         if (property.Default is not null)
             return;
 
-        SetDefaultPropertyValue(type, property);
-    }
+        if (!_typeToDefaultOpenApiValue.ContainsKey(type))
+            return;
 
-    private static void SetDefaultPropertyValue(Type type, OpenApiSchema property)
-    {
-        if (type == typeof(Guid))
-            property.Default = new OpenApiString(Guid.Empty.ToString());
-
-        else if (type == typeof(DateTime))
-            property.Default = new OpenApiString(DateTime.UtcNow.ToString());
-
-        else if (type == typeof(int))
-            property.Default = new OpenApiInteger(0);
-
-        else if (type == typeof(bool))
-            property.Default = new OpenApiBoolean(false);
-
-        else if (type == typeof(string))
-            property.Default = new OpenApiString("string");
+        property.Default = _typeToDefaultOpenApiValue[type];
     }
 }

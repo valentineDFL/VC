@@ -43,7 +43,6 @@ public class TenantsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
-        Console.WriteLine();
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
         if (!validationResult.IsValid)
@@ -52,7 +51,6 @@ public class TenantsController : ControllerBase
         var mappedCreateDto = createRequest.ToCreateTenantParams();
 
         var response = await _tenantService.CreateAsync(mappedCreateDto);
-
 
         if (response.IsSuccess)
             return Ok(response);
