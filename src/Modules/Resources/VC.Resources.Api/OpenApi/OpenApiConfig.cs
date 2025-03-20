@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
+using VC.Utilities;
 
 namespace VC.Resources.Api.OpenApi;
 
@@ -20,7 +21,9 @@ public class OpenApiConfig
 
             return Task.CompletedTask;
         }
+
         );
+        opts.AddSchemaTransformer<OpenApiDefaultValuesConfigurator>();
 
         return opts;
     }

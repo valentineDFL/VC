@@ -12,6 +12,7 @@ public static class UpdateResourceMappers
     public static VC.Recources.Resource.Domain.Entities.Resource ToResourceDomain(this UpdateResourceDto dto)
        => new VC.Recources.Resource.Domain.Entities.Resource
        {
+           Id = dto.Id,
            Name = dto.Name,
            Description = dto.Description,
            Skills = dto.Skills.ToDomainSkills()

@@ -14,7 +14,7 @@ internal class ResourceRepository : IResourceRepository
     public async Task AddAsync(Resource.Domain.Entities.Resource entity)
         => await _context.Resources.AddAsync(entity);
 
-    public async Task<Resource.Domain.Entities.Resource> GetAsync(Guid id)
+    public async Task<Resource.Domain.Entities.Resource?> GetAsync(Guid id)
         => await _context.Resources
             .Include(r => r.Skills)
             .ThenInclude(s => s.Expirience)

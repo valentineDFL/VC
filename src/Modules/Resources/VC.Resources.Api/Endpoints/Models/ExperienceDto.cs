@@ -2,10 +2,10 @@
 
 namespace VC.Resources.Api.Endpoints.Models;
 
-public class ExperienceDto(int Years, int Month)
+public record ExperienceDto(int Years, int Months)
 {
     public int Years { get; set; } = Years;
-    public int Months { get; set; } = Month;
+    public int Months { get; set; } = Months;
 };
 
 public static class ExperienceDtoMappers

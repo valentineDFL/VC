@@ -47,6 +47,7 @@ public class ResourceService : IResourceSevice
     public async Task<Result> UpdateResourceAsync(UpdateResourceDto dto)
     {
         var resource = dto.ToResourceDomain();
+
         resource.TenantId = _tenantResolver.Resolve(); 
 
         _resourceRepository.Update(resource);
