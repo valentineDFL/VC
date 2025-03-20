@@ -22,6 +22,6 @@ public static class InfrastructureConfiguration
     private static void ConfigureRepositories(IServiceCollection services)
     {
         services.AddScoped<ITenantRepository, TenantRepository>();
-        services.AddScoped<IDbSaver, DbSaver>();
+        services.AddScoped<IDbSaver, TenantDbSaver>();
     }
 }

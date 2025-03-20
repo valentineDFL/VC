@@ -1,4 +1,4 @@
-﻿namespace VC.Recources.Resource.Domain.Entities;
+﻿namespace VC.Recources.Resource;
 
 public class Experience
 {

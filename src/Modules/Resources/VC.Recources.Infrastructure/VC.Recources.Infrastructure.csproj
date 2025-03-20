@@ -16,11 +16,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
-    <ProjectReference Include="..\VC.Recources\VC.Recources.csproj" />
+    <ProjectReference Include="..\VC.Recources\VC.Recources.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
+
+    <ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>VC.Recources.Di</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 </Project>

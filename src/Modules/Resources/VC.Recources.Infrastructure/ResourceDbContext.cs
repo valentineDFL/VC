@@ -4,7 +4,7 @@ using VC.Utilities.Resolvers;
 
 namespace VC.Recources.Infrastructure;
 
-public class ResourceDbContext : DbContext
+internal class ResourceDbContext : DbContext
 {
     private readonly ITenantResolver _tenantResolver;
 

@@ -1,12 +1,13 @@
 ﻿using VC.Tenants.Infrastructure.Persistence;
 
+
 namespace VC.Tenants.Infrastructure;
 
-public class DbSaver : IDbSaver
+public class TenantDbSaver : IDbSaver
 {
     private readonly TenantsDbContext _context;
 
-    public DbSaver(TenantsDbContext context)
+    public TenantDbSaver(TenantsDbContext context)
     {
         _context = context;
     }

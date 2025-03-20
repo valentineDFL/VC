@@ -1,4 +1,5 @@
 ﻿using VC.Tenants.Entities;
+using VC.Utilities;
 
 namespace VC.Tenants.Repositories;
 

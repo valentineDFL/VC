@@ -2,7 +2,6 @@
 using VC.Recources.Application.Services;
 using VC.Resources.Api.Endpoints.Models.Request;
 using VC.Resources.Api.Endpoints.Models.Response;
-using VC.Resources.Api.Endpoints;
 using VC.Utilities.Resolvers;
 
 namespace VC.Resources.Api.Controllers;
@@ -24,7 +23,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ResourceResponseDto>> GetResourceAsync(Guid id)
+    public async Task<ActionResult<ResourceResponse>> GetResourceAsync(Guid id)
     {
         var tenantId = _tenantResolver.Resolve();
 
@@ -33,7 +32,7 @@ public class ResourceController : ControllerBase
         if (!response.IsSuccess)
             return BadRequest(response);
 
-        var mappedResource = response.Value.ToResponseDto();
+        var mappedResource = response.Value.ToApiResource();
 
         return Ok(mappedResource);
     }
@@ -57,7 +56,7 @@ public class ResourceController : ControllerBase
     {
         var tenantId = _tenantResolver.Resolve();
 
-        var mappedDto = dto.ToUpdateResourceDto(tenantId);
+        var mappedDto = dto.ToUpdateResourceDto();
         var response = await _resourceService.UpdateResourceAsync(mappedDto);
 
         if (!response.IsSuccess)

@@ -6,13 +6,11 @@ public record UpdateResourceRequest(
     Guid Id,
     string Name,
     string Description,
-    Dictionary<string, object> Attributes
+    List<SkillDto> Skills
     );
 
 public static class UpdateResourceMapper
 {
-    public static UpdateResourceDto ToUpdateResourceDto(this UpdateResourceRequest dto, Guid tenantId)
-    {
-        return new UpdateResourceDto(tenantId, dto.Id, dto.Name, dto.Description, dto.Attributes);
-    }
+    public static UpdateResourceDto ToUpdateResourceDto(this UpdateResourceRequest dto)
+        => new UpdateResourceDto(dto.Id, dto.Name, dto.Description, dto.Skills.ToResourceSkill());
 }
