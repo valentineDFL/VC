@@ -1,4 +1,6 @@
-﻿namespace VC.Tenants.Api.Endpoints.Tenants.Models;
+﻿using VC.Tenants.Entities;
+
+namespace VC.Tenants.Api.Endpoints.Tenants.Models;
 
 public record TenantDayWorkScheduleDto(
     DayOfWeek Day,
@@ -15,6 +17,21 @@ public static class TenantDayWorkScheduleMappers
         foreach(var dayWorkSchedule in dtos)
         {
             result.Add(new VC.Tenants.Application.Tenants.Models.TenantDayWorkScheduleDto(
+                dayWorkSchedule.Day,
+                dayWorkSchedule.StartWork,
+                dayWorkSchedule.EndWork));
+        }
+
+        return result;
+    }
+
+    public static List<TenantDayWorkScheduleDto> ToApiDayWorkSchedule(this List<TenantDayWorkSchedule> tenantDayWorks)
+    {
+        var result = new List<TenantDayWorkScheduleDto>();
+
+        foreach (var dayWorkSchedule in tenantDayWorks)
+        {
+            result.Add(new TenantDayWorkScheduleDto(
                 dayWorkSchedule.Day,
                 dayWorkSchedule.StartWork,
                 dayWorkSchedule.EndWork));

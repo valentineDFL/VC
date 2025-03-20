@@ -1,11 +1,10 @@
-﻿using FluentResults;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using VC.Tenants.Api.Endpoints.Tenants.Models;
+using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
+using VC.Tenants.Api.Endpoints.Tenants.Models.Response;
 using VC.Tenants.Application.Tenants;
-using VC.Tenants.Entities;
 
-namespace VC.Tenants.Api.Controller;
+namespace VC.Tenants.Api.Controllers;
 
 [ApiController]
 [Route("[Controller]")]
@@ -27,19 +26,24 @@ public class TenantsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<Tenant>> GetAsync()
+    public async Task<ActionResult<ResponseTenantDto>> GetAsync()
     {
         var response = await _tenantService.GetAsync();
 
-        if (response.IsSuccess)
-            return Ok(response);
+        if (!response.IsSuccess)
+            return BadRequest(response);
 
-        return BadRequest(response);
+        var mappedResponseDto = response
+            .Value
+            .ToResponseDto();
+
+        return BadRequest(mappedResponseDto);
     }
 
     [HttpPost]
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
+        Console.WriteLine();
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
         if (!validationResult.IsValid)
@@ -48,6 +52,7 @@ public class TenantsController : ControllerBase
         var mappedCreateDto = createRequest.ToCreateTenantParams();
 
         var response = await _tenantService.CreateAsync(mappedCreateDto);
+
 
         if (response.IsSuccess)
             return Ok(response);
@@ -65,7 +70,7 @@ public class TenantsController : ControllerBase
 
         var mappedUpdateDto = updateRequest.ToTenantUpdateDto();
 
-        Result response = await _tenantService.UpdateAsync(mappedUpdateDto);
+        var response = await _tenantService.UpdateAsync(mappedUpdateDto);
 
         if (response.IsSuccess)
             return Ok(response);

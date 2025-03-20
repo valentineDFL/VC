@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using VC.Tenants.Api.Endpoints.Tenants.Models;
+using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
 using VC.Tenants.Application.Tenants;
 using VC.Utilities;
 
