@@ -2,7 +2,7 @@ using Asp.Versioning;
 using OpenTelemetry.Metrics;
 using Scalar.AspNetCore;
 using Serilog;
-using VC.Tenants.Api.Controller;
+using VC.Tenants.Api.Controllers;
 using VC.Tenants.Di;
 using VC.Utilities;
 
