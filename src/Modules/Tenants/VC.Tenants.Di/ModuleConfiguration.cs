@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Api.Endpoints.Tenants;
 using VC.Tenants.Api.OpenApi;
+using VC.Utilities;
 
 namespace VC.Tenants.Di;
 
@@ -26,5 +27,6 @@ public static class ModuleConfiguration
         services.ConfigureTenantsApiExtensions();
         services.ConfigureTenantsApplication(configuration);
         services.ConfigureTenantsInfrastructure(configuration);
+        services.Configure<TenantsModuleSettings>(configuration.GetSection(nameof(TenantsModuleSettings)));
     }
 }

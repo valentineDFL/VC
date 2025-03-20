@@ -4,7 +4,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using VC.Recources.Di;
 using VC.Resources.Api.Controllers;
-using VC.Tenants.Api.Controller;
+using VC.Tenants.Api.Controllers;
 using VC.Tenants.Di;
 using VC.Utilities;
 

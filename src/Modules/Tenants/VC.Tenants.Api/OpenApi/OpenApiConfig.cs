@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using VC.Utilities;
 
 namespace VC.Tenants.Api.OpenApi;
 
@@ -17,10 +20,12 @@ public class OpenApiConfig
                     Version = "v1",
                     Title = "Управление арендаторами"
                 };
-            
+
                 return Task.CompletedTask;
             }
         );
+
+        opts.AddSchemaTransformer<OpenApiDefaultValuesConfigurator>();
 
         return opts;
     }

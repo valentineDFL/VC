@@ -14,7 +14,8 @@ public static class InfrastructureConfiguration
     {
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 
-        services.AddDbContext<TenantsDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddDbContext<TenantsDbContext>(options => options
+            .UseNpgsql(connectionString));
 
         ConfigureRepositories(services);
     }
