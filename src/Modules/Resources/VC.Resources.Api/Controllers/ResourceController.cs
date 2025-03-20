@@ -32,7 +32,7 @@ public class ResourceController : ControllerBase
         if (!response.IsSuccess)
             return BadRequest(response);
 
-        var mappedResource = response.Value.ToApiResource();
+        var mappedResource = response.Value.ToResponseDto();
 
         return Ok(mappedResource);
     }

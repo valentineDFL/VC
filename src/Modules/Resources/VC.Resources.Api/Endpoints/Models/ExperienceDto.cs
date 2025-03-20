@@ -10,14 +10,14 @@ public class ExperienceDto(int Years, int Month)
 
 public static class ExperienceDtoMappers
 {
-    public static Experience ToDomainExperience(this ExperienceDto dto)
-        => new Experience
-        {
-            Years = dto.Years,
-            Months = dto.Months
-        };
+    public static VC.Recources.Application.Models.ExperienceDto ToApplicationExperienceDto(this ExperienceDto dto)
+        => new VC.Recources.Application.Models.ExperienceDto
+        (
+            dto.Years,
+            dto.Months
+        );
 
-    public static ExperienceDto ToExperienceDto(this Experience experience)
+    public static ExperienceDto ToApiExperienceDto(this Experience experience)
         => new ExperienceDto
         (
             experience.Months,

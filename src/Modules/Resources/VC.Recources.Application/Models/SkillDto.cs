@@ -19,10 +19,5 @@ public static class SkillDtoMappers
                 Expirience = dto.Experience.ToDomainExperience()
             })
             .ToList();
-
-    public static List<SkillDto> ToApiSkills(this List<Skill> skills)
-        => skills
-            .Select(s => new SkillDto(s.SkillName, s.Expirience.ToApiExperience()))
-            .ToList();
 }
 

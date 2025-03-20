@@ -9,6 +9,7 @@ public static class ResourcesModuleConfiguration
     public static void ConfigureResourceModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigureResourcesInfrastructure(configuration);
+        services.ConfigureResourcesApplication();
         services.ConfigureResourcesOpenApi(configuration);
     }
 

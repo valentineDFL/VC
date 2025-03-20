@@ -16,11 +16,4 @@ public static class ExpirienceSkillDtoMappers
             Years = dto.Years,
             Months = dto.Months
         };
-
-    public static ExperienceDto ToApiExperience(this Experience experience)
-        => new ExperienceDto
-        (
-            experience.Years,
-            experience.Months
-        );
 }

@@ -11,5 +11,5 @@ public record CreateResourceRequest(
 public static class ResourceCreateMapper
 {
     public static CreateResourceDto ToCreateResourceDto(this CreateResourceRequest dto, Guid tenantId)
-        => new CreateResourceDto(tenantId, dto.Name, dto.Description, dto.Skills.ToResourceSkill());
+        => new CreateResourceDto(tenantId, dto.Name, dto.Description, dto.Skills.ToApplicationSkillDto());
 }

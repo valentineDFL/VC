@@ -12,5 +12,5 @@ public record UpdateResourceRequest(
 public static class UpdateResourceMapper
 {
     public static UpdateResourceDto ToUpdateResourceDto(this UpdateResourceRequest dto)
-        => new UpdateResourceDto(dto.Id, dto.Name, dto.Description, dto.Skills.ToResourceSkill());
+        => new UpdateResourceDto(dto.Id, dto.Name, dto.Description, dto.Skills.ToApplicationSkillDto());
 }

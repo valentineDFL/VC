@@ -1,4 +1,4 @@
-﻿using VC.Recources.Application.Models.Response;
+﻿using VC.Recources.Resource.Domain.Entities;
 
 namespace VC.Resources.Api.Endpoints.Models.Response;
 
@@ -17,6 +17,6 @@ public class ResourceResponse(
 
 internal static class ResourceResponseMapper
 {
-    public static ResourceResponse ToResponseDto(this ResourceDto dto)
-        => new ResourceResponse(dto.Name, dto.Description, dto.Skills);
+    public static ResourceResponse ToResponseDto(this Resource dto)
+        => new ResourceResponse(dto.Name, dto.Description, dto.Skills.ToApiSkills());
 }
