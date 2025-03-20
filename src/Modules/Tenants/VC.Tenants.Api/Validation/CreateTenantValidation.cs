@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using VC.Tenants.Api.Endpoints.Tenants.Models;
+using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
 
 namespace VC.Tenants.Api.Validation;
 
