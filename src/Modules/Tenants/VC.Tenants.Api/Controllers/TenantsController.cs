@@ -37,7 +37,7 @@ public class TenantsController : ControllerBase
             .Value
             .ToResponseDto();
 
-        return BadRequest(mappedResponseDto);
+        return Ok(mappedResponseDto);
     }
 
     [HttpPost]
