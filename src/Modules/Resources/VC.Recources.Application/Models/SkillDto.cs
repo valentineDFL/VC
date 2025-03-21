@@ -2,8 +2,10 @@
 
 namespace VC.Recources.Application.Models;
 
-public record SkillDto(string Name, ExperienceDto Experience)
+public record SkillDto(Guid Id, string Name, ExperienceDto Experience)
 {
+    public Guid Id { get; set; } = Id;
+
     public string Name { get; set; } = Name;
 
     public ExperienceDto Experience { get; set; } = Experience;
@@ -15,6 +17,7 @@ public static class SkillDtoMappers
         => dtos
             .Select(dto => new Skill
             {
+                Id = dto.Id,
                 SkillName = dto.Name,
                 Expirience = dto.Experience.ToDomainExperience()
             })

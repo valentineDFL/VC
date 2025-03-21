@@ -11,8 +11,4 @@
     <ProjectReference Include="..\VC.Recources\VC.Recources.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappers\" />
-  </ItemGroup>
-
 </Project>

@@ -17,6 +17,7 @@ internal class ResourceConfiguration : IEntityTypeConfiguration<VC.Recources.Res
 
         builder.HasMany(r => r.Skills)
             .WithOne(s => s.Resource)
-            .HasForeignKey(s => s.ResourceId);
+            .HasForeignKey(s => s.ResourceId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using VC.Recources.Application.Models.Dto;
+using VC.Recources.Resource.Domain.Entities;
 using VC.Recources.UnitOfWork;
 using VC.Utilities.Resolvers;
 
@@ -48,7 +49,7 @@ public class ResourceService : IResourceSevice
     {
         var resource = dto.ToResourceDomain();
 
-        resource.TenantId = _tenantResolver.Resolve(); 
+        resource.TenantId = _tenantResolver.Resolve();
 
         _resourceRepository.Update(resource);
         await _dbSaver.SaveAsync();

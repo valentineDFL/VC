@@ -2,11 +2,13 @@
 
 namespace VC.Resources.Api.Endpoints.Models;
 
-public record SkillDto(string Name, ExperienceDto Expirience)
+public record SkillDto(Guid Id, string Name, ExperienceDto Expirience)
 {
+    public Guid Id { get; set; } = Id;
+
     public string Name { get; set; } = Name;
 
-    public ExperienceDto Expirience { get; set; } = Expirience; 
+    public ExperienceDto Expirience { get; set; } = Expirience;
 }
 
 public static class SkillDtoMappers
@@ -15,17 +17,19 @@ public static class SkillDtoMappers
         => skills
             .Select(skill => new SkillDto
             (
-               skill.SkillName,
-               skill.Expirience.ToApiExperienceDto()
+                skill.Id,
+                skill.SkillName,
+                skill.Expirience.ToApiExperienceDto()
             ))
             .ToList();
 
     public static List<VC.Recources.Application.Models.SkillDto> ToApplicationSkillDto(this List<SkillDto> skills)
-    => skills
-        .Select(skill => new VC.Recources.Application.Models.SkillDto
-        (
-            skill.Name,
-            skill.Expirience.ToApplicationExperienceDto()
-        ))
-        .ToList();
+        => skills
+            .Select(skill => new VC.Recources.Application.Models.SkillDto
+            (
+                skill.Id,
+                skill.Name,
+                skill.Expirience.ToApplicationExperienceDto()
+            ))
+            .ToList();
 }
