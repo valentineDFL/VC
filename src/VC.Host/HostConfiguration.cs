@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using OpenTelemetry.Metrics;
-using System.Threading;
 
 namespace VC.Host;
 
@@ -34,26 +33,6 @@ internal static class HostConfiguration
 
                 return Task.CompletedTask;
             });
-
-            opts.AddSchemaTransformer((schema, context, cancellationToken) =>
-            {
-                if (schema.Properties == null)
-                    return Task.CompletedTask;
-
-                foreach (var property in schema.Properties)
-                {
-                    if (property.Value.Type == typeof(string).Name)
-                    {
-                        property.Value.Default = new Microsoft.OpenApi.Any.OpenApiString("ZALUPA");
-                    }
-                    else if (property.Value.Type == "integer")
-                    {
-                        property.Value.Default = new Microsoft.OpenApi.Any.OpenApiInteger(10000);
-                    }
-                }
-
-                return Task.CompletedTask;
-            });
         });
     }
 
@@ -63,10 +42,12 @@ internal static class HostConfiguration
             .WithMetrics(b =>
             {
                 b.AddMeter("VC", "Npgsql");
+
                 b.AddProcessInstrumentation()
-                    .AddRuntimeInstrumentation()
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation();
+                 .AddRuntimeInstrumentation()
+                 .AddAspNetCoreInstrumentation()
+                 .AddHttpClientInstrumentation();
+
                 b.AddPrometheusExporter();
             });
     }
