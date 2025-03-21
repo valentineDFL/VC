@@ -27,7 +27,7 @@ public class ResourceController : ControllerBase
     {
         var tenantId = _tenantResolver.Resolve();
 
-        var response = await _resourceService.GetResourceAsync(tenantId);
+        var response = await _resourceService.GetResourceAsync(id);
 
         if (!response.IsSuccess)
             return BadRequest(response);

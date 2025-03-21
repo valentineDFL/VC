@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VC.Tenants.Entities;
+using VC.Utilities;
 using VC.Utilities.Resolvers;
 
 namespace VC.Tenants.Infrastructure.Persistence;
@@ -42,7 +43,7 @@ public class TenantsDbContext : DbContext
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (!isTenantExists)
+            if (isTenantExists)
                 return;
 
             var config = new TenantConfiguration
@@ -111,7 +112,7 @@ public class TenantsDbContext : DbContext
 
             var tenant = new Tenant
             {
-                Id = Guid.CreateVersion7(),
+                Id = TenantsIds.StaticTenantId,
                 Name = "AdminTestTenant",
                 Slug = SeedingDataBaseKeys.SeedTenantSlug,
                 Config = config,
