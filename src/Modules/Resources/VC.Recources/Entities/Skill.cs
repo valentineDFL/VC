@@ -1,12 +1,12 @@
-﻿namespace VC.Recources.Resource.Domain.Entities;
+﻿namespace VC.Recources.Domain.Entities;
 
 public class Skill
 {
     public Guid Id { get; set; }
 
-    public string SkillName { get; set; }
+    public string Name { get; set; }
 
-    public Experience Expirience { get; set; }
+    public Experience Experience { get; set; }
 
     public Resource Resource { get; set; }
 

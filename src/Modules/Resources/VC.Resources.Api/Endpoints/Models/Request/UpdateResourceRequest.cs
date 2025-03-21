@@ -6,11 +6,11 @@ public record UpdateResourceRequest(
     Guid Id,
     string Name,
     string Description,
-    List<SkillDto> Skills
+    IReadOnlyList<SkillDto> Skills
     );
 
-public static class UpdateResourceMapper
+public static class UpdateResourceMappers
 {
     public static UpdateResourceDto ToUpdateResourceDto(this UpdateResourceRequest dto)
-        => new UpdateResourceDto(dto.Id, dto.Name, dto.Description, dto.Skills.ToApplicationSkillDto());
+        => new UpdateResourceDto(dto.Id, dto.Name, dto.Description, dto.Skills.ToList());
 }

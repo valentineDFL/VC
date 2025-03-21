@@ -1,4 +1,6 @@
-﻿namespace VC.Recources.Application.Models.Dto;
+﻿using VC.Recources.Domain.Entities;
+
+namespace VC.Recources.Application.Models.Dto;
 
 public record CreateResourceDto(
     Guid TenantId,
@@ -9,8 +11,8 @@ public record CreateResourceDto(
 
 public static class CreateResourceMappers
 {
-    public static VC.Recources.Resource.Domain.Entities.Resource ToResourceDomain(this CreateResourceDto dto)
-        => new VC.Recources.Resource.Domain.Entities.Resource
+    public static Resource ToResourceDomain(this CreateResourceDto dto)
+        => new Resource
         {
             Name = dto.Name,
             Description = dto.Description,

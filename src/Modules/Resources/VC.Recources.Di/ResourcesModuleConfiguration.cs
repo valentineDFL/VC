@@ -10,9 +10,9 @@ public static class ResourcesModuleConfiguration
     {
         services.ConfigureResourcesInfrastructure(configuration);
         services.ConfigureResourcesApplication();
-        services.ConfigureResourcesOpenApi(configuration);
+        services.ConfigureResourcesOpenApi();
     }
 
-    public static IServiceCollection ConfigureResourcesOpenApi(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureResourcesOpenApi(this IServiceCollection services)
         => services.AddOpenApi(OpenApiConfig.DocumentName, opts => OpenApiConfig.ConfigureOpenApi(opts));
 }

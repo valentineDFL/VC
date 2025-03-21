@@ -20,9 +20,7 @@ public class OpenApiConfig
             };
 
             return Task.CompletedTask;
-        }
-
-        );
+        });
         opts.AddSchemaTransformer<OpenApiDefaultValuesConfigurator>();
 
         return opts;

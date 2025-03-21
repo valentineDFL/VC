@@ -149,6 +149,7 @@ internal class TenantsService : ITenantsService
     private void UpdateFindedTenant(Tenant from, Tenant to)
     {
         to.Name = from.Name;
+
         to.Slug = from.Slug;
 
         to.Config = from.Config;

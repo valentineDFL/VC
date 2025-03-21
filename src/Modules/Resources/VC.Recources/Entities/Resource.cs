@@ -1,4 +1,4 @@
-﻿namespace VC.Recources.Resource.Domain.Entities;
+﻿namespace VC.Recources.Domain.Entities;
 
 public class Resource
 {

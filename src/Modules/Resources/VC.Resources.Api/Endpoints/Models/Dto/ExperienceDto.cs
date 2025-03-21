@@ -1,6 +1,6 @@
-﻿using VC.Recources.Resource;
+﻿using VC.Recources.Domain.Entities;
 
-namespace VC.Resources.Api.Endpoints.Models;
+namespace VC.Resources.Api.Endpoints.Models.Dto;
 
 public record ExperienceDto(int Years, int Months)
 {
@@ -10,8 +10,8 @@ public record ExperienceDto(int Years, int Months)
 
 public static class ExperienceDtoMappers
 {
-    public static VC.Recources.Application.Models.ExperienceDto ToApplicationExperienceDto(this ExperienceDto dto)
-        => new VC.Recources.Application.Models.ExperienceDto
+    public static ExperienceDto ToApplicationExperienceDto(this ExperienceDto dto)
+        => new ExperienceDto
         (
             dto.Years,
             dto.Months

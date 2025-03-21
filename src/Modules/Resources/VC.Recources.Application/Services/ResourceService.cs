@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using VC.Recources.Application.Models.Dto;
-using VC.Recources.Resource.Domain.Entities;
+using VC.Recources.Domain.Entities;
 using VC.Recources.UnitOfWork;
 using VC.Utilities.Resolvers;
 
@@ -35,7 +35,7 @@ public class ResourceService : IResourceSevice
         return Result.Ok();
     }
 
-    public async Task<Result<Resource.Domain.Entities.Resource>> GetResourceAsync(Guid resourceId)
+    public async Task<Result<Resource>> GetResourceAsync(Guid resourceId)
     {
         var resource = await _resourceRepository.GetAsync(resourceId);
 

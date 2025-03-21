@@ -1,6 +1,5 @@
 ﻿using VC.Tenants.Infrastructure.Persistence;
 
-
 namespace VC.Tenants.Infrastructure;
 
 public class TenantDbSaver : IDbSaver

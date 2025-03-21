@@ -1,6 +1,6 @@
-﻿using VC.Recources.Resource;
+﻿using VC.Recources.Domain.Entities;
 
-namespace VC.Recources.Application.Models;
+namespace VC.Recources.Application.Models.Dto;
 
 public record ExperienceDto(int Years, int Months)
 {

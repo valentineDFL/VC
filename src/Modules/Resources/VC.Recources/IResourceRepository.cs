@@ -1,10 +1,12 @@
-﻿namespace VC.Recources;
+﻿using VC.Recources.Domain.Entities;
+
+namespace VC.Recources;
 
 public interface IResourceRepository
 {
-    public Task AddAsync(Resource.Domain.Entities.Resource entity);
+    public Task AddAsync(Resource entity);
 
-    public Task<Resource.Domain.Entities.Resource> GetAsync(Guid id);
+    public Task<Resource> GetAsync(Guid id);
 
-    public void Update(Resource.Domain.Entities.Resource entity);
+    public void Update(Resource entity);
 }

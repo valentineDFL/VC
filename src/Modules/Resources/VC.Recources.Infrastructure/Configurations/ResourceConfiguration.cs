@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VC.Recources.Domain.Entities;
 
 namespace VC.Recources.Infrastructure.Configurations;
 
-internal class ResourceConfiguration : IEntityTypeConfiguration<VC.Recources.Resource.Domain.Entities.Resource>
+internal class ResourceConfiguration : IEntityTypeConfiguration<Resource>
 {
-    public void Configure(EntityTypeBuilder<Resource.Domain.Entities.Resource> builder)
+    public void Configure(EntityTypeBuilder<Resource> builder)
     {
         builder.HasKey(r => r.Id);
 
@@ -17,7 +18,6 @@ internal class ResourceConfiguration : IEntityTypeConfiguration<VC.Recources.Res
 
         builder.HasMany(r => r.Skills)
             .WithOne(s => s.Resource)
-            .HasForeignKey(s => s.ResourceId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(s => s.ResourceId);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace VC.Recources.Application.Models.Dto;
+﻿using VC.Recources.Domain.Entities;
+
+namespace VC.Recources.Application.Models.Dto;
 
 public record UpdateResourceDto(
     Guid Id,
@@ -9,8 +11,8 @@ public record UpdateResourceDto(
 
 public static class UpdateResourceMappers
 {
-    public static VC.Recources.Resource.Domain.Entities.Resource ToResourceDomain(this UpdateResourceDto dto)
-       => new VC.Recources.Resource.Domain.Entities.Resource
+    public static Resource ToResourceDomain(this UpdateResourceDto dto)
+       => new Resource
        {
            Id = dto.Id,
            Name = dto.Name,

@@ -1,4 +1,5 @@
-﻿using VC.Recources.Resource.Domain.Entities;
+﻿using VC.Recources.Domain.Entities;
+using VC.Resources.Api.Endpoints.Models.Dto;
 
 namespace VC.Resources.Api.Endpoints.Models.Response;
 

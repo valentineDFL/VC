@@ -24,9 +24,9 @@
   </ItemGroup>
 
     <ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>VC.Recources.Di</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>VC.Recources.Di</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 
 </Project>

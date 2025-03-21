@@ -1,6 +1,6 @@
-﻿using VC.Recources.Resource.Domain.Entities;
+﻿using VC.Recources.Domain.Entities;
 
-namespace VC.Resources.Api.Endpoints.Models;
+namespace VC.Resources.Api.Endpoints.Models.Dto;
 
 public record SkillDto(Guid Id, string Name, ExperienceDto Expirience)
 {
@@ -18,14 +18,14 @@ public static class SkillDtoMappers
             .Select(skill => new SkillDto
             (
                 skill.Id,
-                skill.SkillName,
-                skill.Expirience.ToApiExperienceDto()
+                skill.Name,
+                skill.Experience.ToApiExperienceDto()
             ))
             .ToList();
 
-    public static List<VC.Recources.Application.Models.SkillDto> ToApplicationSkillDto(this List<SkillDto> skills)
+    public static List<SkillDto> ToApplicationSkillDto(this List<SkillDto> skills)
         => skills
-            .Select(skill => new VC.Recources.Application.Models.SkillDto
+            .Select(skill => new SkillDto
             (
                 skill.Id,
                 skill.Name,

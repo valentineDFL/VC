@@ -1,25 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using VC.Recources.Domain.Entities;
 
 namespace VC.Recources.Infrastructure.Repositories;
 
 internal class ResourceRepository : IResourceRepository
 {
-    private readonly ResourceDbContext _context;
+    private readonly ResourceDbContext _dbContext;
 
-    public ResourceRepository(ResourceDbContext context)
+    public ResourceRepository(ResourceDbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
-    public async Task AddAsync(Resource.Domain.Entities.Resource entity)
-        => await _context.Resources.AddAsync(entity);
+    public async Task AddAsync(Resource entity)
+        => await _dbContext.Resources.AddAsync(entity);
 
-    public async Task<Resource.Domain.Entities.Resource?> GetAsync(Guid id)
-        => await _context.Resources
+    public async Task<Resource?> GetAsync(Guid id)
+        => await _dbContext.Resources
             .Include(r => r.Skills)
-            .ThenInclude(s => s.Expirience)
+            .ThenInclude(s => s.Experience)
             .FirstOrDefaultAsync(r => r.Id == id);
 
-    public void Update(Resource.Domain.Entities.Resource entity)
-        => _context.Resources.Update(entity);
+    public void Update(Resource entity)
+        => _dbContext.Resources.Update(entity);
 }

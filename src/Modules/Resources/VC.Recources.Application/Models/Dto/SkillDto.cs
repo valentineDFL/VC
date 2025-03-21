@@ -1,6 +1,6 @@
-﻿using VC.Recources.Resource.Domain.Entities;
+﻿using VC.Recources.Domain.Entities;
 
-namespace VC.Recources.Application.Models;
+namespace VC.Recources.Application.Models.Dto;
 
 public record SkillDto(Guid Id, string Name, ExperienceDto Experience)
 {
@@ -18,8 +18,8 @@ public static class SkillDtoMappers
             .Select(dto => new Skill
             {
                 Id = dto.Id,
-                SkillName = dto.Name,
-                Expirience = dto.Experience.ToDomainExperience()
+                Name = dto.Name,
+                Experience = dto.Experience.ToDomainExperience()
             })
             .ToList();
 }

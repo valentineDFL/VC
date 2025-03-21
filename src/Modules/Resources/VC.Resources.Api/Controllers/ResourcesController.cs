@@ -9,12 +9,12 @@ namespace VC.Resources.Api.Controllers;
 [ApiController]
 [Route("[controller]")]
 [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-public class ResourceController : ControllerBase
+public class ResourcesController : ControllerBase
 {
     private readonly IResourceSevice _resourceService;
-    private readonly ITenantResolver _tenantResolver;
+    private readonly ITenantResolver _tenantResolver; // вынести в application
 
-    public ResourceController(
+    public ResourcesController(
         IResourceSevice resourceSevice,
         ITenantResolver tenantResolver)
     {
@@ -42,7 +42,7 @@ public class ResourceController : ControllerBase
     {
         var tenantId = _tenantResolver.Resolve();
 
-        var mappedDto = dto.ToCreateResourceDto(tenantId);
+        var mappedDto = dto.ToCreateResourceDto(tenantId); // логику присловения ресурса tenantId перенести в метод Сервиса (Application)
         var response = await _resourceService.CreateResourceAsync(mappedDto);
 
         if (!response.IsSuccess)
@@ -54,8 +54,6 @@ public class ResourceController : ControllerBase
     [HttpPut]
     public async Task<ActionResult> UpdateResourceAsync(UpdateResourceRequest dto)
     {
-        var tenantId = _tenantResolver.Resolve();
-
         var mappedDto = dto.ToUpdateResourceDto();
         var response = await _resourceService.UpdateResourceAsync(mappedDto);
 

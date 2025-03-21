@@ -5,11 +5,11 @@ namespace VC.Resources.Api.Endpoints.Models.Request;
 public record CreateResourceRequest(
     string Name,
     string Description,
-    List<SkillDto> Skills
+    IReadOnlyList<SkillDto> Skills
     );
 
-public static class ResourceCreateMapper
+public static class CreateResourceMappers
 {
     public static CreateResourceDto ToCreateResourceDto(this CreateResourceRequest dto, Guid tenantId)
-        => new CreateResourceDto(tenantId, dto.Name, dto.Description, dto.Skills.ToApplicationSkillDto());
+        => new CreateResourceDto(tenantId, dto.Name, dto.Description, dto.Skills.ToList());
 }

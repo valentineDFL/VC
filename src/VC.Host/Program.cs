@@ -14,7 +14,7 @@ builder.Services.ConfigureTenantsModule(builder.Configuration);
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(TenantsController).Assembly)
-    .AddApplicationPart(typeof(ResourceController).Assembly);
+    .AddApplicationPart(typeof(ResourcesController).Assembly);
 
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureResourceModule(builder.Configuration);
