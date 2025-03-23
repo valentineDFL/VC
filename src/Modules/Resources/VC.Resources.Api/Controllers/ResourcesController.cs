@@ -22,7 +22,7 @@ public class ResourcesController : ControllerBase
         _resourceService = resourceSevice;
     }
 
-    [HttpGet("{id:int:min(1)},  Name = GetResourceAsyncById")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<ResourceResponse>> GetResourceAsync(Guid id)
     {
         var response = await _resourceService.GetResourceAsync(id);

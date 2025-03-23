@@ -1,21 +1,13 @@
-using Asp.Versioning;
-using OpenTelemetry.Metrics;
 using Scalar.AspNetCore;
 using Serilog;
+using VC.Host;
 using VC.Recources.Di;
-using VC.Resources.Api.Controllers;
-using VC.Tenants.Api.Controllers;
 using VC.Tenants.Di;
 using VC.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureTenantsModule(builder.Configuration);
-
-builder.Services.AddControllers()
-    .AddApplicationPart(typeof(TenantsController).Assembly)
-    .AddApplicationPart(typeof(ResourcesController).Assembly);
-
+builder.Services.AddControllers().AddApplicationPart(typeof(VC.Tenants.Api.Controllers.TenantsController).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureResourceModule(builder.Configuration);
 builder.Services.ConfigureUtilities();
@@ -27,56 +19,8 @@ builder.Services.AddHealthChecks();
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddOpenApi("home", opts =>
-{
-    opts.ShouldInclude = description => description.GroupName == "Home API";
-    opts.AddDocumentTransformer((document, ctx, ctl) =>
-        {
-            document.Info = new()
-            {
-                Version = "v1",
-                Title = "Универсальная платформа для управления услугами и онлайн-бронирования с поддержкой мультитенантности",
-                Description = """
-                              <a href="http://localhost:5056/scalar/tenants">Управление арендаторами</a><br/>
-                              <a href="http://localhost:5056/scalar/bookings">Управление бронированиями</a><br/>
-                              <a href="http://localhost:5056/scalar/resources">Управление ресурсами</a><br/>
-                         
-                              GitLab - https://gitlab.com/tech-power-partners/vclients/vc
-                              """
-            };
+builder.Services.ConfigureHost();
 
-            return Task.CompletedTask;
-        }
-    );
-});
-
-builder.Services.AddOpenTelemetry()
-    .WithMetrics(b =>
-    {
-        b.AddMeter("VC", "Npgsql");
-        b.AddProcessInstrumentation()
-            .AddRuntimeInstrumentation()
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-        b.AddPrometheusExporter();
-    });
-
-builder.Services.AddApiVersioning(options =>
-    {
-        options.DefaultApiVersion = new(1);
-        options.ReportApiVersions = true;
-        options.AssumeDefaultVersionWhenUnspecified = true;
-        options.ApiVersionReader = ApiVersionReader.Combine(
-            new UrlSegmentApiVersionReader(),
-            new HeaderApiVersionReader("X-Api-Version"));
-    })
-    .AddApiExplorer(options =>
-    {
-        options.GroupNameFormat = "'v'V";
-        options.SubstituteApiVersionInUrl = true;
-    });
-
-VC.Tenants.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
 VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
 
 var app = builder.Build();

@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using OpenTelemetry.Metrics;
-using System.Threading;
 
 namespace VC.Host;
 
@@ -25,32 +24,24 @@ internal static class HostConfiguration
                     Version = "v1",
                     Title = "Универсальная платформа для управления услугами и онлайн-бронирования с поддержкой мультитенантности",
                     Description = """
-                              <a href="http://localhost:5056/scalar/tenants">Управление арендаторами</a><br/>
-                              <a href="http://localhost:5056/scalar/bookings">Управление бронированиями</a><br/>
-                         
-                              GitLab - https://gitlab.com/tech-power-partners/vclients/vc
+                                <p>
+                                  <h3><a href="http://localhost:5056/scalar/tenants"
+                                    title="click">Управление арендаторами</a></h3>
+                                </p>
+                                <p>
+                                  <h3><a href="http://localhost:5056/scalar/bookings"
+                                    title="click">Управление бронированиями</a></h3>
+                                </p>
+                                <p>
+                                  <h3><a href="http://localhost:5056/scalar/resources"
+                                    title="click">Управление ресурсами</a></h3>
+                                </p><br/>
+                                <p>
+                                  <a href="https://gitlab.com/tech-power-partners/vclients/vc 
+                                    title="click"">GitLab - vclients</a>
+                                </p>
                               """
                 };
-
-                return Task.CompletedTask;
-            });
-
-            opts.AddSchemaTransformer((schema, context, cancellationToken) =>
-            {
-                if (schema.Properties == null)
-                    return Task.CompletedTask;
-
-                foreach (var property in schema.Properties)
-                {
-                    if (property.Value.Type == typeof(string).Name)
-                    {
-                        property.Value.Default = new Microsoft.OpenApi.Any.OpenApiString("ZALUPA");
-                    }
-                    else if (property.Value.Type == "integer")
-                    {
-                        property.Value.Default = new Microsoft.OpenApi.Any.OpenApiInteger(10000);
-                    }
-                }
 
                 return Task.CompletedTask;
             });
@@ -63,10 +54,12 @@ internal static class HostConfiguration
             .WithMetrics(b =>
             {
                 b.AddMeter("VC", "Npgsql");
+
                 b.AddProcessInstrumentation()
-                    .AddRuntimeInstrumentation()
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation();
+                 .AddRuntimeInstrumentation()
+                 .AddAspNetCoreInstrumentation()
+                 .AddHttpClientInstrumentation();
+
                 b.AddPrometheusExporter();
             });
     }
