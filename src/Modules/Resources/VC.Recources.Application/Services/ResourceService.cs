@@ -1,5 +1,5 @@
 ﻿using FluentResults;
-using VC.Recources.Application.Models.Dto;
+using VC.Recources.Application.Endpoints.Models.Request;
 using VC.Recources.Domain.Entities;
 using VC.Recources.UnitOfWork;
 using VC.Utilities.Resolvers;
@@ -35,9 +35,9 @@ public class ResourceService : IResourceSevice
         return Result.Ok();
     }
 
-    public async Task<Result<Resource>> GetResourceAsync(Guid resourceId)
+    public async Task<Result<Resource>> GetResourceAsync(Guid id)
     {
-        var resource = await _resourceRepository.GetAsync(resourceId);
+        var resource = await _resourceRepository.GetAsync(id);
 
         if (resource is null)
             return Result.Fail("Resource not found .!.");

@@ -1,4 +1,5 @@
-﻿using VC.Recources.Application.Models.Dto;
+﻿using VC.Recources.Application.Endpoints.Models.Dto;
+using VC.Recources.Application.Endpoints.Models.Request;
 
 namespace VC.Resources.Api.Endpoints.Models.Request;
 

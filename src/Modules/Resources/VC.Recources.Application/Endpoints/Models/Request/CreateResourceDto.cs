@@ -1,6 +1,7 @@
-﻿using VC.Recources.Domain.Entities;
+﻿using VC.Recources.Application.Endpoints.Models.Dto;
+using VC.Recources.Domain.Entities;
 
-namespace VC.Recources.Application.Models.Dto;
+namespace VC.Recources.Application.Endpoints.Models.Request;
 
 public record CreateResourceDto(
     Guid TenantId,

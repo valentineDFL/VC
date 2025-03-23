@@ -7,7 +7,7 @@ using VC.Utilities.Resolvers;
 namespace VC.Resources.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
 public class ResourcesController : ControllerBase
 {
@@ -22,11 +22,9 @@ public class ResourcesController : ControllerBase
         _resourceService = resourceSevice;
     }
 
-    [HttpGet]
+    [HttpGet("{id:int:min(1)},  Name = GetResourceAsyncById")]
     public async Task<ActionResult<ResourceResponse>> GetResourceAsync(Guid id)
     {
-        var tenantId = _tenantResolver.Resolve();
-
         var response = await _resourceService.GetResourceAsync(id);
 
         if (!response.IsSuccess)
@@ -41,8 +39,8 @@ public class ResourcesController : ControllerBase
     public async Task<ActionResult> CreateResourceAsync(CreateResourceRequest dto)
     {
         var tenantId = _tenantResolver.Resolve();
-
-        var mappedDto = dto.ToCreateResourceDto(tenantId); // логику присловения ресурса tenantId перенести в метод Сервиса (Application)
+        var mappedDto = dto.ToCreateResourceDto(tenantId); // логику присвоения ресурса tenantId перенести в метод Сервиса (Application)
+        
         var response = await _resourceService.CreateResourceAsync(mappedDto);
 
         if (!response.IsSuccess)
@@ -54,7 +52,9 @@ public class ResourcesController : ControllerBase
     [HttpPut]
     public async Task<ActionResult> UpdateResourceAsync(UpdateResourceRequest dto)
     {
-        var mappedDto = dto.ToUpdateResourceDto();
+        var tenantId = _tenantResolver.Resolve();
+        var mappedDto = dto.ToUpdateResourceDto(tenantId);
+        
         var response = await _resourceService.UpdateResourceAsync(mappedDto);
 
         if (!response.IsSuccess)
