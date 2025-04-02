@@ -1,12 +1,13 @@
 ﻿using VC.Recources.Application.Endpoints.Models.Dto;
-using VC.Recources.Application.Endpoints.Models.Request;
+using VC.Recources.Application.Endpoints.Models.Requests;
 
-namespace VC.Resources.Api.Endpoints.Models.Request;
+namespace VC.Resources.Api.Endpoints.Models.Requests;
 
 public record UpdateResourceRequest(
+    Guid Id,
     string Name,
     string Description,
-    IReadOnlyList<SkillDto> Skills
+    List<SkillDto> Skills
     );
 
 public static class UpdateResourceMappers

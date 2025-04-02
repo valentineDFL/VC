@@ -1,10 +1,10 @@
 ﻿using FluentResults;
-using VC.Recources.Application.Endpoints.Models.Request;
+using VC.Recources.Application.Endpoints.Models.Requests;
 using VC.Recources.Domain.Entities;
 
 namespace VC.Recources.Application.Services;
 
-public interface IResourceSevice
+public interface IResourceService
 {
     public Task<Result> CreateResourceAsync(CreateResourceDto dto);
 

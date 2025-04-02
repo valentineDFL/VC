@@ -10,5 +10,5 @@ public class Resource
 
     public string Description { get; set; }
 
-    public List<Skill> Skills { get; set; }
+    public List<Skill>? Skills { get; set; }
 }

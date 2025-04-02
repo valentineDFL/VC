@@ -1,7 +1,7 @@
 ﻿using VC.Recources.Application.Endpoints.Models.Dto;
 using VC.Recources.Domain.Entities;
 
-namespace VC.Recources.Application.Endpoints.Models.Request;
+namespace VC.Recources.Application.Endpoints.Models.Requests;
 
 public record UpdateResourceDto(
     Guid Id,
@@ -15,7 +15,6 @@ public static class UpdateResourceMappers
     public static Resource ToResourceDomain(this UpdateResourceDto dto)
        => new Resource
        {
-           Id = dto.Id,
            Name = dto.Name,
            Description = dto.Description,
            Skills = dto.Skills.ToDomainSkills()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using VC.Recources.Application;
 using VC.Recources.Domain.Entities;
 
 namespace VC.Recources.Infrastructure.Repositories;
@@ -15,7 +16,7 @@ internal class ResourceRepository : IResourceRepository
     public async Task AddAsync(Resource entity)
         => await _dbContext.Resources.AddAsync(entity);
 
-    public async Task<Resource?> GetAsync(Guid id)
+    public async Task<Resource> GetAsync(Guid id)
         => await _dbContext.Resources
             .Include(r => r.Skills)
             .ThenInclude(s => s.Experience)

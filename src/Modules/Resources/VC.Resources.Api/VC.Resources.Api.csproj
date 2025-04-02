@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
     <ProjectReference Include="..\VC.Recources.Application\VC.Recources.Application.csproj" />
+    <ProjectReference Include="..\VC.Recources.Infrastructure\VC.Recources.Infrastructure.csproj" />
     <ProjectReference Include="..\VC.Recources\VC.Recources.Domain.csproj" />
   </ItemGroup>
 

@@ -1,31 +1,32 @@
 ﻿using FluentResults;
-using VC.Recources.Application.Endpoints.Models.Request;
+using VC.Recources.Application.Endpoints.Models.Requests;
 using VC.Recources.Domain.Entities;
 using VC.Recources.UnitOfWork;
 using VC.Utilities.Resolvers;
 
 namespace VC.Recources.Application.Services;
 
-public class ResourceService : IResourceSevice
+public class ResourceService : IResourceService
 {
     private readonly IResourceRepository _resourceRepository;
-    private readonly IDbSaver _dbSaver;
     private readonly ITenantResolver _tenantResolver;
+    private readonly IDbSaver _dbSaver;
 
     public ResourceService(
         IResourceRepository resourceRepository,
-        IDbSaver dbSaver,
-        ITenantResolver tenantResolver
-        )
+        ITenantResolver tenantResolver,
+        IDbSaver dbSaver
+    )
     {
         _resourceRepository = resourceRepository;
-        _dbSaver = dbSaver;
         _tenantResolver = tenantResolver;
+        _dbSaver = dbSaver;
     }
 
     public async Task<Result> CreateResourceAsync(CreateResourceDto dto)
     {
         var resource = dto.ToResourceDomain();
+        
         resource.Id = Guid.CreateVersion7();
         resource.TenantId = _tenantResolver.Resolve();
 
@@ -39,18 +40,15 @@ public class ResourceService : IResourceSevice
     {
         var resource = await _resourceRepository.GetAsync(id);
 
-        if (resource is null)
-            return Result.Fail("Resource not found .!.");
-
-        return Result.Ok(resource);
+        return resource is null ? Result.Fail("Resource not found") : Result.Ok(resource);
     }
 
     public async Task<Result> UpdateResourceAsync(UpdateResourceDto dto)
     {
-        var resource = dto.ToResourceDomain();
-
+        var resource = await _resourceRepository.GetAsync(dto.Id);
+        
         resource.TenantId = _tenantResolver.Resolve();
-
+        
         _resourceRepository.Update(resource);
         await _dbSaver.SaveAsync();
 

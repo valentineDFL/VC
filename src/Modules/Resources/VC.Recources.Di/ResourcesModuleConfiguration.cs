@@ -14,5 +14,7 @@ public static class ResourcesModuleConfiguration
     }
 
     public static IServiceCollection ConfigureResourcesOpenApi(this IServiceCollection services)
-        => services.AddOpenApi(OpenApiConfig.DocumentName, opts => OpenApiConfig.ConfigureOpenApi(opts));
+        => services.AddOpenApi(
+            OpenApiConfig.DocumentName, 
+            opts => OpenApiConfig.ConfigureOpenApi(opts));
 }

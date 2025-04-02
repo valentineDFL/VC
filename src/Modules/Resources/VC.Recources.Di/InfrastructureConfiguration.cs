@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using VC.Recources.Application;
 using VC.Recources.Infrastructure;
 using VC.Recources.Infrastructure.Repositories;
 using VC.Recources.UnitOfWork;
+using VC.Utilities.Resolvers;
 
 namespace VC.Recources.Di;
 

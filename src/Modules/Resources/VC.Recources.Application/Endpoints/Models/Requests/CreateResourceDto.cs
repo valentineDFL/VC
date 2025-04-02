@@ -1,10 +1,10 @@
 ﻿using VC.Recources.Application.Endpoints.Models.Dto;
 using VC.Recources.Domain.Entities;
 
-namespace VC.Recources.Application.Endpoints.Models.Request;
+namespace VC.Recources.Application.Endpoints.Models.Requests;
 
 public record CreateResourceDto(
-    Guid TenantId,
+    // Guid TenantId,
     string Name,
     string Description,
     List<SkillDto> Skills

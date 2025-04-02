@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VC.Recources.Application.Endpoints.Models.Requests;
 using VC.Recources.Application.Services;
-using VC.Resources.Api.Endpoints.Models.Request;
+using VC.Resources.Api.Endpoints.Models.Requests;
 using VC.Resources.Api.Endpoints.Models.Response;
+using VC.Utilities;
 using VC.Utilities.Resolvers;
 
 namespace VC.Resources.Api.Controllers;
@@ -11,18 +13,14 @@ namespace VC.Resources.Api.Controllers;
 [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
 public class ResourcesController : ControllerBase
 {
-    private readonly IResourceSevice _resourceService;
-    private readonly ITenantResolver _tenantResolver; // вынести в application
+    private readonly IResourceService _resourceService;
 
-    public ResourcesController(
-        IResourceSevice resourceSevice,
-        ITenantResolver tenantResolver)
+    public ResourcesController(IResourceService resourceService)
     {
-        _tenantResolver = tenantResolver;
-        _resourceService = resourceSevice;
+        _resourceService = resourceService;
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:Guid}")]
     public async Task<ActionResult<ResourceResponse>> GetResourceAsync(Guid id)
     {
         var response = await _resourceService.GetResourceAsync(id);
@@ -36,30 +34,31 @@ public class ResourcesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateResourceAsync(CreateResourceRequest dto)
+    public async Task<ActionResult> CreateResourceAsync(CreateResourceRequest request)
     {
-        var tenantId = _tenantResolver.Resolve();
-        var mappedDto = dto.ToCreateResourceDto(tenantId); // логику присвоения ресурса tenantId перенести в метод Сервиса (Application)
+        var dto = new CreateResourceDto(
+            request.Name,
+            request.Description,
+            request.Skills
+        );
         
-        var response = await _resourceService.CreateResourceAsync(mappedDto);
-
-        if (!response.IsSuccess)
-            return BadRequest(response);
-
-        return Ok(response);
+        var response = await _resourceService.CreateResourceAsync(dto);
+        
+        return response.IsSuccess ? Ok(response) : BadRequest(response);
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateResourceAsync(UpdateResourceRequest dto)
+    public async Task<ActionResult> UpdateResourceAsync(UpdateResourceRequest request)
     {
-        var tenantId = _tenantResolver.Resolve();
-        var mappedDto = dto.ToUpdateResourceDto(tenantId);
+        var dto = new UpdateResourceDto(
+            request.Id,
+            request.Name,
+            request.Description,
+            request.Skills
+            );
         
-        var response = await _resourceService.UpdateResourceAsync(mappedDto);
+        var response = await _resourceService.UpdateResourceAsync(dto);
 
-        if (!response.IsSuccess)
-            return BadRequest(response);
-
-        return Ok(response);
+        return response.IsSuccess ? Ok(response) : BadRequest(response);
     }
 }

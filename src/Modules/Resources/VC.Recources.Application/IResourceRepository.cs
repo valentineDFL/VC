@@ -1,6 +1,6 @@
 ﻿using VC.Recources.Domain.Entities;
 
-namespace VC.Recources;
+namespace VC.Recources.Application;
 
 public interface IResourceRepository
 {

@@ -7,6 +7,6 @@ public static class ApplicationConfiguration
 {
     public static void ConfigureResourcesApplication(this IServiceCollection services)
     {
-        services.AddScoped<IResourceSevice, ResourceService>();
+        services.AddScoped<IResourceService, ResourceService>();
     }
 }
