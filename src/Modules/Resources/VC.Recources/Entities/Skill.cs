@@ -11,4 +11,12 @@ public class Skill
     public Resource Resource { get; set; }
 
     public Guid ResourceId { get; set; }
+
+    public Skill(string name, Experience experience)
+    {
+        Name = name;
+        Experience = experience;
+    }
+
+    public Skill() { }
 }

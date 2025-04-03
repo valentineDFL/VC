@@ -26,7 +26,7 @@ public class ResourceService : IResourceService
     public async Task<Result> CreateResourceAsync(CreateResourceDto dto)
     {
         var resource = dto.ToResourceDomain();
-        
+
         resource.Id = Guid.CreateVersion7();
         resource.TenantId = _tenantResolver.Resolve();
 
@@ -46,12 +46,29 @@ public class ResourceService : IResourceService
     public async Task<Result> UpdateResourceAsync(UpdateResourceDto dto)
     {
         var resource = await _resourceRepository.GetAsync(dto.Id);
-        
-        resource.TenantId = _tenantResolver.Resolve();
-        
-        _resourceRepository.Update(resource);
-        await _dbSaver.SaveAsync();
 
-        return Result.Ok();
+        if (resource is null)
+            return Result.Fail("Resource not found");
+
+        try
+        {
+            resource.UpdateDetails(
+                dto.Name,
+                dto.Description,
+                dto.Skills
+                    .Select(s => new Skill(
+                        s.Name,
+                        new Experience(s.Experience.Years, s.Experience.Months)))
+                    .ToList());
+
+            _resourceRepository.Update(resource);
+            await _dbSaver.SaveAsync();
+            
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.Fail(e.Message);
+        }
     }
 }
