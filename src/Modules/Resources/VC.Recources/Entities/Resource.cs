@@ -16,12 +16,6 @@ public class Resource
 
     public Resource() { }
 
-    public Resource(string name, string description)
-    {
-        UpdateName(name);
-        UpdateDescription(description);
-    }
-
     public void UpdateDetails(
         string name,
         string description,

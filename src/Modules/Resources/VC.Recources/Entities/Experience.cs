@@ -9,11 +9,17 @@ public record Experience
 
     public Experience(int years, int months)
     {
-        if (years < 0 || months < 0 || years > 11)
-            throw new InvalidOperationException("Invalid experiece");
+        if (years < 0 || months < 0)
+            throw new InvalidOperationException("Invalid experience");
+
+        if (months > 11)
+        {
+            var divider = months / 12;
+            months -= divider * 12;
+            years += divider;
+        }
 
         Years = years;
         Months = months;
     }
-
 }
