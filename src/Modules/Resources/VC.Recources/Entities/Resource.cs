@@ -12,8 +12,6 @@ public class Resource
 
     public List<Skill>? Skills { get; set; }
 
-    private const int _highestNumberOfSkills = 20;
-
     public Resource() { }
 
     public void UpdateDetails(
@@ -50,9 +48,7 @@ public class Resource
 
     private void AddSkill(Skill skill)
     {
-        if (Skills.Count >= _highestNumberOfSkills)
-            throw new InvalidOperationException("Max skills limit reached");
-
-        Skills.Add(skill);
+        if (skill is not null)
+            Skills.Add(skill);
     }
 }

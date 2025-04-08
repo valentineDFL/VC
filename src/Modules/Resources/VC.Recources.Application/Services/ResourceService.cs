@@ -47,28 +47,21 @@ public class ResourceService : IResourceService
     {
         var resource = await _resourceRepository.GetAsync(dto.Id);
 
-        if (resource is null)
-            return Result.Fail("Resource not found");
+        var skills = dto.Skills
+            .Select(s => new Skill(
+                s.Name,
+                new Experience(s.Experience.Years, s.Experience.Months)))
+            .ToList();
 
-        try
-        {
-            resource.UpdateDetails(
-                dto.Name,
-                dto.Description,
-                dto.Skills
-                    .Select(s => new Skill(
-                        s.Name,
-                        new Experience(s.Experience.Years, s.Experience.Months)))
-                    .ToList());
+        resource.UpdateDetails(
+            dto.Name,
+            dto.Description,
+            skills
+        );
 
-            _resourceRepository.Update(resource);
-            await _dbSaver.SaveAsync();
-            
-            return Result.Ok();
-        }
-        catch (Exception e)
-        {
-            return Result.Fail(e.Message);
-        }
+        _resourceRepository.Update(resource);
+        await _dbSaver.SaveAsync();
+
+        return resource is null ? Result.Fail("Resource not found") : Result.Ok();
     }
 }
