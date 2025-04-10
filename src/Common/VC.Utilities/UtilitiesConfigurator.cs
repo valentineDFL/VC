@@ -11,5 +11,6 @@ public static class UtilitiesConfigurator
     {
         services.AddScoped<ITenantResolver, HttpContextTenantResolver>();
         services.Configure<MailSender>(configuration.GetSection(nameof(MailSender)));
+        services.AddSingleton<IMailSenderService, MailService>();
     }
 }

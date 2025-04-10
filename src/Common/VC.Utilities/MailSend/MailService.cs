@@ -8,15 +8,14 @@ namespace VC.Utilities.MailSend;
 public class MailService : IMailSenderService
 {
     private SmtpClient _smtpClient;
-    private IOptions<MailSender> _mailSender;
+    private MailSender _mailSender;
 
     public MailService(IOptions<MailSender> options)
     {
+        _mailSender = options.Value;
         _smtpClient = new SmtpClient();
-        _smtpClient.Connect(options.Value.SmtpHost, 587, MailKit.Security.SecureSocketOptions.StartTls);
-        _smtpClient.Authenticate(options.Value.SenderMailName, options.Value.SenderAppPassword);
-
-        _mailSender = options;
+        _smtpClient.Connect(_mailSender.SmtpHost, 587, MailKit.Security.SecureSocketOptions.StartTls);
+        _smtpClient.Authenticate(_mailSender.SenderMailName, _mailSender.SenderAppPassword);
     }
 
     ~MailService()
@@ -32,27 +31,15 @@ public class MailService : IMailSenderService
             MimeMessage mimeMessage = new MimeMessage();
             mimeMessage.Subject = message.Subject;
 
-            mimeMessage.From.Add(new MailboxAddress("Администрация сайта", _mailSender.Value.SenderMailName));
+            mimeMessage.From.Add(new MailboxAddress("Администрация сайта", _mailSender.SenderMailName));
             mimeMessage.To.Add(new MailboxAddress(message.ReceiverName, message.ReceiverMail));
 
-            mimeMessage.Body = new TextPart
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
                 Text = HtmlBodyText.GetBodyText(message.Header, message.Text, message.Link ?? string.Empty)
             };
 
             await _smtpClient.SendAsync(mimeMessage);
-
-            //using (var client = new SmtpClient())
-            //{
-            //    // smtp, sender, program password
-            //    await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            //    await client.AuthenticateAsync("zolotuhavalentin@gmail.com", "ejtaajwdjmwzwnvp"); // ejtaajwdjmwzwnvp
-
-            //    await client.SendAsync(emailMessage);
-
-            //    await client.DisconnectAsync(true);
-            //}
-
             return Result.Ok(MailSendStatus.Success.ToString());
         }
         catch(Exception ex)

@@ -7,8 +7,6 @@ namespace VC.Tenants.Infrastructure.Persistence;
 
 public class TenantsDbContext : DbContext
 {
-    public DbSet<Tenant> Tenants { get; set; }
-
     private readonly ITenantResolver _tenantResolver;
     private readonly TenantsModuleSettings _tenantModuleOptions;
 
@@ -21,6 +19,8 @@ public class TenantsDbContext : DbContext
         _tenantModuleOptions = tenantModuleSettings.Value;
         Database.EnsureCreated();
     }
+
+    public DbSet<Tenant> Tenants { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

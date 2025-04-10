@@ -2,25 +2,18 @@
 
 public class MailSender
 {
-    public MailSender(string senderMailName, string senderAppPassword, string smtpHost)
-    {
-        SenderMailName = senderMailName;
-        SenderAppPassword = senderAppPassword;
-        SmtpHost = smtpHost;
-    }
-
     /// <summary>
     /// Имя Отправителя
     /// </summary>
-    public string SenderMailName { get; private set; }
+    public string? SenderMailName { get; set; }
 
     /// <summary>
     /// Пароль для аутентификации в api отправки сообщений
     /// </summary>
-    public string SenderAppPassword { get; private set; }
+    public string? SenderAppPassword { get; set; }
 
     /// <summary>
     /// Хост отправителя
     /// </summary>
-    public string SmtpHost { get; private set; }
+    public string? SmtpHost { get; set; }
 }

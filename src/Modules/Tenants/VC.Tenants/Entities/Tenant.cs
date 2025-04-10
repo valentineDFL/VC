@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace VC.Tenants.Entities;
 
 /// <summary>
@@ -22,6 +20,4 @@ public class Tenant
     public ContactInfo ContactInfo { get; set; }
 
     public TenantWorkSchedule WorkWeekSchedule { get; set; }
-
-    public bool IsVerify { get; set; }
 }

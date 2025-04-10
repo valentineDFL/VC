@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Response;
 using VC.Tenants.Application.Tenants;
+using VC.Utilities.MailSend;
 
 namespace VC.Tenants.Api.Controllers;
 
@@ -15,14 +16,19 @@ public class TenantsController : ControllerBase
     private readonly IValidator<CreateTenantRequest> _createTenantValidator;
     private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
 
+    private readonly IMailSenderService _mailSenderService;
+
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
-        IValidator<UpdateTenantRequest> updateTenantValidator
+        IValidator<UpdateTenantRequest> updateTenantValidator,
+        IMailSenderService mailSenderService
         )
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
         _updateTenantValidator = updateTenantValidator;
+
+        _mailSenderService = mailSenderService;
     }
 
     [HttpGet]
@@ -44,6 +50,18 @@ public class TenantsController : ControllerBase
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
+
+        var subject = "Регистрация на сайте";
+        var text = "Вы зарегестрировались на нашем сайте, но для возможности иметь все возможности при использовании ресурса вам необходимо подтвердить вашу почту, для этого вам нужно перейти по ссылке ниже:";
+        var receiverName = createRequest.Name;
+        var receiverMail = createRequest.Contact.Email;
+        string header = "Спасибо за регистрацию на сайте!";
+
+        Message message = new Message(subject, text, receiverName, receiverMail, header, null);
+
+        await _mailSenderService.SendMailAsync(message);
+
+        Console.WriteLine("Отправлено");
 
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
