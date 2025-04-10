@@ -22,4 +22,6 @@ public class Tenant
     public ContactInfo ContactInfo { get; set; }
 
     public TenantWorkSchedule WorkWeekSchedule { get; set; }
+
+    public bool IsVerify { get; set; }
 }

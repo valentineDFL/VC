@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddApplicationPart(typeof(VC.Tenants.Api.Controllers.TenantsController).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
-builder.Services.ConfigureUtilities();
+builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
