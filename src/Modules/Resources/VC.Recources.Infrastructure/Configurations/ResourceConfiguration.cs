@@ -10,6 +10,9 @@ internal class ResourceConfiguration : IEntityTypeConfiguration<Resource>
     {
         builder.HasKey(r => r.Id);
 
+        builder.HasIndex(r => r.Name)
+            .IsUnique();
+
         builder.Property(r => r.Name)
             .HasMaxLength(20);
 

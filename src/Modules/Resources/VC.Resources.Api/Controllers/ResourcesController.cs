@@ -11,18 +11,11 @@ namespace VC.Resources.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-public class ResourcesController : ControllerBase
+public class ResourcesController(IResourceService _resourceService)
+    : ControllerBase
 {
-    private readonly IResourceService _resourceService;
-
-    public ResourcesController(
-        IResourceService resourceService)
-    {
-        _resourceService = resourceService;
-    }
-
     [HttpPost]
-    public async Task<ActionResult> CreateResourceAsync([FromBody] CreateResourceRequest request)
+    public async Task<ActionResult> CreateAsync([FromBody] CreateResourceRequest request)
     {
         var dto = new CreateResourceDto(
             request.Name,
@@ -30,19 +23,21 @@ public class ResourcesController : ControllerBase
             request.Skills
         );
 
-        var result = ValidationHelper.Validate<CreateResourceDto>(dto, new CreateResourceDtoValidator());
-        if (result is not null)
-            return result;
+        var validator = new CreateResourceDtoValidator();
+        var result = validator.Validate(dto);
 
-        var response = await _resourceService.CreateResourceAsync(dto);
+        if (!result.IsValid)
+            return result.ToErrorActionResult();
+
+        var response = await _resourceService.CreateAsync(dto);
 
         return response.IsSuccess ? Ok(response) : BadRequest(response);
     }
 
     [HttpGet("{id:Guid}")]
-    public async Task<ActionResult<ResourceResponse>> GetResourceAsync(Guid id)
+    public async Task<ActionResult<ResourceResponse>> GetAsync(Guid id)
     {
-        var response = await _resourceService.GetResourceAsync(id);
+        var response = await _resourceService.GetAsync(id);
 
         if (!response.IsSuccess)
             return BadRequest(response);
@@ -53,7 +48,7 @@ public class ResourcesController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateResourceAsync([FromBody] UpdateResourceRequest request)
+    public async Task<ActionResult> UpdateAsync([FromBody] UpdateResourceRequest request)
     {
         var dto = new UpdateResourceDto(
             request.Id,
@@ -62,12 +57,16 @@ public class ResourcesController : ControllerBase
             request.Skills
         );
 
-        var result = ValidationHelper.Validate<UpdateResourceDto>(dto, new UpdateResourceDtoValidator());
-        if (result is not null)
-            return result;
+        var validator = new UpdateResourceDtoValidator();
+        var result = validator.Validate(dto);
 
-        var response = await _resourceService.UpdateResourceAsync(dto);
+        if (!result.IsValid)
+            return result.ToErrorActionResult();
 
-        return response.IsSuccess ? Ok(response) : BadRequest(response);
+        var response = await _resourceService.UpdateAsync(dto);
+
+        return response.IsSuccess
+            ? Ok(response)
+            : BadRequest();
     }
 }

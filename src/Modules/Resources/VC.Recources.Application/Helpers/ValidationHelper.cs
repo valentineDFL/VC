@@ -1,16 +1,14 @@
-using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace VC.Recources.Application.Helpers;
 
 public static class ValidationHelper
 {
-    public static ActionResult  Validate<T>(T dto, AbstractValidator<T> validator)
+    public static ActionResult ToErrorActionResult(this ValidationResult validationResult)
     {
-        var validationResult = validator.Validate(dto);
-
         return validationResult.IsValid
-            ? null
+            ? throw new Exception("Результат оказался валидным")
             : new BadRequestObjectResult(new
             {
                 Errors = validationResult.Errors.Select(e => new

@@ -1,5 +1,6 @@
 using FluentValidation;
 using VC.Recources.Application.Endpoints.Models.Requests;
+using VC.Recources.Domain;
 
 namespace VC.Recources.Application.Validators;
 
