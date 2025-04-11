@@ -1,4 +1,4 @@
-﻿using VC.Recources.UnitOfWork;
+﻿using VC.Recources.Domain.UnitOfWork;
 
 namespace VC.Recources.Infrastructure;
 

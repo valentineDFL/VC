@@ -4,7 +4,6 @@ using VC.Recources.Domain.Entities;
 namespace VC.Recources.Application.Endpoints.Models.Requests;
 
 public record CreateResourceDto(
-    // Guid TenantId,
     string Name,
     string Description,
     List<SkillDto> Skills

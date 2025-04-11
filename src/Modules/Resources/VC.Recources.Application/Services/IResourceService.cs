@@ -6,9 +6,9 @@ namespace VC.Recources.Application.Services;
 
 public interface IResourceService
 {
-    public Task<Result> CreateResourceAsync(CreateResourceDto dto);
+    public Task<Result> CreateAsync(CreateResourceDto dto);
 
-    public Task<Result<Resource>> GetResourceAsync(Guid id);
+    public Task<Result<Resource>> GetAsync(Guid id);
 
-    public Task<Result> UpdateResourceAsync(UpdateResourceDto dto);
+    public Task<Result> UpdateAsync(UpdateResourceDto dto);
 }

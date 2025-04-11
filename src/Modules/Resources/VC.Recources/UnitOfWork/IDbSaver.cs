@@ -1,4 +1,4 @@
-﻿namespace VC.Recources.UnitOfWork;
+﻿namespace VC.Recources.Domain.UnitOfWork;
 
 public interface IDbSaver 
 {

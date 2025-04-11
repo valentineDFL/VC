@@ -12,16 +12,17 @@ public class Resource
 
     public List<Skill>? Skills { get; set; }
 
-    private const int _highestNumberOfSkills = 20;
+    public Resource()
+    {
+    }
 
-    public Resource() { }
-
-    public void UpdateDetails(
+    public async Task UpdateDetails(
         string name,
+        INameUniquenessChecker nameUniquenessChecker,
         string description,
         List<Skill> skills)
     {
-        UpdateName(name);
+        await UpdateName(name, nameUniquenessChecker);
         UpdateDescription(description);
         UpdateSkills(skills);
     }
@@ -35,12 +36,15 @@ public class Resource
         }
     }
 
-    private void UpdateName(string name)
+    private async Task UpdateName(string newName, INameUniquenessChecker nameUniquenessChecker)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (!await nameUniquenessChecker.IsNameUniqueAsync(newName, Id))
+            throw new InvalidOperationException($"Name {newName} already exists");
+
+        if (string.IsNullOrWhiteSpace(newName))
             throw new InvalidOperationException("Name cannot be empty");
 
-        Name = name.Trim();
+        Name = newName.Trim();
     }
 
     private void UpdateDescription(string description)
@@ -50,9 +54,7 @@ public class Resource
 
     private void AddSkill(Skill skill)
     {
-        if (Skills.Count >= _highestNumberOfSkills)
-            throw new InvalidOperationException("Max skills limit reached");
-
-        Skills.Add(skill);
+        if (skill is not null)
+            Skills.Add(skill);
     }
 }
