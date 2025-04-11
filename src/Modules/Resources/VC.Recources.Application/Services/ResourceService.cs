@@ -16,7 +16,7 @@ public class ResourceService(
 {
     public async Task<Result> CreateAsync(CreateResourceDto dto)
     {
-        var resource = dto.ToResourceDomain();
+        var resource = dto.ToDomain();
 
         resource.Id = Guid.CreateVersion7();
         resource.TenantId = _tenantResolver.Resolve();

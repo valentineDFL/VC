@@ -7,11 +7,11 @@ public record CreateResourceDto(
     string Name,
     string Description,
     List<SkillDto> Skills
-    );
+);
 
 public static class CreateResourceMappers
 {
-    public static Resource ToResourceDomain(this CreateResourceDto dto)
+    public static Resource ToDomain(this CreateResourceDto dto)
         => new Resource
         {
             Name = dto.Name,

@@ -1,15 +1,15 @@
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace VC.Recources.Application.Helpers;
 
 public static class ValidationHelper
 {
-    public static ActionResult ToErrorActionResult(this ValidationResult validationResult)
+    public static IResult ToErrorActionResult(this ValidationResult validationResult)
     {
         return validationResult.IsValid
             ? throw new Exception("Результат оказался валидным")
-            : new BadRequestObjectResult(new
+            : Results.BadRequest(new
             {
                 Errors = validationResult.Errors.Select(e => new
                 {

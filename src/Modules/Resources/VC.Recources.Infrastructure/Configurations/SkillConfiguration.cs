@@ -13,6 +13,6 @@ internal class SkillConfiguration : IEntityTypeConfiguration<Skill>
         builder.Property(s => s.Name)
             .HasMaxLength(64);
 
-        builder.ComplexProperty(s => s.Experience);
+        builder.OwnsOne(s => s.Experience);
     }
 }

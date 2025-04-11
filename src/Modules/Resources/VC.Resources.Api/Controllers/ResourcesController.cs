@@ -15,7 +15,7 @@ public class ResourcesController(IResourceService _resourceService)
     : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> CreateAsync([FromBody] CreateResourceRequest request)
+    public async Task<ActionResult> CreateAsync(CreateResourceRequest request)
     {
         var dto = new CreateResourceDto(
             request.Name,
@@ -27,14 +27,15 @@ public class ResourcesController(IResourceService _resourceService)
         var result = validator.Validate(dto);
 
         if (!result.IsValid)
-            return result.ToErrorActionResult();
+            return (ActionResult)result.ToErrorActionResult();
 
         var response = await _resourceService.CreateAsync(dto);
 
         return response.IsSuccess ? Ok(response) : BadRequest(response);
     }
 
-    [HttpGet("{id:Guid}")]
+    [Route("{id}")]
+    [HttpGet]
     public async Task<ActionResult<ResourceResponse>> GetAsync(Guid id)
     {
         var response = await _resourceService.GetAsync(id);
@@ -48,7 +49,7 @@ public class ResourcesController(IResourceService _resourceService)
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync([FromBody] UpdateResourceRequest request)
+    public async Task<ActionResult> UpdateAsync(UpdateResourceRequest request)
     {
         var dto = new UpdateResourceDto(
             request.Id,
@@ -61,7 +62,7 @@ public class ResourcesController(IResourceService _resourceService)
         var result = validator.Validate(dto);
 
         if (!result.IsValid)
-            return result.ToErrorActionResult();
+            return (ActionResult)result.ToErrorActionResult();
 
         var response = await _resourceService.UpdateAsync(dto);
 
