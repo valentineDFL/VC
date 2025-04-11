@@ -19,90 +19,12 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> CreateAsync(CreateTenantParams @params)
     {
-        var tenant = BuildTenant(@params);
+        var tenant = @params.ToEntity();
 
         await _tenantRepository.AddAsync(tenant);
         await _dbSaver.SaveAsync();
 
         return Result.Ok();
-    }
-
-    private Tenant BuildTenant(CreateTenantParams @params)
-    {
-        var configuration = BuildConfiguration(@params.TenantConfig);
-
-        var contactInfo = BuildContactInfo(@params.Contact);
-
-        var workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
-
-        return new Tenant()
-        {
-            Id = Guid.NewGuid(),
-            Name = @params.Name,
-            Slug = @params.Slug,
-            Config = configuration,
-            Status = @params.TenantStatus,
-            ContactInfo = contactInfo,
-            WorkWeekSchedule = workSchedule
-        };
-    }
-
-    private Tenant BuildTenant(UpdateTenantParams @params)
-    {
-        var configuration = BuildConfiguration(@params.TenantConfig);
-
-        var contactInfo = BuildContactInfo(@params.Contact);
-
-        var workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
-
-        return new Tenant()
-        {
-            Id = @params.Id,
-            Name = @params.Name,
-            Slug = @params.Slug,
-            Config = configuration,
-            Status = @params.TenantStatus,
-            ContactInfo = contactInfo,
-            WorkWeekSchedule = workSchedule
-        };
-    }
-
-    private TenantConfiguration BuildConfiguration(TenantConfigurationDto dto)
-    {
-        return new TenantConfiguration()
-        {
-            About = dto.About,
-            Currency = dto.Currency,
-            Language = dto.Language,
-            TimeZoneId = dto.TimeZoneId,
-        };
-    }
-
-    private ContactInfo BuildContactInfo(ContactDto dto)
-    {
-        return new ContactInfo()
-        {
-            Email = dto.Email,
-            Phone = dto.Phone,
-            Address = dto.Address,
-        };
-    }
-
-    private TenantWorkSchedule BuildTenantWorkSchedule(TenantWeekWorkSheduleDto dto)
-    {
-        var daysSchedule = new List<TenantDayWorkSchedule>();
-
-        foreach (var day in dto.WorkDays)
-        {
-            daysSchedule.Add(new TenantDayWorkSchedule()
-            {
-                Day = day.Day,
-                StartWork = day.StartWork.ToUniversalTime(),
-                EndWork = day.EndWork.ToUniversalTime()
-            });
-        }
-
-        return new TenantWorkSchedule() { DaysSchedule = daysSchedule };
     }
 
     public async Task<Result> DeleteAsync()
@@ -136,9 +58,7 @@ internal class TenantsService : ITenantsService
         if (existingTenant is null)
             return Result.Fail("Tenant not found");
 
-        var tenant = BuildTenant(@params);
-
-        UpdateFindedTenant(tenant, existingTenant);
+        var tenant = @params.ToEntity(existingTenant.Id);
 
         _tenantRepository.Update(existingTenant);
         await _dbSaver.SaveAsync();
@@ -146,17 +66,32 @@ internal class TenantsService : ITenantsService
         return Result.Ok();
     }
 
-    private void UpdateFindedTenant(Tenant from, Tenant to)
+    public async Task<Result> VerifyEmailAsync()
     {
-        to.Name = from.Name;
-        to.Slug = from.Slug;
+        var tenant = await _tenantRepository.GetAsync();
 
-        to.Config = from.Config;
+        if (tenant is null)
+            return Result.Fail("Tenant Not Found");
 
-        to.Status = from.Status;
+        if (tenant.ContactInfo.ConfirmationTimeExpired)
+            return Result.Fail("Link has expired");
 
-        to.ContactInfo = from.ContactInfo;
+        var oldContactInfo = tenant.ContactInfo;
+        var updatedTenantContactInfo = ContactInfo.Create
+            (
+                oldContactInfo.Email,
+                oldContactInfo.Phone, 
+                oldContactInfo.Address, 
+                true, 
+                oldContactInfo.ConfirmationTime
+            );
 
-        to.WorkWeekSchedule = from.WorkWeekSchedule;
+        var updatedTenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, tenant.ContactInfo, tenant.WorkWeekSchedule);
+
+        _tenantRepository.Update(tenant);
+
+        await _dbSaver.SaveAsync();
+
+        return Result.Ok();
     }
 }

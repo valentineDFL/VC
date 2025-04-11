@@ -2,7 +2,6 @@ using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using VC.Tenants.Api.Endpoints.Tenants.Models;
 using VC.Tenants.Api.OpenApi;
 
 namespace VC.Tenants.Api.Endpoints.Tenants;

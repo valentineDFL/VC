@@ -2,7 +2,7 @@
 
 internal static class HtmlBodyText
 {
-    public static string GetBodyText(string header, string text, string link)
+    public static string GetBodyText(string header, string text)
     {
         return @$"
                 <html lang=""ru"">
@@ -14,7 +14,6 @@ internal static class HtmlBodyText
                     <div style=""max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); overflow: hidden; padding: 20px;"">
                         <div style=""background-color: #4CAF50; color: white; padding: 20px; border-radius: 8px 8px 0 0;"">
                             <h1 style=""text-align: center;"">{header}</h1>
-                            <h1 style=""text-align: center;"">{link}</h1>
                         </div>
                         <div style=""padding: 20px;"">
                             <p>Здравствуйте!</p>

@@ -36,7 +36,7 @@ public class MailService : IMailSenderService
 
             mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
-                Text = HtmlBodyText.GetBodyText(message.Header, message.Text, message.Link ?? string.Empty)
+                Text = HtmlBodyText.GetBodyText(message.Header, message.Text)
             };
 
             await _smtpClient.SendAsync(mimeMessage);

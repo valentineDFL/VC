@@ -9,6 +9,7 @@ internal static class ApplicationConfiguration
     public static IServiceCollection ConfigureTenantsApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ITenantsService, TenantsService>();
+
         return services;
     }
 }

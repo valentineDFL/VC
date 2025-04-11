@@ -2,17 +2,13 @@ using VC.Tenants.Entities;
 
 namespace VC.Tenants.Api.Endpoints.Tenants.Models;
 
-public record ContactInfoDto(string Email, string Phone, string Address);
+public record ContactInfoDto(string Email, string Phone, AddressDto Address);
 
-public static class ContactDtoMappers
+internal static class ContactDtoMapper
 {
-    public static Application.Tenants.Models.ContactDto ToApplicationContactDto(this ContactInfoDto dto)
-    {
-        return new Application.Tenants.Models.ContactDto(dto.Email, dto.Phone, dto.Address);
-    }
+    public static Application.Tenants.Models.ContactInfoDto ToApplicationDto(this ContactInfoDto dto)
+        => new Application.Tenants.Models.ContactInfoDto(dto.Email, dto.Phone, dto.Address.ToApplicationDto());
 
-    public static ContactInfoDto ToApiContactDto(this ContactInfo contactInfo)
-    {
-        return new ContactInfoDto(contactInfo.Email, contactInfo.Phone, contactInfo.Address);
-    }
+    public static ContactInfoDto ToApiDto(this ContactInfo contactInfo)
+        => new ContactInfoDto(contactInfo.Email, contactInfo.Phone, contactInfo.Address.ToApiDto());
 }

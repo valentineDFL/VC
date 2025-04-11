@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
+using VC.Tenants.Entities;
 
 namespace VC.Tenants.Api.Validation;
 
@@ -8,16 +9,16 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
     public UpdateTenantValidation()
     {
         RuleFor(ctr => ctr)
-            .NotNull();
+           .NotNull();
 
         RuleFor(ctr => ctr.Name)
-            .MinimumLength(3)
-            .MaximumLength(32)
+            .MinimumLength(Tenant.NameMinLenght)
+            .MaximumLength(Tenant.NameMaxLenght)
             .NotEmpty();
 
         RuleFor(ctr => ctr.Slug)
-            .MinimumLength(10)
-            .MaximumLength(128)
+            .MinimumLength(Tenant.SlugMinLength)
+            .MaximumLength(Tenant.SlugMaxLength)
             .NotEmpty();
 
         RuleFor(ctr => ctr.Config)
@@ -27,46 +28,66 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
             .ChildRules(tcd =>
             {
                 tcd.RuleFor(tcd => tcd.About)
-                    .MinimumLength(16)
-                    .MaximumLength(256)
+                    .MinimumLength(TenantConfiguration.AboutMinLength)
+                    .MaximumLength(TenantConfiguration.AboutMaxLength)
                     .NotEmpty();
 
                 tcd.RuleFor(tcd => tcd.Currency)
-                    .MinimumLength(3)
-                    .MaximumLength(3)
+                    .MinimumLength(TenantConfiguration.CurrencyMinLength)
+                    .MaximumLength(TenantConfiguration.CurrencyMaxLength)
                     .NotEmpty();
 
                 tcd.RuleFor(tcd => tcd.Language)
-                    .MinimumLength(2)
-                    .MaximumLength(3)
+                    .MinimumLength(TenantConfiguration.LanguageMinLength)
+                    .MaximumLength(TenantConfiguration.LanguageMaxLength)
                     .NotEmpty();
 
                 tcd.RuleFor(tcd => tcd.TimeZoneId)
-                    .MinimumLength(2)
-                    .MaximumLength(3)
+                    .MinimumLength(TenantConfiguration.TimeZoneIdMinLength)
+                    .MaximumLength(TenantConfiguration.TimeZoneIdMaxLength)
                     .NotEmpty();
             });
 
         RuleFor(ctr => ctr.Status)
-            .Must(ctr => ctr != Entities.TenantStatus.None)
+            .Must(ctr => ctr != TenantStatus.None)
             .IsInEnum();
 
         RuleFor(ctr => ctr.Contact)
             .ChildRules(con =>
             {
                 con.RuleFor(ctr => ctr.Email)
-                .MaximumLength(64)
+                .MaximumLength(ContactInfo.EmailAddressMaxLength)
                 .NotNull()
                 .EmailAddress();
 
                 con.RuleFor(ctr => ctr.Phone)
-                .MinimumLength(15)
-                .MaximumLength(16)
+                .MinimumLength(ContactInfo.PhoneNumberMinLength)
+                .MaximumLength(ContactInfo.PhoneNumberMaxLength)
                 .NotEmpty();
 
                 con.RuleFor(ctr => ctr.Address)
-                .MinimumLength(8)
-                .MaximumLength(48);
+                .NotNull()
+                .ChildRules(add =>
+                {
+                    add.RuleFor(tn => tn.Country)
+                    .MinimumLength(Address.CountryMinLength)
+                    .MaximumLength(Address.CountryMaxLength)
+                    .NotEmpty();
+
+                    add.RuleFor(tn => tn.City)
+                    .MinimumLength(Address.CityMinLength)
+                    .MaximumLength(Address.CityMaxLength)
+                    .NotEmpty();
+
+                    add.RuleFor(tn => tn.Street)
+                    .MinimumLength(Address.StreetMinLength)
+                    .MaximumLength(Address.StreetMaxLength)
+                    .NotEmpty();
+
+                    add.RuleFor(tn => tn.House)
+                    .Must(tn => tn >= Address.HouseMinNum && tn <= Address.HouseMaxNum);
+                });
+
             });
 
         RuleFor(ctr => ctr.WorkSchedule)

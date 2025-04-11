@@ -2,19 +2,13 @@
 
 namespace VC.Tenants.Api.Endpoints.Tenants.Models;
 
-public record TenantWeekWorkScheduleDto(
-    List<TenantDayWorkScheduleDto> WeekDays
-    );
+public record TenantWeekWorkScheduleDto(IReadOnlyList<TenantDayWorkScheduleDto> WeekDays);
 
-public static class TenantWorkScheduleMapper
+internal static class TenantWorkScheduleMapper
 {
-    public static Application.Tenants.Models.TenantWeekWorkSheduleDto ToTenantWeekWorkSheduleDto(this Api.Endpoints.Tenants.Models.TenantWeekWorkScheduleDto dto)
-    {
-        return new Application.Tenants.Models.TenantWeekWorkSheduleDto(dto.WeekDays.ToTenantsDayWorkShedule());
-    }
+    public static Application.Tenants.Models.TenantWeekWorkSheduleDto ToApplicationDto(this Api.Endpoints.Tenants.Models.TenantWeekWorkScheduleDto dto)
+        => new Application.Tenants.Models.TenantWeekWorkSheduleDto(dto.WeekDays.ToApplicationDto());
 
-    public static TenantWeekWorkScheduleDto ToTenantApiWeekWorkSheduleDto(this TenantWorkSchedule tenantWeekWork)
-    {
-        return new TenantWeekWorkScheduleDto(tenantWeekWork.DaysSchedule.ToApiDayWorkSchedule());
-    }
+    public static TenantWeekWorkScheduleDto ToApiDto(this TenantWorkSchedule tenantWeekWork)
+        => new TenantWeekWorkScheduleDto(tenantWeekWork.DaysSchedule.ToApiDto());
 }

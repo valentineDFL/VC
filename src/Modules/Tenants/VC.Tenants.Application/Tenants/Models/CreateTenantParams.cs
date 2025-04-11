@@ -2,9 +2,13 @@ using VC.Tenants.Entities;
 
 namespace VC.Tenants.Application.Tenants.Models;
 
-public class CreateTenantParams(string name, string slug, 
-    TenantConfigurationDto tenantConfig, TenantStatus tenantStatus,
-    ContactDto contactDto, TenantWeekWorkSheduleDto workSheduleDto)
+public class CreateTenantParams
+    (string name,
+     string slug, 
+     TenantConfigurationDto tenantConfig, 
+     TenantStatus tenantStatus,
+     ContactInfoDto contactDto, 
+     TenantWeekWorkSheduleDto workSheduleDto)
 {
     public string Name { get; } = name;
 
@@ -14,8 +18,22 @@ public class CreateTenantParams(string name, string slug,
 
     public TenantStatus TenantStatus { get; } = tenantStatus;
 
-    public ContactDto Contact { get; } = contactDto;
+    public ContactInfoDto Contact { get; } = contactDto;
 
     public TenantWeekWorkSheduleDto WorkSchedule { get; } = workSheduleDto;
 }
 
+internal static class CreateTenantParamsMapper
+{
+    public static Tenant ToEntity(this CreateTenantParams createTenant)
+        => Tenant.Create
+        (
+            Guid.CreateVersion7(),
+            createTenant.Name,
+            createTenant.Slug,
+            createTenant.TenantConfig.ToEntity(),
+            createTenant.TenantStatus,
+            createTenant.Contact.ToEntity(),
+            createTenant.WorkSchedule.ToEntity()
+        );
+}

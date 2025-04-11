@@ -2,41 +2,24 @@
 
 namespace VC.Tenants.Api.Endpoints.Tenants.Models.Request;
 
-public record UpdateTenantRequest(
-    Guid TenantId,
-    string Name,
-    string Slug,
-    TenantConfigurationDto Config,
-    TenantStatus Status,
-    ContactInfoDto Contact,
-    TenantWeekWorkScheduleDto WorkSchedule
-    )
+public record UpdateTenantRequest
+    (string Name,
+     string Slug,
+     TenantConfigurationDto Config,
+     TenantStatus Status,
+     ContactInfoDto Contact,
+     TenantWeekWorkScheduleDto WorkSchedule);
+
+internal static class UpdateTenantRequestMapper 
 {
-    public Guid TenantId { get; init; } = TenantId;
-
-    public string Name { get; init; } = Name;
-
-    public string Slug { get; init; } = Slug;
-
-    public TenantConfigurationDto Config { get; init; } = Config;
-
-    public TenantStatus Status { get; init; } = Status;
-
-    public ContactInfoDto Contact { get; init; } = Contact;
-
-    public TenantWeekWorkScheduleDto WorkSchedule { get; init; } = WorkSchedule;
-}
-
-public static class UpdateTenantRequestMappers 
-{
-    public static Application.Tenants.Models.UpdateTenantParams ToTenantUpdateDto(this UpdateTenantRequest dto)
-    {
-        return new Application.Tenants.Models.UpdateTenantParams(dto.TenantId,
+    public static Application.Tenants.Models.UpdateTenantParams ToApplicationUpdateDto(this UpdateTenantRequest dto)
+      => new Application.Tenants.Models.UpdateTenantParams
+        (
             dto.Name,
             dto.Slug,
-            dto.Config.ToTenantConfigurationDto(),
+            dto.Config.ToApplicationDto(),
             dto.Status,
-            dto.Contact.ToApplicationContactDto(),
-            dto.WorkSchedule.ToTenantWeekWorkSheduleDto());
-    }
+            dto.Contact.ToApplicationDto(),
+            dto.WorkSchedule.ToApplicationDto()
+        );
 }

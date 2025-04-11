@@ -13,4 +13,6 @@ public interface ITenantsService
     public Task<Result<Tenant>> GetAsync();
 
     public Task<Result> UpdateAsync(UpdateTenantParams @params);
+
+    public Task<Result> VerifyEmailAsync();
 }

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using FluentResults;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Response;
@@ -51,29 +52,52 @@ public class TenantsController : ControllerBase
     {
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var mappedCreateDto = createRequest.ToApplicationCreateDto();
+
+        var response = await _tenantService.CreateAsync(mappedCreateDto);
+
         var subject = "Регистрация на сайте";
-        var text = "Вы зарегестрировались на нашем сайте, но для возможности иметь все возможности при использовании ресурса вам необходимо подтвердить вашу почту, для этого вам нужно перейти по ссылке ниже:";
         var receiverName = createRequest.Name;
         var receiverMail = createRequest.Contact.Email;
         string header = "Спасибо за регистрацию на сайте!";
 
-        Message message = new Message(subject, text, receiverName, receiverMail, header, null);
+        string link = "http://localhost:5056/Tenants/verify-email";
+        var linkTag = $"<a href= \"{link}\">Verify Link</a>";
+        var text = $"Вы зарегестрировались на нашем сайте, но для возможности иметь все возможности при использовании ресурса вам необходимо подтвердить вашу почту, для этого вам нужно перейти по ссылке: {linkTag}";
+
+        Message message = new Message(subject, text, receiverName, receiverMail, header);
 
         await _mailSenderService.SendMailAsync(message);
 
         Console.WriteLine("Отправлено");
 
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
-        var mappedCreateDto = createRequest.ToCreateTenantParams();
-
-        var response = await _tenantService.CreateAsync(mappedCreateDto);
-
         if (response.IsSuccess)
             return Ok(response);
 
         return BadRequest(response);
+    }
+
+    [HttpGet("verify-email")]
+    public async Task<ActionResult<Result>> VerifyMailAsync()
+    {
+        Console.WriteLine("Verify");
+        var response = await _tenantService.VerifyEmailAsync();
+
+        if(response.IsSuccess) 
+            return Ok(response);
+
+        return BadRequest(response);
+    }
+
+    [HttpPost("sendMailAgain")]
+    public async Task<ActionResult<Result>> SendVerifyMailAgain()
+    {
+
+
+        return Ok();
     }
 
     [HttpPut]
@@ -84,7 +108,7 @@ public class TenantsController : ControllerBase
         if (!validationResult.IsValid)
             return BadRequest(validationResult);
 
-        var mappedUpdateDto = updateRequest.ToTenantUpdateDto();
+        var mappedUpdateDto = updateRequest.ToApplicationUpdateDto();
 
         var response = await _tenantService.UpdateAsync(mappedUpdateDto);
 

@@ -17,7 +17,7 @@ public static partial class TenantsEndpoints
         var logger = loggerFactory.CreateLogger(typeof(TenantsEndpoints));
         logger.LogInformation("Creating tenant {@Tenants}", request);
 
-        var result = await tenantsService.CreateAsync(request.ToCreateTenantParams());
+        var result = await tenantsService.CreateAsync(request.ToApplicationCreateDto());
 
         return result.ToMinimalApi();
     }

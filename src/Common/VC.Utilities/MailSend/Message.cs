@@ -2,14 +2,13 @@
 
 public class Message
 {
-    public Message(string subject, string text, string receiverName, string receiverMail, string header, string link)
+    public Message(string subject, string text, string receiverName, string receiverMail, string header)
     {
         Subject = subject;
         Text = text;
         ReceiverName = receiverName;
         ReceiverMail = receiverMail;
         Header = header;
-        Link = link;
     }
 
     /// <summary>
@@ -36,9 +35,4 @@ public class Message
     /// Заголовок письма
     /// </summary>
     public string Header { get; private set; }
-
-    /// <summary>
-    /// Ссылка на Endpoint
-    /// </summary>
-    public string? Link { get; private set; }
 }
