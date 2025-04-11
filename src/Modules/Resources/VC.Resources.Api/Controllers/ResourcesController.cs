@@ -34,15 +34,7 @@ public class ResourcesController(IResourceService _resourceService)
         return response.IsSuccess ? Ok(response) : BadRequest(response);
     }
 
-<<<<<<< HEAD
-    [Route("{id}")]
-    [HttpGet]
-=======
     [HttpGet("{id:Guid}")]
-<<<<<<< HEAD
->>>>>>> origin/feature/VC-8/ResourceModule
-=======
->>>>>>> origin/feature/VC-8/ResourceModule
     public async Task<ActionResult<ResourceResponse>> GetAsync(Guid id)
     {
         var response = await _resourceService.GetAsync(id);
