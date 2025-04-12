@@ -10,7 +10,7 @@ public static class UtilitiesConfigurator
     public static void ConfigureUtilities(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ITenantResolver, HttpContextTenantResolver>();
-        services.Configure<MailSender>(configuration.GetSection(nameof(MailSender)));
-        services.AddSingleton<IMailSenderService, MailService>();
+        services.Configure<MailSenderInfo>(configuration.GetSection(nameof(MailSenderInfo)));
+        services.AddSingleton<ISendMailService, MailService>();
     }
 }

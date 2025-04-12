@@ -16,7 +16,7 @@ public static class ModuleConfiguration
 
     public static void ConfigureTenantsModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services.ConfigureTenantsApiExtensions();
+        services.ConfigureTenantsApiExtensions(configuration);
         services.ConfigureTenantsApplication(configuration);
         services.ConfigureTenantsInfrastructure(configuration);
         services.Configure<TenantsModuleSettings>(configuration.GetSection(nameof(TenantsModuleSettings)));

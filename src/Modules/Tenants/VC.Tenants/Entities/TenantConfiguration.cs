@@ -22,6 +22,8 @@ public class TenantConfiguration
         TimeZoneId = timeZoneId;
     }
 
+    private TenantConfiguration() { }
+
     public string About { get; private set; }
 
     public string Currency { get; private set; }
@@ -36,7 +38,7 @@ public class TenantConfiguration
         if (about.Length > AboutMaxLength || about.Length < AboutMinLength)
             throw new ArgumentException($"About length must be greater than {AboutMinLength} or equals. Lower than {AboutMaxLength} or equals.");
 
-        if(currency.Length > AboutMaxLength || currency.Length < AboutMinLength)
+        if(currency.Length > CurrencyMaxLength || currency.Length < CurrencyMinLength)
             throw new ArgumentException($"Currency length must be greater than {CurrencyMinLength} or equals. Lower than {CurrencyMaxLength} or equals.");
 
         if(language.Length > LanguageMaxLength || language.Length < LanguageMinLength)

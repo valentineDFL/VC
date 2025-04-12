@@ -3,6 +3,7 @@ using VC.Tenants.Application.Tenants.Models;
 using VC.Tenants.Entities;
 using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
+using VC.Utilities.Resolvers;
 
 namespace VC.Tenants.Application.Tenants;
 
@@ -10,11 +11,13 @@ internal class TenantsService : ITenantsService
 {
     private readonly ITenantRepository _tenantRepository;
     private readonly IDbSaver _dbSaver;
+    private readonly ITenantResolver _tenantResolver;
 
-    public TenantsService(ITenantRepository tenantRepository, IDbSaver dbSaver)
+    public TenantsService(ITenantRepository tenantRepository, IDbSaver dbSaver, ITenantResolver tenantResolver)
     {
         _tenantRepository = tenantRepository;
         _dbSaver = dbSaver;
+        _tenantResolver = tenantResolver;
     }
 
     public async Task<Result> CreateAsync(CreateTenantParams @params)
@@ -53,14 +56,11 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        var existingTenant = await _tenantRepository.GetAsync();
+        var tenantId = _tenantResolver.Resolve();
 
-        if (existingTenant is null)
-            return Result.Fail("Tenant not found");
+        var tenant = @params.ToEntity(tenantId);
 
-        var tenant = @params.ToEntity(existingTenant.Id);
-
-        _tenantRepository.Update(existingTenant);
+        _tenantRepository.Update(tenant);
         await _dbSaver.SaveAsync();
 
         return Result.Ok();
@@ -86,7 +86,9 @@ internal class TenantsService : ITenantsService
                 oldContactInfo.ConfirmationTime
             );
 
-        var updatedTenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, tenant.ContactInfo, tenant.WorkWeekSchedule);
+        // tenant Repository AsNoTracking
+
+        tenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, tenant.ContactInfo, tenant.WorkWeekSchedule);
 
         _tenantRepository.Update(tenant);
 

@@ -9,6 +9,8 @@ public class TenantDayWorkSchedule
         EndWork = endWork;
     }
 
+    private TenantDayWorkSchedule() { }
+
     public DayOfWeek Day { get; private set; }
 
     public DateTime StartWork { get; private set; }

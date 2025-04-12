@@ -15,6 +15,6 @@ internal static class TenantDayWorkScheduleDtoMapper
 {
     public static List<TenantDayWorkSchedule> ToEntity(this IReadOnlyList<TenantDayWorkScheduleDto> tenantDayWorksDtos)
         => tenantDayWorksDtos
-           .Select(tdw => TenantDayWorkSchedule.Create(tdw.Day, tdw.StartWork, tdw.EndWork))
+           .Select(tdw => TenantDayWorkSchedule.Create(tdw.Day, tdw.StartWork.ToUniversalTime(), tdw.EndWork.ToUniversalTime()))
            .ToList();
 }

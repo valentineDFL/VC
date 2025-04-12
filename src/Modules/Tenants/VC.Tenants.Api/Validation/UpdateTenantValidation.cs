@@ -99,7 +99,8 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
                 wc.RuleFor(wc => wc.WeekDays)
                 .NotNull()
                 .Must(wk => wk.Count == 7)
-                .Must(wk => wk.DistinctBy(wd => wd.Day).Count() == wk.Count);
+                .Must(wk => wk.DistinctBy(wd => wd.Day).Count() == wk.Count)
+                .Must(wk => wk.All(x => x.StartWork != x.EndWork && x.StartWork < x.EndWork));
             });
     }
 }

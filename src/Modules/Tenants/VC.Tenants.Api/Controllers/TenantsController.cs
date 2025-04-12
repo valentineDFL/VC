@@ -1,9 +1,12 @@
 ﻿using FluentResults;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using VC.Tenants.Api.Endpoints;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
 using VC.Tenants.Api.Endpoints.Tenants.Models.Response;
 using VC.Tenants.Application.Tenants;
+using VC.Utilities;
 using VC.Utilities.MailSend;
 
 namespace VC.Tenants.Api.Controllers;
@@ -17,12 +20,15 @@ public class TenantsController : ControllerBase
     private readonly IValidator<CreateTenantRequest> _createTenantValidator;
     private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
 
-    private readonly IMailSenderService _mailSenderService;
+    private readonly ISendMailService _mailSenderService;
+
+    private readonly EndpointsUrls _endpointsUrls;
 
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
         IValidator<UpdateTenantRequest> updateTenantValidator,
-        IMailSenderService mailSenderService
+        ISendMailService mailSenderService,
+        IOptions<EndpointsUrls> options
         )
     {
         _tenantService = tenantService;
@@ -30,6 +36,7 @@ public class TenantsController : ControllerBase
         _updateTenantValidator = updateTenantValidator;
 
         _mailSenderService = mailSenderService;
+        _endpointsUrls = options.Value;
     }
 
     [HttpGet]
@@ -50,6 +57,8 @@ public class TenantsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
+        Console.WriteLine(createRequest is null);
+
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
         if (!validationResult.IsValid)
@@ -59,20 +68,9 @@ public class TenantsController : ControllerBase
 
         var response = await _tenantService.CreateAsync(mappedCreateDto);
 
-        var subject = "Регистрация на сайте";
-        var receiverName = createRequest.Name;
-        var receiverMail = createRequest.Contact.Email;
-        string header = "Спасибо за регистрацию на сайте!";
-
-        string link = "http://localhost:5056/Tenants/verify-email";
-        var linkTag = $"<a href= \"{link}\">Verify Link</a>";
-        var text = $"Вы зарегестрировались на нашем сайте, но для возможности иметь все возможности при использовании ресурса вам необходимо подтвердить вашу почту, для этого вам нужно перейти по ссылке: {linkTag}";
-
-        Message message = new Message(subject, text, receiverName, receiverMail, header);
+        Message message = TenantEmailVerifyForm.RegistrationTenantEmailVerifyForm(_endpointsUrls.EmailVerifyEndpointUrl, createRequest.Name, createRequest.Contact.Email);
 
         await _mailSenderService.SendMailAsync(message);
-
-        Console.WriteLine("Отправлено");
 
         if (response.IsSuccess)
             return Ok(response);

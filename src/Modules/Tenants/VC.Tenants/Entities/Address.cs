@@ -5,7 +5,7 @@ public class Address
     public const int CountryMinLength = 5;
     public const int CountryMaxLength = 32;
 
-    public const int CityMinLength = 5;
+    public const int CityMinLength = 4;
     public const int CityMaxLength = 32;
 
     public const int StreetMinLength = 5;
@@ -21,6 +21,8 @@ public class Address
         Street = street;
         House = house;
     }
+
+    private Address() { }
 
     public string Country { get; private set; }
 

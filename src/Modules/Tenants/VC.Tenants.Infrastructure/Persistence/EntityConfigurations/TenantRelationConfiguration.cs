@@ -18,11 +18,17 @@ internal class TenantRelationConfiguration : IEntityTypeConfiguration<Tenant>
 
         builder.OwnsOne(t => t.Config);
         
-        builder.OwnsOne(t => t.ContactInfo);
-
-        builder.OwnsOne(t => t.WorkWeekSchedule, ws =>
+        builder.OwnsOne(t => t.ContactInfo, ci =>
         {
-            ws.OwnsMany(x => x.DaysSchedule);
+            ci.OwnsOne(add => add.Address);
         });
+
+        //builder.OwnsOne(t => t.WorkWeekSchedule, ws =>
+        //{
+        //    ws.OwnsMany(x => x.DaysSchedule, x =>
+        //    {
+        //        x.WithOwner().HasForeignKey(x => x.);
+        //    });
+        //});
     }
 }

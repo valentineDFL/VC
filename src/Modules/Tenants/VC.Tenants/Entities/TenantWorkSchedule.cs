@@ -2,12 +2,16 @@
 
 public class TenantWorkSchedule
 {
+    // добавить модели коллекций Id, 
+
     private List<TenantDayWorkSchedule> _daysSchedule;
 
     private TenantWorkSchedule(List<TenantDayWorkSchedule> daysSchedule)
     {
         _daysSchedule = daysSchedule;
     }
+
+    private TenantWorkSchedule() { }
 
     public IReadOnlyList<TenantDayWorkSchedule> DaysSchedule => _daysSchedule;
 

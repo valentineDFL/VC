@@ -12,8 +12,8 @@ using VC.Tenants.Infrastructure.Persistence;
 namespace VC.Tenants.Infrastructure.Migrations
 {
     [DbContext(typeof(TenantsDbContext))]
-    [Migration("20250410040812_UpdateContactInfoOwn")]
-    partial class UpdateContactInfoOwn
+    [Migration("20250411042920_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,10 @@ namespace VC.Tenants.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TestProp")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tenants", "tenants");
@@ -54,9 +58,6 @@ namespace VC.Tenants.Infrastructure.Migrations
                         {
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
-
-                            b1.Property<string>("Address")
-                                .HasColumnType("text");
 
                             b1.Property<DateTime>("ConfirmationTime")
                                 .HasColumnType("timestamp with time zone");
@@ -76,6 +77,37 @@ namespace VC.Tenants.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("TenantId");
+
+                            b1.OwnsOne("VC.Tenants.Entities.Address", "Address", b2 =>
+                                {
+                                    b2.Property<Guid>("ContactInfoTenantId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("City")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Country")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<int>("House")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("Street")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.HasKey("ContactInfoTenantId");
+
+                                    b2.ToTable("Tenants", "tenants");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ContactInfoTenantId");
+                                });
+
+                            b1.Navigation("Address")
+                                .IsRequired();
                         });
 
                     b.OwnsOne("VC.Tenants.Entities.TenantConfiguration", "Config", b1 =>

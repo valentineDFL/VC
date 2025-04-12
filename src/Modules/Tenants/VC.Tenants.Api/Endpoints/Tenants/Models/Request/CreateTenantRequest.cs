@@ -17,7 +17,7 @@ internal static class CreateTenantRequestMapper
         => new CreateTenantParams
         (
             request.Name,
-            request.Slug, 
+            request.Slug,
             request.Config.ToApplicationDto(),
             request.Status,
             request.Contact.ToApplicationDto(),

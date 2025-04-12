@@ -2,7 +2,7 @@
 
 namespace VC.Utilities.MailSend;
 
-public interface IMailSenderService
+public interface ISendMailService
 {
     public Task<Result<string>> SendMailAsync(Message message);
 }

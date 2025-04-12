@@ -16,7 +16,7 @@ public static class InfrastructureConfiguration
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 
         services.AddDbContext<TenantsDbContext>(options => options
-            .UseNpgsql(connectionString));
+            .UseNpgsql(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", TenantsDbContext.SchemaName)));
 
         ConfigureRepositories(services);
     }

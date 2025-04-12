@@ -7,8 +7,10 @@ namespace VC.Tenants.Infrastructure.Persistence;
 
 public class TenantsDbContext : DbContext
 {
+    public const string SchemaName = "tenants";
+
     private readonly ITenantResolver _tenantResolver;
-    private readonly TenantsModuleSettings _tenantModuleOptions;
+    private readonly TenantsModuleSettings _tenantModuleSettings;
 
     public TenantsDbContext(
         DbContextOptions<TenantsDbContext> options, 
@@ -16,7 +18,7 @@ public class TenantsDbContext : DbContext
         IOptions<TenantsModuleSettings> tenantModuleSettings) : base(options)
     {
         _tenantResolver = tenantResolver;
-        _tenantModuleOptions = tenantModuleSettings.Value;
+        _tenantModuleSettings = tenantModuleSettings.Value;
         Database.EnsureCreated();
     }
 
@@ -24,7 +26,7 @@ public class TenantsDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("tenants");
+        modelBuilder.HasDefaultSchema(SchemaName);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantsDbContext).Assembly);
 
@@ -36,14 +38,14 @@ public class TenantsDbContext : DbContext
     {
         optionsBuilder.UseSeeding((context, flag) =>
         {
-            if (!_tenantModuleOptions.SeedingSettings.IsEnabled)
+            if (!_tenantModuleSettings.SeedingSettings.IsEnabled)
                 return;
 
             var isTenantExists = context.Set<Tenant>()
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (!isTenantExists)
+            if (isTenantExists)
                 return;
 
             Tenant tenant = CreateSeedingTenant();
@@ -87,43 +89,43 @@ public class TenantsDbContext : DbContext
                 (
                     DayOfWeek.Sunday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 ),
                 TenantDayWorkSchedule.Create
                 (
                     DayOfWeek.Monday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 ),
                 TenantDayWorkSchedule.Create
                 (
                     DayOfWeek.Tuesday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 ),
                 TenantDayWorkSchedule.Create
                 (
                     DayOfWeek.Wednesday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 ),
                 TenantDayWorkSchedule.Create
                 (
                     DayOfWeek.Thursday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 ),
                 TenantDayWorkSchedule.Create
                 (
                     DayOfWeek.Friday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 ),
                 TenantDayWorkSchedule.Create
                 (
                     DayOfWeek.Saturday,
                     DateTime.UtcNow,
-                    DateTime.UtcNow
+                    DateTime.UtcNow.AddHours(8)
                 )
             };
 

@@ -5,12 +5,12 @@ using MimeKit;
 
 namespace VC.Utilities.MailSend;
 
-public class MailService : IMailSenderService
+public class MailService : ISendMailService
 {
     private SmtpClient _smtpClient;
-    private MailSender _mailSender;
+    private MailSenderInfo _mailSender;
 
-    public MailService(IOptions<MailSender> options)
+    public MailService(IOptions<MailSenderInfo> options)
     {
         _mailSender = options.Value;
         _smtpClient = new SmtpClient();

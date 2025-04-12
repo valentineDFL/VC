@@ -24,6 +24,8 @@ public class ContactInfo
         ConfirmationTime = confirmationTime;
     }
 
+    private ContactInfo() { }
+
     public string? Email { get; private set; }
 
     public string? Phone { get; private set; }
