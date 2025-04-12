@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\src\Common\VC.Utilities\VC.Utilities.csproj" />
+    <ProjectReference Include="..\src\Modules\Tenants\VC.Tenants.Application\VC.Tenants.Application.csproj" />
+  </ItemGroup>
+
 </Project>

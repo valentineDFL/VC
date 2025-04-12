@@ -4,6 +4,7 @@ using VC.Services.Repositories;
 using VC.Services.UnitOfWork;
 
 namespace VC.Services.Application.Services.Commands.CreateService;
+
 public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand, Guid>
 {
     private readonly IServicesRepository _dbContext;

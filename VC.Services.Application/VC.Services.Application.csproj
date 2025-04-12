@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\Common\VC.Utilities\VC.Utilities.csproj" />
+    <ProjectReference Include="..\VC.Services.Infrastructure\VC.Services.Infrastructure.csproj" />
     <ProjectReference Include="..\VC.Services\VC.Services.csproj" />
   </ItemGroup>
 

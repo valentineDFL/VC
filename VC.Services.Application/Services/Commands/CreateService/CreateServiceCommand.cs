@@ -2,6 +2,7 @@
 using VC.Services.Entities;
 
 namespace VC.Services.Application.Services.Commands.CreateService;
+
 public class CreateServiceCommand : IRequest<Guid>
 {
     public Guid Id { get; set; }
