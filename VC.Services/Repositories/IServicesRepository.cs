@@ -2,8 +2,9 @@
 using static VC.Services.Repositories.IRepositoryBase;
 
 namespace VC.Services.Repositories;
-public interface IServiceRepository : IRepositoryBase<Service>
+public interface IServicesRepository : IRepositoryBase<Service>
 {
     public Task<ICollection<Service>> GetByTenantAsinc(Guid id);
     public Task<Service?> GetAsync();
+    public Task<ICollection<Service>> GetByFilter(string filter, decimal price);
 }

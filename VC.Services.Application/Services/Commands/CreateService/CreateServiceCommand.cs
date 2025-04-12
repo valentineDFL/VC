@@ -1,6 +1,8 @@
-﻿namespace VC.Services.Entities;
+﻿using MediatR;
+using VC.Services.Entities;
 
-public class Service
+namespace VC.Services.Application.Services.Commands.CreateService;
+public class CreateServiceCommand : IRequest<Guid>
 {
     public Guid Id { get; set; }
 
@@ -22,5 +24,5 @@ public class Service
 
     public Guid TenantId { get; set; }
 
-    public List<Guid> ResourceRequirement { get; set; }
+    public List<Guid>? ResourceRequirement { get; set; }
 }
