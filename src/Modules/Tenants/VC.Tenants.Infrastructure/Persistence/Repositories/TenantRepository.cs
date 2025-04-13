@@ -21,6 +21,7 @@ internal class TenantRepository : ITenantRepository
     public async Task<Tenant?> GetAsync()
     {
         return await _dbContext.Tenants
+            .AsNoTracking()
             .FirstOrDefaultAsync();
     }
 

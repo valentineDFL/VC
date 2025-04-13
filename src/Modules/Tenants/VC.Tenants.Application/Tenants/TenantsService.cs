@@ -1,5 +1,6 @@
 using FluentResults;
-using VC.Tenants.Application.Tenants.Models;
+using VC.Tenants.Application.Models.Create;
+using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Entities;
 using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
@@ -22,7 +23,7 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> CreateAsync(CreateTenantParams @params)
     {
-        var tenant = @params.ToEntity();
+        var tenant = @params.ToEntity(Guid.CreateVersion7());
 
         await _tenantRepository.AddAsync(tenant);
         await _dbSaver.SaveAsync();
@@ -56,12 +57,12 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        var tenantId = _tenantResolver.Resolve();
+        //var tenantId = _tenantResolver.Resolve();
 
-        var tenant = @params.ToEntity(tenantId);
+        //var tenant = _mapper.Map<Tenant>(@params);
 
-        _tenantRepository.Update(tenant);
-        await _dbSaver.SaveAsync();
+        //_tenantRepository.Update(tenant);
+        //await _dbSaver.SaveAsync();
 
         return Result.Ok();
     }
@@ -73,22 +74,16 @@ internal class TenantsService : ITenantsService
         if (tenant is null)
             return Result.Fail("Tenant Not Found");
 
-        if (tenant.ContactInfo.ConfirmationTimeExpired)
+        else if (tenant.ContactInfo.IsVerify)
+            return Result.Fail("Tenant has already been verified");
+
+        else if (tenant.ContactInfo.ConfirmationTimeExpired)
             return Result.Fail("Link has expired");
 
         var oldContactInfo = tenant.ContactInfo;
-        var updatedTenantContactInfo = ContactInfo.Create
-            (
-                oldContactInfo.Email,
-                oldContactInfo.Phone, 
-                oldContactInfo.Address, 
-                true, 
-                oldContactInfo.ConfirmationTime
-            );
+        var updatedTenantContactInfo = ContactInfo.Create(oldContactInfo.Email, oldContactInfo.Phone, oldContactInfo.Address, true, oldContactInfo.ConfirmationTime);
 
-        // tenant Repository AsNoTracking
-
-        tenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, tenant.ContactInfo, tenant.WorkWeekSchedule);
+        tenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, updatedTenantContactInfo, tenant.WorkWeekSchedule);
 
         _tenantRepository.Update(tenant);
 

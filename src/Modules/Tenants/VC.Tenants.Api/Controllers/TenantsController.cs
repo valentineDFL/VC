@@ -1,10 +1,12 @@
 ﻿using FluentResults;
 using FluentValidation;
+using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using VC.Tenants.Api.Endpoints;
-using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
-using VC.Tenants.Api.Endpoints.Tenants.Models.Response;
+using VC.Tenants.Api.Models.Request.Tenant;
+using VC.Tenants.Api.Models.Response;
+using VC.Tenants.Application.Models.Create;
+using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Application.Tenants;
 using VC.Utilities;
 using VC.Utilities.MailSend;
@@ -24,11 +26,14 @@ public class TenantsController : ControllerBase
 
     private readonly EndpointsUrls _endpointsUrls;
 
+    private readonly IMapper _mapper;
+
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
         IValidator<UpdateTenantRequest> updateTenantValidator,
         ISendMailService mailSenderService,
-        IOptions<EndpointsUrls> options
+        IOptions<EndpointsUrls> options,
+        IMapper mapper
         )
     {
         _tenantService = tenantService;
@@ -37,6 +42,8 @@ public class TenantsController : ControllerBase
 
         _mailSenderService = mailSenderService;
         _endpointsUrls = options.Value;
+
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -47,9 +54,7 @@ public class TenantsController : ControllerBase
         if (!response.IsSuccess)
             return BadRequest(response);
 
-        var mappedResponseDto = response
-            .Value
-            .ToResponseDto();
+        var mappedResponseDto = _mapper.Map<ResponseTenantDto>(response.Value);
 
         return Ok(mappedResponseDto);
     }
@@ -64,7 +69,9 @@ public class TenantsController : ControllerBase
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var mappedCreateDto = createRequest.ToApplicationCreateDto();
+        var mappedCreateDto = _mapper.Map<CreateTenantRequest, CreateTenantParams>(createRequest);
+
+        Console.WriteLine(mappedCreateDto.Contact.Address.Country);
 
         var response = await _tenantService.CreateAsync(mappedCreateDto);
 
@@ -106,7 +113,7 @@ public class TenantsController : ControllerBase
         if (!validationResult.IsValid)
             return BadRequest(validationResult);
 
-        var mappedUpdateDto = updateRequest.ToApplicationUpdateDto();
+        var mappedUpdateDto = _mapper.Map<UpdateTenantRequest, UpdateTenantParams>(updateRequest);
 
         var response = await _tenantService.UpdateAsync(mappedUpdateDto);
 

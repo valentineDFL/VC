@@ -83,53 +83,60 @@ public class TenantsDbContext : DbContext
             DateTime.UtcNow
         );
 
-        var workScheduleDays = new List<TenantDayWorkSchedule>
+        var workScheduleDays = new List<TenantDaySchedule>
             {
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Sunday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 ),
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Monday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 ),
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Tuesday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 ),
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Wednesday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 ),
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Thursday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 ),
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Friday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 ),
-                TenantDayWorkSchedule.Create
+                TenantDaySchedule.Create
                 (
+                    Guid.CreateVersion7(),
                     DayOfWeek.Saturday,
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(8)
                 )
             };
 
-        var workSchedule = TenantWorkSchedule.Create
+        var workSchedule = TenantWeekSchedule.Create
         (
             workScheduleDays
         );

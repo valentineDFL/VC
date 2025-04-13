@@ -23,12 +23,12 @@ internal class TenantRelationConfiguration : IEntityTypeConfiguration<Tenant>
             ci.OwnsOne(add => add.Address);
         });
 
-        //builder.OwnsOne(t => t.WorkWeekSchedule, ws =>
-        //{
-        //    ws.OwnsMany(x => x.DaysSchedule, x =>
-        //    {
-        //        x.WithOwner().HasForeignKey(x => x.);
-        //    });
-        //});
+        builder.OwnsOne(t => t.WorkWeekSchedule, ws =>
+        {
+            ws.OwnsMany(x => x.DaysSchedule, x =>
+            {
+                x.WithOwner().HasForeignKey(x => x.Id);
+            });
+        });
     }
 }

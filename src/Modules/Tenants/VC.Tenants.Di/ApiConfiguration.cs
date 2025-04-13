@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
+using VC.Tenants.Api.Models.Request.Tenant;
 using VC.Tenants.Api.Validation;
 using VC.Utilities;
+using Mapster;
+
 
 namespace VC.Tenants.Di;
 
@@ -14,5 +16,7 @@ public static class ApiConfiguration
         services.AddScoped<IValidator<CreateTenantRequest>, CreateTenantValidation>();
         services.AddScoped<IValidator<UpdateTenantRequest>, UpdateTenantValidation>();
         services.Configure<EndpointsUrls>(configuration.GetSection(nameof(EndpointsUrls)));
+
+        services.AddMapster();
     }
 }

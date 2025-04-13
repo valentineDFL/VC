@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
+using VC.Tenants.Api.Models.Request.Tenant;
 using VC.Tenants.Entities;
 
 namespace VC.Tenants.Api.Validation;
@@ -96,7 +96,7 @@ internal class CreateTenantValidation : AbstractValidator<CreateTenantRequest>
         RuleFor(ctr => ctr.WorkSchedule)
             .ChildRules(wc =>
             {
-                wc.RuleFor(wc => wc.WeekDays)
+                wc.RuleFor(wc => wc.WeekSchedule)
                 .NotNull()
                 .Must(wk => wk.Count == 7)
                 .Must(wk => wk.DistinctBy(wd => wd.Day).Count() == wk.Count)

@@ -11,7 +11,7 @@ public class Tenant
     public const int SlugMinLength = 10;
     public const int SlugMaxLength = 128;
 
-    private Tenant(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, TenantWorkSchedule workWeekSchedule)
+    private Tenant(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, TenantWeekSchedule workWeekSchedule)
     {
         Id = id;
         Name = name;
@@ -39,9 +39,9 @@ public class Tenant
     
     public ContactInfo ContactInfo { get; private set; }
 
-    public TenantWorkSchedule WorkWeekSchedule { get; private set; }
+    public TenantWeekSchedule WorkWeekSchedule { get; private set; }
 
-    public static Tenant Create(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, TenantWorkSchedule workWeekSchedule)
+    public static Tenant Create(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, TenantWeekSchedule workWeekSchedule)
     {
         if(id == Guid.Empty)
             throw new ArgumentException("Id cannot be empty");

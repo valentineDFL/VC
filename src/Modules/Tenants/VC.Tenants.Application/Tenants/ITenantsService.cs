@@ -1,5 +1,6 @@
 using FluentResults;
-using VC.Tenants.Application.Tenants.Models;
+using VC.Tenants.Application.Models.Create;
+using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Entities;
 
 namespace VC.Tenants.Application.Tenants;
