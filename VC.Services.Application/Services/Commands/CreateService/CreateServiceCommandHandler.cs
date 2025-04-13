@@ -7,12 +7,12 @@ namespace VC.Services.Application.Services.Commands.CreateService;
 
 public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand, Guid>
 {
-    private readonly IServicesRepository _dbContext;
+    private readonly IServicesRepository _dbRepository;
     private readonly IDbSaver _dbSaver;
 
-    public CreateServiceCommandHandler(IServicesRepository dbContext, IDbSaver dbSaver)
+    public CreateServiceCommandHandler(IServicesRepository dbRepository, IDbSaver dbSaver)
     {
-        _dbContext = dbContext;
+        _dbRepository = dbRepository;
         _dbSaver = dbSaver;
     }
 
@@ -27,12 +27,11 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             Duration = request.Duration,
             IsActive = request.IsActive,
             CreatedAt = DateTime.UtcNow,
-            TenantId = request.TenantId,
             UpdatedAt = null,
-            ResourceRequirement = new()
+            ResourceRequirement = request.ResourceRequirement // не знаю кстати если он добавит там ресурсы какие то то хз тут вроде должен быть запрос или тип того какие он добавил
         };
 
-        await _dbContext.AddAsync(service, cancellationToken);
+        await _dbRepository.AddAsync(service, cancellationToken);
         await _dbSaver.SaveAsync();
 
         return service.Id;

@@ -3,6 +3,6 @@
 public interface IRepositoryBase<TEntity> where TEntity : class
 {
     public Task AddAsync(TEntity entity, CancellationToken cancellationToken);
-    public void Remove(TEntity entity);
-    public void Update(TEntity entity, CancellationToken cancellationToken);
+    public Task Remove(TEntity entity, CancellationToken cancellationToken);
+    public Task Update(TEntity entity, CancellationToken cancellationToken);
 }

@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using VC.Services.Entities;
 
-namespace VC.Services.Application.Services.Commands.CreateService;
+namespace VC.Services.Application.Services.Commands.UpdateService;
 
-public class CreateServiceCommand : IRequest<Guid>
+public class UpdateServiceCommand : IRequest<Result>
 {
     public Guid Id { get; set; }
 
@@ -19,9 +20,9 @@ public class CreateServiceCommand : IRequest<Guid>
 
     public bool IsActive { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-
     public DateTime? UpdatedAt { get; set; }
 
-    public List<Guid> ResourceRequirement { get; set; } = new();
+    public Guid TenantId { get; set; }
+
+    public List<Guid>? ResourceRequirement { get; set; }
 }
