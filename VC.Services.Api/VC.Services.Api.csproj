@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\Common\VC.Utilities\VC.Utilities.csproj" />
-    <ProjectReference Include="..\src\Modules\Tenants\VC.Tenants.Application\VC.Tenants.Application.csproj" />
+    <ProjectReference Include="..\VC.Services.Application\VC.Services.Application.csproj" />
   </ItemGroup>
 
 </Project>
