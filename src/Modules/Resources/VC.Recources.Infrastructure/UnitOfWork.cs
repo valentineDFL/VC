@@ -1,16 +1,11 @@
-﻿using VC.Recources.Domain.UnitOfWork;
+using VC.Recources.Domain.UnitOfWork;
 
 namespace VC.Recources.Infrastructure;
 
-internal class DbSaver : IDbSaver
+public class UnitOfWork : IUnitOfWork
 {
     private readonly ResourceDbContext _dbContext;
-
-    public DbSaver(ResourceDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
+    
     public async Task SaveAsync()
     {
         await _dbContext.SaveChangesAsync();
