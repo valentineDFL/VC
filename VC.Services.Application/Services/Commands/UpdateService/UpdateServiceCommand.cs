@@ -22,7 +22,5 @@ public class UpdateServiceCommand : IRequest<Result>
 
     public DateTime? UpdatedAt { get; set; }
 
-    public Guid TenantId { get; set; }
-
     public List<Guid>? ResourceRequirement { get; set; }
 }
