@@ -18,21 +18,21 @@ namespace VC.Services.Application.Services.Commands.UpdateService
 
         public async Task<Result> Handle(UpdateServiceCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _dbRepository.GetByIdAsync(request.Id, cancellationToken);
+            var service = await _dbRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            if (entity == null)
+            if (service == null)
                 return Result.Fail("Not found");
 
-            entity.Title = request.Title;
-            entity.Description = request.Description;
-            entity.Price = request.Price;
-            entity.Duration = request.Duration;
-            entity.Category = request.Category;
-            entity.UpdatedAt = DateTime.UtcNow;
-            entity.IsActive = request.IsActive;
-            entity.ResourceRequirement = request.ResourceRequirement;
+            service.Title = request.Title;
+            service.Description = request.Description;
+            service.Price = request.Price;
+            service.Duration = request.Duration;
+            service.Category = request.Category;
+            service.UpdatedAt = DateTime.UtcNow;
+            service.IsActive = request.IsActive;
+            service.ResourceRequirement = request.ResourceRequirement;
 
-            await _dbRepository.Update(entity, cancellationToken);
+            await _dbRepository.Update(service, cancellationToken);
             await _dbSaver.SaveAsync();
 
             return Result.Ok();

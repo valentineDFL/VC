@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using VC.Services.Entities;
 
 namespace VC.Services.Application.Services.Commands.CreateService;
 
-public class CreateServiceCommand : IRequest<Guid>
+public class CreateServiceCommand : IRequest<Result<Guid>>
 {
     public Guid Id { get; set; }
 

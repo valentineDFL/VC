@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using VC.Services.Entities;
 using VC.Services.Repositories;
 using VC.Services.UnitOfWork;
 
 namespace VC.Services.Application.Services.Commands.CreateService;
 
-public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand, Guid>
+public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand, Result<Guid>>
 {
     private readonly IServicesRepository _dbRepository;
     private readonly IDbSaver _dbSaver;
@@ -16,7 +17,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         _dbSaver = dbSaver;
     }
 
-    public async Task<Guid> Handle(CreateServiceCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateServiceCommand request, CancellationToken cancellationToken)
     {
         var service = new Service
         {
@@ -34,6 +35,6 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         await _dbRepository.AddAsync(service, cancellationToken);
         await _dbSaver.SaveAsync();
 
-        return service.Id;
+        return Result.Ok(service.Id);
     }
 }

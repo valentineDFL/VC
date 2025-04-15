@@ -1,10 +1,11 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using VC.Services.Repositories;
 using VC.Services.UnitOfWork;
 
 namespace VC.Services.Application.Services.Commands.RemoveService;
 
-public class RemoveServiceCommandHandler : IRequestHandler<RemoveServiceCommand>
+public class RemoveServiceCommandHandler : IRequestHandler<RemoveServiceCommand, Result>
 {
     public readonly IServicesRepository _dbRepository;
     public readonly IDbSaver _dbSaver;
@@ -15,11 +16,16 @@ public class RemoveServiceCommandHandler : IRequestHandler<RemoveServiceCommand>
         _dbSaver = dbSaver;
     }
 
-    public async Task Handle(RemoveServiceCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RemoveServiceCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _dbRepository.GetByIdAsync(request.Id, cancellationToken);
+        var service = await _dbRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        await _dbRepository.Remove(entity, cancellationToken);
+        if (service == null)
+            return Result.Fail("Not found service");
+
+        await _dbRepository.Remove(service, cancellationToken);
         await _dbSaver.SaveAsync();
+
+        return Result.Ok();
     }
 }
