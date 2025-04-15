@@ -28,7 +28,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             Duration = request.Duration,
             IsActive = request.IsActive,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = null,
+            TenantId = request.TenantId,
             ResourceRequirement = request.ResourceRequirement // не знаю кстати если он добавит там ресурсы какие то то хз тут вроде должен быть запрос или тип того какие он добавил
         };
 

@@ -1,10 +1,12 @@
 ﻿using FluentResults;
 using MediatR;
-using VC.Services.Entities;
+using VC.Services.Application.Mapping;
+using VC.Services.Application.Models;
 using VC.Services.Repositories;
 
 namespace VC.Services.Application.Services.Queries.GetService;
-public class GetServiceQueryHandler : IRequestHandler<GetServiceQuery, Result<Service>>
+
+public class GetServiceQueryHandler : IRequestHandler<GetServiceQuery, Result<ServiceDto>>
 {
     private readonly IServicesRepository _dbRepository;
 
@@ -13,13 +15,15 @@ public class GetServiceQueryHandler : IRequestHandler<GetServiceQuery, Result<Se
         _dbRepository = dbRepository;
     }
 
-    public async Task<Result<Service>> Handle(GetServiceQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ServiceDto>> Handle(GetServiceQuery request, CancellationToken cancellationToken)
     {
         var service = await _dbRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (service == null)
-            return Result.Fail<Service>("NotFound");
+            return Result.Fail<ServiceDto>("NotFound");
 
-        return Result.Ok(service);
+        var serviceDto = MapperToDto.ConvertToDto(service);
+
+        return Result.Ok(serviceDto);
     }
 }

@@ -22,7 +22,7 @@ public class CreateServiceCommand : IRequest<Result<Guid>>
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public Guid TenantId { get; set; }
 
     public List<Guid> ResourceRequirement { get; set; } = new();
 }
