@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Common\VC.Utilities\VC.Utilities.csproj" />
+    <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
     <ProjectReference Include="..\VC.Services.Application\VC.Services.Application.csproj" />
   </ItemGroup>
 

@@ -56,17 +56,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Bookings.Integration", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Bookings.Infrastructure", "src\Modules\Bookings\VC.Bookings.Infrastructure\VC.Bookings.Infrastructure.csproj", "{6796F60E-1C67-4FBB-AEDD-679462A0AC0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services", "VC.Services\VC.Services.csproj", "{4AF44D35-54AF-4DDB-868B-CB32DA044423}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services", "src\Modules\Services\VC.Services\VC.Services.csproj", "{4AF44D35-54AF-4DDB-868B-CB32DA044423}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Api", "VC.Services.Api\VC.Services.Api.csproj", "{59256530-AC7F-443F-8B47-FD2DD0A2050E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Api", "src\Modules\Services\VC.Services.Api\VC.Services.Api.csproj", "{59256530-AC7F-443F-8B47-FD2DD0A2050E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Application", "VC.Services.Application\VC.Services.Application.csproj", "{37700D3B-4D68-4733-9012-88C875B379EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Application", "src\Modules\Services\VC.Services.Application\VC.Services.Application.csproj", "{37700D3B-4D68-4733-9012-88C875B379EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Di", "VC.Services.Di\VC.Services.Di.csproj", "{77F36AF7-D395-4345-B7A7-108354A68319}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Di", "src\Modules\Services\VC.Services.Di\VC.Services.Di.csproj", "{77F36AF7-D395-4345-B7A7-108354A68319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Infrastructure", "VC.Services.Infrastructure\VC.Services.Infrastructure.csproj", "{B26B112E-6047-4284-8D60-1085ED9BBDD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Infrastructure", "src\Modules\Services\VC.Services.Infrastructure\VC.Services.Infrastructure.csproj", "{B26B112E-6047-4284-8D60-1085ED9BBDD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Integration", "VC.Services.Integration\VC.Services.Integration.csproj", "{1CD19043-14B4-4134-A8BB-379CEB776B50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VC.Services.Integration", "src\Modules\Services\VC.Services.Integration\VC.Services.Integration.csproj", "{1CD19043-14B4-4134-A8BB-379CEB776B50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
