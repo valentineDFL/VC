@@ -3,6 +3,7 @@ using MediatR;
 using VC.Services.Entities;
 using VC.Services.Repositories;
 using VC.Services.UnitOfWork;
+using VC.Utilities.Resolvers;
 
 namespace VC.Services.Application.Services.Commands.CreateService;
 
@@ -10,11 +11,12 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
 {
     private readonly IServicesRepository _dbRepository;
     private readonly IDbSaver _dbSaver;
-
-    public CreateServiceCommandHandler(IServicesRepository dbRepository, IDbSaver dbSaver)
+    private readonly ITenantResolver _tenantResolver;
+    public CreateServiceCommandHandler(IServicesRepository dbRepository, IDbSaver dbSaver, ITenantResolver resolver)
     {
         _dbRepository = dbRepository;
         _dbSaver = dbSaver;
+        _tenantResolver = resolver;
     }
 
     public async Task<Result<Guid>> Handle(CreateServiceCommand request, CancellationToken cancellationToken)
@@ -28,7 +30,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             Duration = request.Duration,
             IsActive = request.IsActive,
             CreatedAt = DateTime.UtcNow,
-            TenantId = request.TenantId,
+            TenantId = _tenantResolver.Resolve(),
             ResourceRequirement = request.ResourceRequirement // не знаю кстати если он добавит там ресурсы какие то то хз тут вроде должен быть запрос или тип того какие он добавил
         };
 

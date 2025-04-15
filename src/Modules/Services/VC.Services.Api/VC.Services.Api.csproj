@@ -11,8 +11,4 @@
     <ProjectReference Include="..\VC.Services.Application\VC.Services.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
