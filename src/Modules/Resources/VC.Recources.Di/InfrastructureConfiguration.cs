@@ -24,6 +24,6 @@ public static class InfrastructureConfiguration
     private static void ConfigureInfrastructure(IServiceCollection services)
     {
         services.AddScoped<IResourceRepository, ResourceRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IDbSaver, DbSaver>();
     }
 }

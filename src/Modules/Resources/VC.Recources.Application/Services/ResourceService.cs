@@ -10,7 +10,7 @@ namespace VC.Recources.Application.Services;
 public class ResourceService(
     IResourceRepository _resourceRepository,
     ITenantResolver _tenantResolver,
-    IUnitOfWork _dbSaver,
+    IDbSaver _dbSaver,
     INameUniquenessChecker _nameUniquenessChecker)
     : IResourceService
 {
