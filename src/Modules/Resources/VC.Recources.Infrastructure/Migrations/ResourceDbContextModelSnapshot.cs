@@ -10,7 +10,7 @@ using VC.Recources.Infrastructure;
 
 namespace VC.Recources.Infrastructure.Migrations
 {
-    [DbContext(typeof(ResourceDbContext))]
+    [DbContext(typeof(DbContext.DbContext))]
     partial class ResourceDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

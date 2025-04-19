@@ -3,15 +3,15 @@ using VC.Recources.Domain.Entities;
 
 namespace VC.Recources.Application.Endpoints.Models.Requests;
 
-public record CreateResourceDto(
+public record CreateDto(
     string Name,
     string Description,
     List<SkillDto> Skills
 );
 
-public static class CreateResourceMappers
+public static class CreateMappers
 {
-    public static Resource ToDomain(this CreateResourceDto dto)
+    public static Resource ToDomain(this CreateDto dto)
         => new Resource
         {
             Name = dto.Name,

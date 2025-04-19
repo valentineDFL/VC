@@ -3,7 +3,7 @@ using VC.Recources.Application.Endpoints.Models.Requests;
 
 namespace VC.Recources.Application.Validators;
 
-public class CreateResourceDtoValidator : AbstractValidator<CreateResourceDto>
+public class CreateResourceDtoValidator : AbstractValidator<CreateDto>
 {
     public CreateResourceDtoValidator()
     {

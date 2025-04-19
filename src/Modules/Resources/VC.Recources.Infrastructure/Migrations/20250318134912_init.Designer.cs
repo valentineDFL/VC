@@ -11,7 +11,7 @@ using VC.Recources.Infrastructure;
 
 namespace VC.Recources.Infrastructure.Migrations
 {
-    [DbContext(typeof(ResourceDbContext))]
+    [DbContext(typeof(DbContext.DbContext))]
     [Migration("20250318134912_init")]
     partial class init
     {

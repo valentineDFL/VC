@@ -4,7 +4,7 @@ using VC.Recources.Domain;
 
 namespace VC.Recources.Application.Validators;
 
-public sealed class UpdateResourceDtoValidator : AbstractValidator<UpdateResourceDto>
+public sealed class UpdateResourceDtoValidator : AbstractValidator<UpdateDto>
 {
     public UpdateResourceDtoValidator()
     {

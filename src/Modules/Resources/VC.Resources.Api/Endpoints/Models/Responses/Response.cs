@@ -1,9 +1,9 @@
 ﻿using VC.Recources.Domain.Entities;
 using VC.Resources.Api.Endpoints.Models.Dto;
 
-namespace VC.Resources.Api.Endpoints.Models.Response;
+namespace VC.Resources.Api.Endpoints.Models.Responses;
 
-public class ResourceResponse(
+public class Response(
     string name,
     string description,
     List<SkillDto> skills
@@ -16,8 +16,8 @@ public class ResourceResponse(
     public List<SkillDto> Skills { get; set; } = skills;
 };
 
-internal static class ResourceResponseMapper
+internal static class ResponseMapper
 {
-    public static ResourceResponse ToResponseDto(this Resource dto)
-        => new ResourceResponse(dto.Name, dto.Description, dto.Skills.ToApiSkills());
+    public static Response ToResponseDto(this Resource dto)
+        => new Response(dto.Name, dto.Description, dto.Skills.ToApiSkills());
 }

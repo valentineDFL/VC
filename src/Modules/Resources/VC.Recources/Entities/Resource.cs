@@ -18,11 +18,10 @@ public class Resource
 
     public async Task UpdateDetails(
         string name,
-        INameUniquenessChecker nameUniquenessChecker,
         string description,
         List<Skill> skills)
     {
-        await UpdateName(name, nameUniquenessChecker);
+        UpdateName(name);
         UpdateDescription(description);
         UpdateSkills(skills);
     }
@@ -36,11 +35,8 @@ public class Resource
         }
     }
 
-    private async Task UpdateName(string newName, INameUniquenessChecker nameUniquenessChecker)
+    private void UpdateName(string newName)
     {
-        if (!await nameUniquenessChecker.IsNameUniqueAsync(newName, Id))
-            throw new InvalidOperationException($"Name {newName} already exists");
-
         if (string.IsNullOrWhiteSpace(newName))
             throw new InvalidOperationException("Name cannot be empty");
 

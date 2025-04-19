@@ -11,14 +11,7 @@ public record Experience
     {
         if (years < 0 || months < 0)
             throw new InvalidOperationException("Invalid experience");
-
-        if (months > 11)
-        {
-            var divider = months / 12;
-            months -= divider * 12;
-            years += divider;
-        }
-
+        
         Years = years;
         Months = months;
     }

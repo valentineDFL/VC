@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using VC.Recources.Application.Endpoints.Models.Requests;
+using VC.Recources.Application.Interfaces;
 using VC.Recources.Domain;
 using VC.Recources.Domain.Entities;
 using VC.Recources.Domain.UnitOfWork;
@@ -7,36 +8,46 @@ using VC.Utilities.Resolvers;
 
 namespace VC.Recources.Application.Services;
 
-public class ResourceService(
-    IResourceRepository _resourceRepository,
+public class Service(
     ITenantResolver _tenantResolver,
-    IDbSaver _dbSaver,
-    INameUniquenessChecker _nameUniquenessChecker)
-    : IResourceService
+    IResourcesUnitOfWork _unitOfWork,
+    IRepository _repository
+    )
+    : IService
 {
-    public async Task<Result> CreateAsync(CreateResourceDto dto)
+    public async Task<Result> AddAsync(CreateDto dto)
     {
+        await _unitOfWork.BeginTransactionAsync();
+
         var resource = dto.ToDomain();
 
         resource.Id = Guid.CreateVersion7();
         resource.TenantId = _tenantResolver.Resolve();
 
-        await _resourceRepository.AddAsync(resource);
-        await _dbSaver.SaveAsync();
+        await _repository.AddAsync(resource);
+        await _unitOfWork.CommitTransactionAsync();
 
         return Result.Ok();
     }
 
     public async Task<Result<Resource>> GetAsync(Guid id)
     {
-        var resource = await _resourceRepository.GetAsync(id);
+        await _unitOfWork.BeginTransactionAsync();
 
-        return resource is null ? Result.Fail("Resource not found") : Result.Ok(resource);
+        var resource = await _repository.GetAsync(id);
+        if (resource is null)
+            return Result.Fail("Resource not found");
+
+        await _unitOfWork.CommitTransactionAsync();
+
+        return Result.Ok(resource);
     }
 
-    public async Task<Result> UpdateAsync(UpdateResourceDto dto)
+    public async Task<Result> UpdateAsync(UpdateDto dto)
     {
-        var resource = await _resourceRepository.GetAsync(dto.Id);
+        await _unitOfWork.BeginTransactionAsync();
+
+        var resource = await _unitOfWork.Resources.GetAsync(dto.Id);
 
         if (resource is null)
             return Result.Fail("Resource not found");
@@ -49,13 +60,12 @@ public class ResourceService(
 
         await resource.UpdateDetails(
             dto.Name,
-            _nameUniquenessChecker,
             dto.Description,
             skills
         );
 
-        _resourceRepository.Update(resource);
-        await _dbSaver.SaveAsync();
+        _repository.Update(resource);
+        await _unitOfWork.CommitTransactionAsync();
 
         return Result.Ok();
     }

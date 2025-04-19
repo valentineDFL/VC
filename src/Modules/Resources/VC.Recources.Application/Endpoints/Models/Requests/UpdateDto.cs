@@ -3,16 +3,16 @@ using VC.Recources.Domain.Entities;
 
 namespace VC.Recources.Application.Endpoints.Models.Requests;
 
-public record UpdateResourceDto(
+public record UpdateDto(
     Guid Id,
     string Name,
     string Description,
     List<SkillDto> Skills
     );
 
-public static class UpdateResourceMappers
+public static class UpdateMappers
 {
-    public static Resource ToResourceDomain(this UpdateResourceDto dto)
+    public static Resource ToResourceDomain(this UpdateDto dto)
        => new Resource
        {
            Name = dto.Name,
