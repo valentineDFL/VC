@@ -33,8 +33,7 @@ public class TenantsController : ControllerBase
         IValidator<UpdateTenantRequest> updateTenantValidator,
         ISendMailService mailSenderService,
         IOptions<EndpointsUrls> options,
-        IMapper mapper
-        )
+        IMapper mapper)
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
@@ -59,23 +58,26 @@ public class TenantsController : ControllerBase
         return Ok(mappedResponseDto);
     }
 
+    /// <summary>
+    /// Эндпоинт принимает дату только в формате UTC
+    /// </summary>
+    /// <param name="createRequest"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
-        Console.WriteLine(createRequest is null);
-
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var mappedCreateDto = _mapper.Map<CreateTenantRequest, CreateTenantParams>(createRequest);
+        var mappedCreateDto = _mapper.Map<CreateTenantParams>(createRequest);
 
-        Console.WriteLine(mappedCreateDto.Contact.Address.Country);
+        Console.WriteLine(mappedCreateDto.Config.About);
 
         var response = await _tenantService.CreateAsync(mappedCreateDto);
 
-        Message message = TenantEmailVerifyForm.RegistrationTenantEmailVerifyForm(_endpointsUrls.EmailVerifyEndpointUrl, createRequest.Name, createRequest.Contact.Email);
+        Message message = TenantEmailVerifyForm.RegistrationTenantEmailVerifyForm(_endpointsUrls.EmailVerifyEndpointUrl, createRequest.Name, createRequest.ContactInfo.Email);
 
         await _mailSenderService.SendMailAsync(message);
 
@@ -88,7 +90,6 @@ public class TenantsController : ControllerBase
     [HttpGet("verify-email")]
     public async Task<ActionResult<Result>> VerifyMailAsync()
     {
-        Console.WriteLine("Verify");
         var response = await _tenantService.VerifyEmailAsync();
 
         if(response.IsSuccess) 
@@ -97,7 +98,7 @@ public class TenantsController : ControllerBase
         return BadRequest(response);
     }
 
-    [HttpPost("sendMailAgain")]
+    [HttpPost("send-mail-again")]
     public async Task<ActionResult<Result>> SendVerifyMailAgain()
     {
 
@@ -105,6 +106,11 @@ public class TenantsController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Эндпоинт принимает дату только в формате UTC
+    /// </summary>
+    /// <param name="updateRequest"></param>
+    /// <returns></returns>
     [HttpPut]
     public async Task<ActionResult> UpdateAsync(UpdateTenantRequest updateRequest)
     {

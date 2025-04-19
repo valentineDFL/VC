@@ -2,16 +2,7 @@
 
 namespace VC.Tenants.Application.Models.Transfer;
 
-public class AddressDto(string country, string city, string street, int house)
-{
-    public string Country { get; } = country;
-
-    public string City { get; } = city;
-
-    public string Street { get; } = street;
-
-    public int House { get; } = house;
-}
+public record AddressDto(string Country, string City, string Street, int House);
 
 internal static class AddressDtoMapper
 {

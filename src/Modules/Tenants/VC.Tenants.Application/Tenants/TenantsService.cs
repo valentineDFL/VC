@@ -23,7 +23,7 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> CreateAsync(CreateTenantParams @params)
     {
-        var tenant = @params.ToEntity(Guid.CreateVersion7());
+        var tenant = @params.ToEntity(Guid.CreateVersion7(), DateTime.UtcNow.AddMinutes(ContactInfo.LinkMinuteValidTime));
 
         await _tenantRepository.AddAsync(tenant);
         await _dbSaver.SaveAsync();
@@ -57,12 +57,15 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        //var tenantId = _tenantResolver.Resolve();
+        var tenantId = _tenantResolver.Resolve();
 
-        //var tenant = _mapper.Map<Tenant>(@params);
+        if (tenantId == Guid.Empty)
+            return Result.Fail("Tenant Not Found");
 
-        //_tenantRepository.Update(tenant);
-        //await _dbSaver.SaveAsync();
+        var tenant = @params.ToEntity(tenantId);
+
+        _tenantRepository.Update(tenant);
+        await _dbSaver.SaveAsync();
 
         return Result.Ok();
     }
@@ -83,7 +86,7 @@ internal class TenantsService : ITenantsService
         var oldContactInfo = tenant.ContactInfo;
         var updatedTenantContactInfo = ContactInfo.Create(oldContactInfo.Email, oldContactInfo.Phone, oldContactInfo.Address, true, oldContactInfo.ConfirmationTime);
 
-        tenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, updatedTenantContactInfo, tenant.WorkWeekSchedule);
+        tenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, updatedTenantContactInfo, tenant.WeekSchedule);
 
         _tenantRepository.Update(tenant);
 

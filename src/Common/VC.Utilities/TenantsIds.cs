@@ -2,5 +2,5 @@
 
 public static class TenantsIds
 {
-    public static Guid StaticTenantId => new Guid("01962350-ab5c-79cd-b00f-4f5f3aa3058b");
+    public static Guid StaticTenantId => new Guid("01964d58-d9f1-769d-ab55-5cbfba60b5a5");
 }

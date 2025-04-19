@@ -9,12 +9,4 @@ public record ResponseTenantDto
      TenantConfigurationDto Config,
      TenantStatus Status,
      ContactInfoDto Contact,
-     ResponseTenantWeekSchedule WorkSchedule);
-
-internal static class ResponseTenantMapper
-{
-    public static void Configure()
-    {
-
-    }
-}
+     List<ResponseScheduleDto> WorkSchedule);

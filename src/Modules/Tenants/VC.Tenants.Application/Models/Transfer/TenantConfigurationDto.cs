@@ -2,16 +2,7 @@
 
 namespace VC.Tenants.Application.Models.Transfer;
 
-public class TenantConfigurationDto(string about, string currency, string language, string timeZoneId)
-{
-    public string About { get; } = about;
-
-    public string Currency { get; } = currency;
-
-    public string Language { get; } = language;
-
-    public string TimeZoneId { get; } = timeZoneId;
-}
+public record TenantConfigurationDto(string About, string Currency, string Language, string TimeZoneId);
 
 internal static class TenantConfigurationDtoMapper
 {

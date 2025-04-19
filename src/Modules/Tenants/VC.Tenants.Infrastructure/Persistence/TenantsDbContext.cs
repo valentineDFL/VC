@@ -58,6 +58,8 @@ public class TenantsDbContext : DbContext
 
     private Tenant CreateSeedingTenant()
     {
+        var tenantId = Guid.CreateVersion7();
+
         var config = TenantConfiguration.Create
             (
                 "Тестовые данные компании",
@@ -83,67 +85,69 @@ public class TenantsDbContext : DbContext
             DateTime.UtcNow
         );
 
-        var workScheduleDays = new List<TenantDaySchedule>
-            {
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Sunday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                ),
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Monday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                ),
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Tuesday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                ),
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Wednesday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                ),
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Thursday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                ),
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Friday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                ),
-                TenantDaySchedule.Create
-                (
-                    Guid.CreateVersion7(),
-                    DayOfWeek.Saturday,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddHours(8)
-                )
-            };
-
-        var workSchedule = TenantWeekSchedule.Create
-        (
-            workScheduleDays
-        );
+        var workSchedule = new List<DaySchedule>
+        {
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Sunday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Monday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Tuesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Wednesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Thursday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Friday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Saturday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            )
+        };
 
         return Tenant.Create
         (
-            Guid.CreateVersion7(),
+            tenantId,
             "AdminTestTenant",
             SeedingDataBaseKeys.SeedTenantSlug,
             config,

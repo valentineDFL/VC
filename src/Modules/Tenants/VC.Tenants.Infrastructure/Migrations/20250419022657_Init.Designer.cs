@@ -12,8 +12,8 @@ using VC.Tenants.Infrastructure.Persistence;
 namespace VC.Tenants.Infrastructure.Migrations
 {
     [DbContext(typeof(TenantsDbContext))]
-    [Migration("20250411043038_UpdateTenant")]
-    partial class UpdateTenant
+    [Migration("20250419022657_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,7 +135,7 @@ namespace VC.Tenants.Infrastructure.Migrations
                                 .HasForeignKey("TenantId");
                         });
 
-                    b.OwnsOne("VC.Tenants.Entities.TenantWorkSchedule", "WorkWeekSchedule", b1 =>
+                    b.OwnsOne("VC.Tenants.Entities.TenantWeekSchedule", "WorkWeekSchedule", b1 =>
                         {
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
@@ -147,16 +147,16 @@ namespace VC.Tenants.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("TenantId");
 
-                            b1.OwnsMany("VC.Tenants.Entities.TenantDayWorkSchedule", "DaysSchedule", b2 =>
+                            b1.OwnsMany("VC.Tenants.Entities.TenantDaySchedule", "DaysSchedule", b2 =>
                                 {
-                                    b2.Property<Guid>("TenantWorkScheduleTenantId")
+                                    b2.Property<Guid>("Id")
                                         .HasColumnType("uuid");
 
-                                    b2.Property<int>("Id")
+                                    b2.Property<int>("Id1")
                                         .ValueGeneratedOnAdd()
                                         .HasColumnType("integer");
 
-                                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
+                                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id1"));
 
                                     b2.Property<int>("Day")
                                         .HasColumnType("integer");
@@ -167,12 +167,12 @@ namespace VC.Tenants.Infrastructure.Migrations
                                     b2.Property<DateTime>("StartWork")
                                         .HasColumnType("timestamp with time zone");
 
-                                    b2.HasKey("TenantWorkScheduleTenantId", "Id");
+                                    b2.HasKey("Id", "Id1");
 
-                                    b2.ToTable("TenantDayWorkSchedule", "tenants");
+                                    b2.ToTable("TenantDaySchedule", "tenants");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("TenantWorkScheduleTenantId");
+                                        .HasForeignKey("Id");
                                 });
 
                             b1.Navigation("DaysSchedule");

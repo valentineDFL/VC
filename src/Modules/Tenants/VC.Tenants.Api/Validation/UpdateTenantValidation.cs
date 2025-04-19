@@ -52,7 +52,7 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
             .Must(ctr => ctr != TenantStatus.None)
             .IsInEnum();
 
-        RuleFor(ctr => ctr.Contact)
+        RuleFor(ctr => ctr.ContactInfo)
             .ChildRules(con =>
             {
                 con.RuleFor(ctr => ctr.Email)
@@ -96,11 +96,13 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
         RuleFor(ctr => ctr.WorkSchedule)
             .ChildRules(wc =>
             {
-                wc.RuleFor(wc => wc.WeekDays)
+                wc.RuleFor(wc => wc)
                 .NotNull()
-                .Must(wk => wk.Count == 7)
+                .Must(wk => wk.Count == Enum.GetValues(typeof(DayOfWeek)).Length)
                 .Must(wk => wk.DistinctBy(wd => wd.Day).Count() == wk.Count)
-                .Must(wk => wk.All(x => x.StartWork != x.EndWork && x.StartWork < x.EndWork));
+                .Must(wk => wk.All(x => x.StartWork != x.EndWork && x.StartWork < x.EndWork))
+                .Must(wk => wk.All(t => t.StartWork.Kind == DateTimeKind.Utc && t.EndWork.Kind == DateTimeKind.Utc))
+                .WithMessage("Time Must be in UTC format");
             });
     }
 }

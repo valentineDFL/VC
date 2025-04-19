@@ -4,18 +4,7 @@ using VC.Tenants.Entities;
 
 namespace VC.Tenants.Application.Models.Update;
 
-public class UpdateContactInfoDto(string email, string phone, AddressDto address, bool isVerify, DateTime confirmationTime)
-{
-    public string Email { get; } = email;
-
-    public string Phone { get; } = phone;
-    
-    public AddressDto Address { get; } = address;
-
-    public bool IsVerify { get; } = isVerify;
-
-    public DateTime ConfirmationTime { get; } = confirmationTime;
-}
+public record UpdateContactInfoDto(string Email, string Phone, AddressDto Address, bool IsVerify, DateTime ConfirmationTime);
 
 internal static class UpdateContactInfoMapper
 {
