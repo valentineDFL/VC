@@ -10,6 +10,4 @@ public interface IRepository
     public Task<Resource> GetAsync(Guid id);
 
     public void Update(Resource entity);
-
-    Task<bool> ExistsAsync(Expression<Func<Resource, bool>> predicate);
 }

@@ -5,7 +5,7 @@ using VC.Recources.Domain;
 using VC.Recources.Domain.UnitOfWork;
 using VC.Recources.Infrastructure;
 using VC.Recources.Infrastructure.Repositories;
-using DbContext = VC.Recources.Infrastructure.DbContext.DbContext;
+using ResourceDbContext = VC.Recources.Infrastructure.ResourceDbContext;
 
 namespace VC.Recources.Di;
 
@@ -15,8 +15,11 @@ internal static class InfrastructureConfiguration
     {
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 
-        services.AddDbContext<DbContext>(options => options
-            .UseNpgsql(connectionString));
+        services.AddDbContext<ResourceDbContext>(options => options
+            .UseNpgsql(connectionString, x =>
+            {
+                x.MigrationsHistoryTable("__EFMigrationsHistory", ResourceDbContext.ResourcesSchema);
+            }));
 
         ConfigureInfrastructure(services);
     }

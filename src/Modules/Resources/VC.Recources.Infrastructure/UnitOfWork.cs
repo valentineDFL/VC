@@ -3,7 +3,7 @@ using VC.Recources.Domain.UnitOfWork;
 
 namespace VC.Recources.Infrastructure;
 
-public class UnitOfWork(DbContext.DbContext _dbContext) : IResourcesUnitOfWork
+public class UnitOfWork(ResourceDbContext _dbContext) : IResourcesUnitOfWork
 {
     public IRepository Resources { get; }
 

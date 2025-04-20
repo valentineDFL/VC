@@ -14,5 +14,10 @@ internal class SkillConfiguration : IEntityTypeConfiguration<Skill>
             .HasMaxLength(64);
 
         builder.OwnsOne(s => s.Experience);
+
+        builder.HasOne(r => r.Resource)
+            .WithMany(r => r.Skills)
+            .HasForeignKey(r => r.ResourceId)
+            .IsRequired(false);
     }
 }

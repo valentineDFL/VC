@@ -12,7 +12,7 @@ public class Service(
     ITenantResolver _tenantResolver,
     IResourcesUnitOfWork _unitOfWork,
     IRepository _repository
-    )
+)
     : IService
 {
     public async Task<Result> AddAsync(CreateDto dto)
@@ -47,7 +47,7 @@ public class Service(
     {
         await _unitOfWork.BeginTransactionAsync();
 
-        var resource = await _unitOfWork.Resources.GetAsync(dto.Id);
+        var resource = await _repository.GetAsync(dto.Id);
 
         if (resource is null)
             return Result.Fail("Resource not found");

@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VC.Recources.Domain;
 using VC.Recources.Domain.Entities;
 
@@ -9,7 +8,7 @@ internal class Repository : IRepository
 {
     private readonly DbSet<Resource> _resources;
 
-    public Repository(DbContext.DbContext dbContext)
+    public Repository(ResourceDbContext dbContext)
     {
         _resources = dbContext.Set<Resource>();
     }
@@ -25,8 +24,4 @@ internal class Repository : IRepository
 
     public void Update(Resource entity)
         => _resources.Update(entity);
-
-    // удалить
-    public async Task<bool> ExistsAsync(Expression<Func<Resource, bool>> predicate)
-        => await _resources.AnyAsync(predicate);
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VC.Recources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,9 +35,9 @@ namespace VC.Recources.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    SkillName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    Expirience_Years = table.Column<int>(type: "integer", nullable: false),
-                    Expirience_Months = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Experience_Years = table.Column<int>(type: "integer", nullable: false),
+                    Experience_Months = table.Column<int>(type: "integer", nullable: false),
                     ResourceId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -48,8 +48,7 @@ namespace VC.Recources.Infrastructure.Migrations
                         column: x => x.ResourceId,
                         principalSchema: "resources",
                         principalTable: "Resources",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

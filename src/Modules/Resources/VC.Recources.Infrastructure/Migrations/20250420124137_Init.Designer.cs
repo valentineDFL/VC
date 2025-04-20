@@ -11,9 +11,9 @@ using VC.Recources.Infrastructure;
 
 namespace VC.Recources.Infrastructure.Migrations
 {
-    [DbContext(typeof(DbContext.DbContext))]
-    [Migration("20250318134912_init")]
-    partial class init
+    [DbContext(typeof(ResourceDbContext))]
+    [Migration("20250420124137_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,7 @@ namespace VC.Recources.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VC.Recources.Resource.Domain.Entities.Resource", b =>
+            modelBuilder.Entity("VC.Recources.Domain.Entities.Resource", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,19 +50,19 @@ namespace VC.Recources.Infrastructure.Migrations
                     b.ToTable("Resources", "resources");
                 });
 
-            modelBuilder.Entity("VC.Recources.Resource.Domain.Entities.Skill", b =>
+            modelBuilder.Entity("VC.Recources.Domain.Entities.Skill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ResourceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SkillName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -71,15 +71,13 @@ namespace VC.Recources.Infrastructure.Migrations
                     b.ToTable("Skills", "resources");
                 });
 
-            modelBuilder.Entity("VC.Recources.Resource.Domain.Entities.Skill", b =>
+            modelBuilder.Entity("VC.Recources.Domain.Entities.Skill", b =>
                 {
-                    b.HasOne("VC.Recources.Resource.Domain.Entities.Resource", "Resource")
+                    b.HasOne("VC.Recources.Domain.Entities.Resource", "Resource")
                         .WithMany("Skills")
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ResourceId");
 
-                    b.OwnsOne("VC.Recources.Resource.Domain.Entities.Experience", "Expirience", b1 =>
+                    b.OwnsOne("VC.Recources.Domain.Entities.Experience", "Experience", b1 =>
                         {
                             b1.Property<Guid>("SkillId")
                                 .HasColumnType("uuid");
@@ -98,13 +96,13 @@ namespace VC.Recources.Infrastructure.Migrations
                                 .HasForeignKey("SkillId");
                         });
 
-                    b.Navigation("Expirience")
+                    b.Navigation("Experience")
                         .IsRequired();
 
                     b.Navigation("Resource");
                 });
 
-            modelBuilder.Entity("VC.Recources.Resource.Domain.Entities.Resource", b =>
+            modelBuilder.Entity("VC.Recources.Domain.Entities.Resource", b =>
                 {
                     b.Navigation("Skills");
                 });

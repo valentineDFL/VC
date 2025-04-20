@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using VC.Recources.Application.Interfaces;
 using VC.Recources.Application.Services;
 using VC.Recources.Application.Validators;
-using VC.Recources.Domain;
-using VC.Recources.Infrastructure;
 
 namespace VC.Recources.Di;
 
