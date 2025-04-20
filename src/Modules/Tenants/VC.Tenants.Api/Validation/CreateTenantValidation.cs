@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Org.BouncyCastle.Math.EC.Rfc8032;
 using VC.Tenants.Api.Models.Request.Tenant;
 using VC.Tenants.Entities;
 

@@ -83,10 +83,7 @@ internal class TenantsService : ITenantsService
         else if (tenant.ContactInfo.ConfirmationTimeExpired)
             return Result.Fail("Link has expired");
 
-        var oldContactInfo = tenant.ContactInfo;
-        var updatedTenantContactInfo = ContactInfo.Create(oldContactInfo.Email, oldContactInfo.Phone, oldContactInfo.Address, true, oldContactInfo.ConfirmationTime);
-
-        tenant = Tenant.Create(tenant.Id, tenant.Name, tenant.Slug, tenant.Config, tenant.Status, updatedTenantContactInfo, tenant.WeekSchedule);
+        tenant.VerifyEmail();
 
         _tenantRepository.Update(tenant);
 

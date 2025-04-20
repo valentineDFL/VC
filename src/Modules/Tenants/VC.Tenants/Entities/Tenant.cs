@@ -50,7 +50,7 @@ public class Tenant
             throw new ArgumentException($"Name length must be greater than {NameMinLenght} or equals. Lowest than {NameMaxLenght} or equals.");
 
         if (slug.Length > SlugMaxLength || slug.Length < SlugMinLength)
-            throw new ArgumentException($"Slug length must be greater than {SlugMinLength - 1} or equals. Lowest than {SlugMaxLength} or equals.");
+            throw new ArgumentException($"Slug length must be greater than {SlugMinLength} or equals. Lowest than {SlugMaxLength} or equals.");
 
         if(config is null)
             throw new ArgumentNullException("Config cannot be null");
@@ -67,4 +67,8 @@ public class Tenant
 
         return new Tenant(id, name, slug, config, status, contactInfo, weekSchedule);
     }
+
+    public void VerifyEmail() => ContactInfo = ContactInfo.Create(ContactInfo.Email, ContactInfo.Phone, ContactInfo.Address, true, ContactInfo.ConfirmationTime);
+
+    public void ChangeTimeToExpireVerifyLink() => ContactInfo = ContactInfo.Create(ContactInfo.Email, ContactInfo.Phone, ContactInfo.Address, false, DateTime.UtcNow.AddMinutes(ContactInfo.LinkMinuteValidTime));
 }

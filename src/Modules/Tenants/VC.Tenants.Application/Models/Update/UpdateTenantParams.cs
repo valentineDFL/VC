@@ -9,10 +9,10 @@ public record UpdateTenantParams
      TenantConfigurationDto Config, 
      TenantStatus Status,
      UpdateContactInfoDto ContactInfo,
-     IReadOnlyList<UpdateScheduleDayDto> WorkSchedule);
+     IReadOnlyList<UpdateScheduleDayDto> WeekSchedule);
 
 internal static class UpdateTenantParamsMapper 
 {
     public static Tenant ToEntity(this UpdateTenantParams dto, Guid resolvedId)
-        => Tenant.Create(resolvedId, dto.Name, dto.Slug, dto.Config.ToEntity(), dto.Status, dto.ContactInfo.ToEntity(), dto.WorkSchedule.ToEntities(resolvedId));
+        => Tenant.Create(resolvedId, dto.Name, dto.Slug, dto.Config.ToEntity(), dto.Status, dto.ContactInfo.ToEntity(), dto.WeekSchedule.ToEntities(resolvedId));
 }

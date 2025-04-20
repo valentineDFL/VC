@@ -8,5 +8,5 @@ public record ResponseTenantDto
      string Slug,
      TenantConfigurationDto Config,
      TenantStatus Status,
-     ContactInfoDto Contact,
-     List<ResponseScheduleDto> WorkSchedule);
+     ResponseContactInfo ContactInfo,
+     IReadOnlyList<ResponseScheduleDto> WeekSchedule);

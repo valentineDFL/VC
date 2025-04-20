@@ -14,24 +14,18 @@ internal class TenantRepository : ITenantRepository
     }
 
     public async Task AddAsync(Tenant entity)
-    {
-        await _dbContext.Tenants.AddAsync(entity);
-    }
+        => await _dbContext.Tenants.AddAsync(entity);
 
     public async Task<Tenant?> GetAsync()
-    {
-        return await _dbContext.Tenants
+        => await _dbContext.Tenants
+            .Include(x => x.WeekSchedule.OrderBy(dd => dd.Day))
             .AsNoTracking()
             .FirstOrDefaultAsync();
-    }
+    
 
     public void Remove(Tenant entity)
-    {
-        _dbContext.Remove(entity);
-    }
+        => _dbContext.Remove(entity);
 
     public void Update(Tenant entity)
-    {
-        _dbContext.Tenants.Update(entity);
-    }
+        => _dbContext.Tenants.Update(entity);
 }

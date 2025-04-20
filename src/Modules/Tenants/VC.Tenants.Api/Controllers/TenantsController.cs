@@ -63,7 +63,7 @@ public class TenantsController : ControllerBase
     /// </summary>
     /// <param name="createRequest"></param>
     /// <returns></returns>
-    [HttpPost]
+    [HttpPost("tenants/tenant")]
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
@@ -72,8 +72,6 @@ public class TenantsController : ControllerBase
             return BadRequest(validationResult.Errors);
 
         var mappedCreateDto = _mapper.Map<CreateTenantParams>(createRequest);
-
-        Console.WriteLine(mappedCreateDto.Config.About);
 
         var response = await _tenantService.CreateAsync(mappedCreateDto);
 
@@ -92,16 +90,31 @@ public class TenantsController : ControllerBase
     {
         var response = await _tenantService.VerifyEmailAsync();
 
-        if(response.IsSuccess) 
+        if(response.IsSuccess)
             return Ok(response);
 
         return BadRequest(response);
     }
 
-    [HttpPost("send-mail-again")]
+    [HttpPost("send-verify-mail")]
     public async Task<ActionResult<Result>> SendVerifyMailAgain()
     {
+        var getResponse = await _tenantService.GetAsync();
 
+        if(!getResponse.IsSuccess)
+            return BadRequest(getResponse);
+
+        var tenant = getResponse.Value;
+        tenant.ChangeTimeToExpireVerifyLink();
+
+        var updateTenantParams = _mapper.Map<UpdateTenantParams>(tenant);
+        var putResponse = await _tenantService.UpdateAsync(updateTenantParams);
+
+        if(!putResponse.IsSuccess)
+            return BadRequest(putResponse);
+
+        Message message = TenantEmailVerifyForm.VerifyTenantEmailForm(_endpointsUrls.EmailVerifyEndpointUrl, tenant.Name, tenant.ContactInfo.Email);
+        await _mailSenderService.SendMailAsync(message);
 
         return Ok();
     }
