@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using VC.Recources.Domain;
-using VC.Recources.Domain.UnitOfWork;
 using VC.Recources.Infrastructure;
 using VC.Recources.Infrastructure.Repositories;
+using VC.Utilities;
 using ResourceDbContext = VC.Recources.Infrastructure.ResourceDbContext;
 
 namespace VC.Recources.Di;
@@ -16,10 +17,10 @@ internal static class InfrastructureConfiguration
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 
         services.AddDbContext<ResourceDbContext>(options => options
-            .UseNpgsql(connectionString, x =>
-            {
-                x.MigrationsHistoryTable("__EFMigrationsHistory", ResourceDbContext.ResourcesSchema);
-            }));
+            .UseNpgsql(
+                connectionString,
+                x => { x.MigrationsHistoryTable("__EFMigrationsHistory", ResourceDbContext.ResourcesSchema); }
+            ));
 
         ConfigureInfrastructure(services);
     }
@@ -27,6 +28,7 @@ internal static class InfrastructureConfiguration
     private static void ConfigureInfrastructure(IServiceCollection services)
     {
         services.AddScoped<IRepository, Repository>();
-        services.AddScoped<IResourcesUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IDbContextTransaction, DbContextTransaction>();
     }
 }

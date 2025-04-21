@@ -22,6 +22,6 @@ internal class Repository : IRepository
             .ThenInclude(s => s.Experience)
             .FirstOrDefaultAsync(r => r.Id == id);
 
-    public void Update(Resource entity)
-        => _resources.Update(entity);
+    public async Task Update(Resource entity)
+        => await Task.Run(() => _resources.Update(entity));
 }

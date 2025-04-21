@@ -1,10 +1,12 @@
 namespace VC.Utilities;
 
-public interface IUnitOfWork : IDisposable
+public interface IUnitOfWork
 {
-    Task BeginTransactionAsync();
+    void BeginTransaction();
 
-    Task RollbackTransactionAsync();
+    void Commit();
 
-    Task CommitTransactionAsync();
+    void Rollback();
+
+    void SaveChanges();
 }

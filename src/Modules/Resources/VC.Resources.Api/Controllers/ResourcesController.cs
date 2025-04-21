@@ -5,13 +5,14 @@ using VC.Recources.Application.Interfaces;
 using VC.Recources.Application.Validators;
 using VC.Resources.Api.Endpoints.Models.Requests;
 using VC.Resources.Api.Endpoints.Models.Responses;
+using VC.Utilities;
 
 namespace VC.Resources.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-public class ResourcesController(IService _service)
+public class ResourcesController(IService _service, IUnitOfWork _unitOfWork)
     : ControllerBase
 {
     [Route("{id}")]
@@ -31,6 +32,8 @@ public class ResourcesController(IService _service)
     [HttpPost]
     public async Task<ActionResult> AddAsync(CreateRequest request)
     {
+        _unitOfWork.BeginTransaction();
+
         var dto = new CreateDto(
             request.Name,
             request.Description,
@@ -46,6 +49,8 @@ public class ResourcesController(IService _service)
         var response = await _service.AddAsync(dto);
         if (!response.IsSuccess)
             return new BadRequestObjectResult(new { Errors = response });
+        
+        _unitOfWork.Commit();
 
         return Ok(response);
     }
@@ -53,6 +58,8 @@ public class ResourcesController(IService _service)
     [HttpPut]
     public async Task<ActionResult> UpdateAsync(UpdateRequest request)
     {
+        _unitOfWork.BeginTransaction();
+
         var dto = new UpdateDto(
             request.Id,
             request.Name,
@@ -69,6 +76,8 @@ public class ResourcesController(IService _service)
         var response = await _service.UpdateAsync(dto);
         if (!response.IsSuccess)
             return new BadRequestObjectResult(new { Errors = response });
+        
+        _unitOfWork.Commit();
 
         return Ok(response);
     }

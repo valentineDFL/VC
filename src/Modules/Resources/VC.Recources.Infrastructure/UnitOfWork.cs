@@ -1,27 +1,42 @@
-﻿using VC.Recources.Domain;
-using VC.Recources.Domain.UnitOfWork;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using VC.Utilities;
 
 namespace VC.Recources.Infrastructure;
 
-public class UnitOfWork(ResourceDbContext _dbContext) : IResourcesUnitOfWork
+internal class UnitOfWork(ResourceDbContext _dbContext) : IUnitOfWork, IDisposable
 {
-    public IRepository Resources { get; }
+    private IDbContextTransaction _transaction;
 
-    public async Task RollbackTransactionAsync()
-        => await _dbContext.Database.RollbackTransactionAsync();
-
-    /// <summary>
-    /// Save changes and commit transaction
-    /// </summary>
-    public async Task CommitTransactionAsync()
+    public void BeginTransaction()
     {
-        await _dbContext.SaveChangesAsync();
-        await _dbContext.Database.CommitTransactionAsync();
+        if (_transaction is not null)
+            throw new InvalidOperationException("Transaction not started");
+
+        _transaction = _dbContext.Database.BeginTransaction();
     }
 
-    public async Task BeginTransactionAsync()
-        => await _dbContext.Database.BeginTransactionAsync();
+    public void Commit()
+    {
+        if (_transaction is null)
+            throw new InvalidOperationException("Transaction not started");
+
+        _dbContext.SaveChanges();
+        _transaction.Commit();
+    }
+
+    public void Rollback()
+    {
+        if (_transaction is null)
+            throw new InvalidOperationException("Transaction not started");
+
+        _transaction.Rollback();
+    }
+
+    public void SaveChanges() => _dbContext.SaveChanges();
 
     public void Dispose()
-        => _dbContext.Dispose();
+    {
+        _transaction?.Dispose();
+        _dbContext.Dispose();
+    }
 }

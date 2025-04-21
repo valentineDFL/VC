@@ -5,9 +5,9 @@ namespace VC.Recources.Domain;
 
 public interface IRepository
 {
-    public Task AddAsync(Resource entity);
+    Task AddAsync(Resource entity);
 
-    public Task<Resource> GetAsync(Guid id);
+    Task<Resource> GetAsync(Guid id);
 
-    public void Update(Resource entity);
+    Task Update(Resource entity);
 }

@@ -8,9 +8,9 @@ public class Skill
 
     public Experience Experience { get; set; }
 
-    public Resource Resource { get; set; }
-
     public Guid ResourceId { get; set; }
+
+    public Resource? Resource { get; set; }
 
     public Skill(string name, Experience experience)
     {
