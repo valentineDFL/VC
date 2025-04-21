@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage;
 using VC.Utilities;
 
 namespace VC.Recources.Infrastructure;

@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using VC.Recources.Application.Endpoints.Models.Requests;
 using VC.Recources.Application.Interfaces;
 using VC.Recources.Domain;
