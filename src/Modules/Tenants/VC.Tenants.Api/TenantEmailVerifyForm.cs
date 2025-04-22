@@ -1,4 +1,4 @@
-﻿using VC.Utilities.MailSend;
+﻿using VC.MailkitIntegration;
 
 namespace VC.Tenants.Api;
 

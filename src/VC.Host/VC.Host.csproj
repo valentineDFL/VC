@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\VC.Integrations.Di\VC.Integrations.Di.csproj" />
       <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Api\VC.Tenants.Api.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Di\VC.Tenants.Di.csproj" />

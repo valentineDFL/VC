@@ -1,4 +1,4 @@
-﻿namespace VC.Utilities.MailSend;
+﻿namespace VC.MailkitIntegration;
 
 public enum MailSendStatus
 {

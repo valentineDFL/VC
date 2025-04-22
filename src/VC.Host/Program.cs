@@ -1,6 +1,8 @@
+using Mapster;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
+using VC.Integrations.Di;
 using VC.Tenants.Di;
 using VC.Utilities;
 
@@ -9,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddApplicationPart(typeof(VC.Tenants.Api.Controllers.TenantsController).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
+builder.Services.ConfigureIntegrationsModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
@@ -18,6 +21,7 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.ConfigureHost();
+builder.Services.AddMapster();
 
 VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
 

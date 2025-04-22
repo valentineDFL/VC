@@ -4,7 +4,7 @@ using VC.Tenants.Application.Tenants;
 
 namespace VC.Tenants.Di;
 
-internal static class ApplicationConfiguration
+internal static class ApplicationConfigurator
 {
     public static IServiceCollection ConfigureTenantsApplication(this IServiceCollection services, IConfiguration configuration)
     {

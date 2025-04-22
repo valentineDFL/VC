@@ -77,10 +77,10 @@ internal class TenantsService : ITenantsService
         if (tenant is null)
             return Result.Fail("Tenant Not Found");
 
-        else if (tenant.ContactInfo.IsVerify)
+        if (tenant.ContactInfo.IsVerify)
             return Result.Fail("Tenant has already been verified");
 
-        else if (tenant.ContactInfo.ConfirmationTimeExpired)
+        if (tenant.ContactInfo.ConfirmationTimeExpired)
             return Result.Fail("Link has expired");
 
         tenant.VerifyEmail();

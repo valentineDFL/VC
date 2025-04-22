@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VC.Tenants.Entities;
+using VC.Utilities;
 using VC.Utilities.Resolvers;
 
 namespace VC.Tenants.Infrastructure.Persistence;
@@ -58,7 +59,7 @@ public class TenantsDbContext : DbContext
 
     private Tenant CreateSeedingTenant()
     {
-        var tenantId = Guid.CreateVersion7();
+        var tenantId = TenantsIds.StaticTenantId;
 
         var config = TenantConfiguration.Create
             (

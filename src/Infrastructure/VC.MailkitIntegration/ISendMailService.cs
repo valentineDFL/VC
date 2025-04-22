@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace VC.Utilities.MailSend;
+namespace VC.MailkitIntegration;
 
 public interface ISendMailService
 {

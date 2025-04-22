@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Api.OpenApi;
 
 namespace VC.Tenants.Di;
 
-public static class ModuleConfiguration
+public static class ModuleConfigurator
 {
     public static void ConfigureTenantsOpenApi(this IServiceCollection services, IConfiguration configuration)
         => services.AddOpenApi(OpenApiConfig.DocumentName, opts => OpenApiConfig.ConfigureOpenApi(opts));

@@ -3,9 +3,9 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace VC.Utilities.MailSend;
+namespace VC.MailkitIntegration;
 
-public class MailService : ISendMailService
+internal class MailService : ISendMailService
 {
     private SmtpClient _smtpClient;
     private MailSenderInfo _mailSender;
@@ -28,7 +28,7 @@ public class MailService : ISendMailService
     {
         try
         {
-            MimeMessage mimeMessage = new MimeMessage();
+            var mimeMessage = new MimeMessage();
             mimeMessage.Subject = message.Subject;
 
             mimeMessage.From.Add(new MailboxAddress("Администрация сайта", _mailSender.SenderMailName));

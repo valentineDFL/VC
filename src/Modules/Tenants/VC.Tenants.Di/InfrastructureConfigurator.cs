@@ -9,7 +9,7 @@ using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Di;
 
-public static class InfrastructureConfiguration
+internal static class InfrastructureConfigurator
 {
     public static void ConfigureTenantsInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {

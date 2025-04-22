@@ -10,9 +10,6 @@ internal static class CreateContactInfoMapper
     /// <summary>
     /// Метод принимает дату только в формате UTC
     /// </summary>
-    /// <param name="dto"></param>
-    /// <param name="expiredTime"></param>
-    /// <returns></returns>
     public static ContactInfo ToEntity(this CreateContactInfoDto dto, DateTime expiredTime)
         => ContactInfo.Create(dto.Email, dto.Phone, dto.Address.ToEntity(), false, expiredTime);
 }

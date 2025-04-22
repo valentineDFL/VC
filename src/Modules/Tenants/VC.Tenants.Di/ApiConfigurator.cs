@@ -4,19 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Api.Models.Request.Tenant;
 using VC.Tenants.Api.Validation;
 using VC.Utilities;
-using Mapster;
-
 
 namespace VC.Tenants.Di;
 
-public static class ApiConfiguration
+internal static class ApiConfigurator
 {
     public static void ConfigureTenantsApiExtensions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IValidator<CreateTenantRequest>, CreateTenantValidation>();
         services.AddScoped<IValidator<UpdateTenantRequest>, UpdateTenantValidation>();
         services.Configure<EndpointsUrls>(configuration.GetSection(nameof(EndpointsUrls)));
-
-        services.AddMapster();
     }
 }

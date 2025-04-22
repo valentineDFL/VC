@@ -3,13 +3,13 @@ using FluentValidation;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using VC.MailkitIntegration;
 using VC.Tenants.Api.Models.Request.Tenant;
 using VC.Tenants.Api.Models.Response;
 using VC.Tenants.Application.Models.Create;
 using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Application.Tenants;
 using VC.Utilities;
-using VC.Utilities.MailSend;
 
 namespace VC.Tenants.Api.Controllers;
 
@@ -48,12 +48,12 @@ public class TenantsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ResponseTenantDto>> GetAsync()
     {
-        var response = await _tenantService.GetAsync();
+        var getResult = await _tenantService.GetAsync();
 
-        if (!response.IsSuccess)
-            return BadRequest(response);
+        if (!getResult.IsSuccess)
+            return BadRequest(getResult);
 
-        var mappedResponseDto = _mapper.Map<ResponseTenantDto>(response.Value);
+        var mappedResponseDto = _mapper.Map<ResponseTenantDto>(getResult.Value);
 
         return Ok(mappedResponseDto);
     }
@@ -61,60 +61,64 @@ public class TenantsController : ControllerBase
     /// <summary>
     /// Эндпоинт принимает дату только в формате UTC
     /// </summary>
-    /// <param name="createRequest"></param>
-    /// <returns></returns>
     [HttpPost("tenants/tenant")]
     public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
     {
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(validationResult);
 
         var mappedCreateDto = _mapper.Map<CreateTenantParams>(createRequest);
 
-        var response = await _tenantService.CreateAsync(mappedCreateDto);
+        var createResult = await _tenantService.CreateAsync(mappedCreateDto);
 
         Message message = TenantEmailVerifyForm.RegistrationTenantEmailVerifyForm(_endpointsUrls.EmailVerifyEndpointUrl, createRequest.Name, createRequest.ContactInfo.Email);
 
-        await _mailSenderService.SendMailAsync(message);
+        var sendResult = await _mailSenderService.SendMailAsync(message);
 
-        if (response.IsSuccess)
-            return Ok(response);
+        if(!sendResult.IsSuccess)
+            return BadRequest(sendResult);
 
-        return BadRequest(response);
+        if (!createResult.IsSuccess)
+            return BadRequest(createResult);
+
+        return Ok(createResult);
     }
 
     [HttpGet("verify-email")]
     public async Task<ActionResult<Result>> VerifyMailAsync()
     {
-        var response = await _tenantService.VerifyEmailAsync();
+        var verifyResult = await _tenantService.VerifyEmailAsync();
 
-        if(response.IsSuccess)
-            return Ok(response);
+        if(verifyResult.IsSuccess)
+            return Ok(verifyResult);
 
-        return BadRequest(response);
+        return BadRequest(verifyResult);
     }
 
     [HttpPost("send-verify-mail")]
     public async Task<ActionResult<Result>> SendVerifyMailAgain()
     {
-        var getResponse = await _tenantService.GetAsync();
+        var getResult = await _tenantService.GetAsync();
 
-        if(!getResponse.IsSuccess)
-            return BadRequest(getResponse);
+        if(!getResult.IsSuccess)
+            return BadRequest(getResult);
 
-        var tenant = getResponse.Value;
+        var tenant = getResult.Value;
         tenant.ChangeTimeToExpireVerifyLink();
 
         var updateTenantParams = _mapper.Map<UpdateTenantParams>(tenant);
-        var putResponse = await _tenantService.UpdateAsync(updateTenantParams);
+        var putResult = await _tenantService.UpdateAsync(updateTenantParams);
 
-        if(!putResponse.IsSuccess)
-            return BadRequest(putResponse);
+        if(!putResult.IsSuccess)
+            return BadRequest(putResult);
 
         Message message = TenantEmailVerifyForm.VerifyTenantEmailForm(_endpointsUrls.EmailVerifyEndpointUrl, tenant.Name, tenant.ContactInfo.Email);
-        await _mailSenderService.SendMailAsync(message);
+        var sendResult = await _mailSenderService.SendMailAsync(message);
+
+        if (!sendResult.IsSuccess)
+            return BadRequest(sendResult);
 
         return Ok();
     }
@@ -122,8 +126,6 @@ public class TenantsController : ControllerBase
     /// <summary>
     /// Эндпоинт принимает дату только в формате UTC
     /// </summary>
-    /// <param name="updateRequest"></param>
-    /// <returns></returns>
     [HttpPut]
     public async Task<ActionResult> UpdateAsync(UpdateTenantRequest updateRequest)
     {
@@ -134,22 +136,22 @@ public class TenantsController : ControllerBase
 
         var mappedUpdateDto = _mapper.Map<UpdateTenantRequest, UpdateTenantParams>(updateRequest);
 
-        var response = await _tenantService.UpdateAsync(mappedUpdateDto);
+        var updateResult = await _tenantService.UpdateAsync(mappedUpdateDto);
 
-        if (response.IsSuccess)
-            return Ok(response);
+        if (updateResult.IsSuccess)
+            return Ok(updateResult);
 
-        return BadRequest(response);
+        return BadRequest(updateResult);
     }
 
     [HttpDelete]
     public async Task<ActionResult> DeleteByIdAsync()
     {
-        var response = await _tenantService.DeleteAsync();
+        var deleteResult = await _tenantService.DeleteAsync();
 
-        if (response.IsSuccess)
+        if (deleteResult.IsSuccess)
             return Ok();
 
-        return BadRequest(response);
+        return BadRequest(deleteResult);
     }
 }
