@@ -10,7 +10,6 @@ namespace VC.Recources.Application.Services;
 
 public class Service(
     ITenantResolver _tenantResolver,
-    IUnitOfWork _unitOfWork,
     IRepository _repository)
     : IService
 {

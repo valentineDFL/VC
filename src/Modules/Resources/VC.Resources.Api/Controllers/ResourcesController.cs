@@ -32,7 +32,7 @@ public class ResourcesController(IService _service, IUnitOfWork _unitOfWork)
     [HttpPost]
     public async Task<ActionResult> AddAsync(CreateRequest request)
     {
-        _unitOfWork.BeginTransaction();
+        await _unitOfWork.BeginTransactionAsync();
 
         var dto = new CreateDto(
             request.Name,
@@ -49,8 +49,8 @@ public class ResourcesController(IService _service, IUnitOfWork _unitOfWork)
         var response = await _service.AddAsync(dto);
         if (!response.IsSuccess)
             return new BadRequestObjectResult(new { Errors = response });
-        
-        _unitOfWork.Commit();
+
+        await _unitOfWork.CommitAsync();
 
         return Ok(response);
     }
@@ -58,7 +58,7 @@ public class ResourcesController(IService _service, IUnitOfWork _unitOfWork)
     [HttpPut]
     public async Task<ActionResult> UpdateAsync(UpdateRequest request)
     {
-        _unitOfWork.BeginTransaction();
+        await _unitOfWork.BeginTransactionAsync();
 
         var dto = new UpdateDto(
             request.Id,
@@ -76,8 +76,8 @@ public class ResourcesController(IService _service, IUnitOfWork _unitOfWork)
         var response = await _service.UpdateAsync(dto);
         if (!response.IsSuccess)
             return new BadRequestObjectResult(new { Errors = response });
-        
-        _unitOfWork.Commit();
+
+        await _unitOfWork.CommitAsync();
 
         return Ok(response);
     }

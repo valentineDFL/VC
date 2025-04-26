@@ -11,11 +11,10 @@ public class ResourceDbContext : DbContext
 
     private readonly ITenantResolver _tenantResolver;
 
-    public ResourceDbContext(DbContextOptions options, ITenantResolver tenantResolver)
+    private ResourceDbContext(DbContextOptions options, ITenantResolver tenantResolver)
         : base(options)
     {
         _tenantResolver = tenantResolver;
-        Database.EnsureCreated();
     }
 
     public DbSet<Resource> Resources { get; set; }
