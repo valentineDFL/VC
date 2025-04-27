@@ -1,6 +1,7 @@
-﻿namespace VC.Tenants.Entities;
+﻿
+namespace VC.Tenants.Entities;
 
-public class TenantConfiguration
+public class TenantConfiguration : ValueObject
 {
     public const int AboutMinLength = 16;
     public const int AboutMaxLength = 256;
@@ -47,7 +48,14 @@ public class TenantConfiguration
         if(timeZoneId.Length > TimeZoneIdMaxLength || timeZoneId.Length < TimeZoneIdMinLength)
             throw new ArgumentException($"TimeZoneId length must be greater than {TimeZoneIdMinLength} or equals. Lower than {TimeZoneIdMaxLength + 1}");
 
-
         return new TenantConfiguration(about, currency, language, timeZoneId);
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return About;
+        yield return Currency;
+        yield return Language;
+        yield return TimeZoneId;
     }
 }

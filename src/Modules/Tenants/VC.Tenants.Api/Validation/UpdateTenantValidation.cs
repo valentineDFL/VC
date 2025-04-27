@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using VC.Tenants.Api.Models.Request.Tenant;
+using VC.Tenants.Api.Models.Request.Update;
 using VC.Tenants.Entities;
 
 namespace VC.Tenants.Api.Validation;
@@ -9,16 +9,11 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
     public UpdateTenantValidation()
     {
         RuleFor(ctr => ctr)
-           .NotNull();
+            .NotNull();
 
         RuleFor(ctr => ctr.Name)
             .MinimumLength(Tenant.NameMinLenght)
             .MaximumLength(Tenant.NameMaxLenght)
-            .NotEmpty();
-
-        RuleFor(ctr => ctr.Slug)
-            .MinimumLength(Tenant.SlugMinLength)
-            .MaximumLength(Tenant.SlugMaxLength)
             .NotEmpty();
 
         RuleFor(ctr => ctr.Config)
@@ -55,17 +50,12 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
         RuleFor(ctr => ctr.ContactInfo)
             .ChildRules(con =>
             {
-                con.RuleFor(ctr => ctr.Email)
-                .MaximumLength(ContactInfo.EmailAddressMaxLength)
-                .NotNull()
-                .EmailAddress();
-
                 con.RuleFor(ctr => ctr.Phone)
                 .MinimumLength(ContactInfo.PhoneNumberMinLength)
                 .MaximumLength(ContactInfo.PhoneNumberMaxLength)
                 .NotEmpty();
 
-                con.RuleFor(ctr => ctr.Address)
+                con.RuleFor(ctr => ctr.AddressDto)
                 .NotNull()
                 .ChildRules(add =>
                 {
@@ -88,18 +78,25 @@ internal class UpdateTenantValidation : AbstractValidator<UpdateTenantRequest>
                     .Must(tn => tn >= Address.HouseMinNum && tn <= Address.HouseMaxNum);
                 });
 
+                con.RuleFor(ctr => ctr.UpdateEmailAddressDto)
+                .ChildRules(ead =>
+                {
+                    ead.RuleFor(em => em.Email)
+                    .NotEmpty()
+                    .MaximumLength(EmailAddress.EmailAddressMaxLength)
+                    .EmailAddress();
+                });
             });
 
         RuleFor(ctr => ctr.WorkSchedule)
-            .NotNull();
-
-        RuleFor(ctr => ctr.WorkSchedule)
+            .NotNull()
             .ChildRules(wc =>
             {
-                wc.RuleFor(wc => wc)
+                wc.RuleFor(wc => wc.WeekSchedule)
                 .NotNull()
                 .Must(wk => wk.Count == Enum.GetValues(typeof(DayOfWeek)).Length)
                 .Must(wk => wk.DistinctBy(wd => wd.Day).Count() == wk.Count)
+                .Must(wk => wk.DistinctBy(wd => wd.Id).Count() == wk.Count)
                 .Must(wk => wk.All(x => x.StartWork != x.EndWork && x.StartWork < x.EndWork))
                 .Must(wk => wk.All(t => t.StartWork.Kind == DateTimeKind.Utc && t.EndWork.Kind == DateTimeKind.Utc))
                 .WithMessage("Time Must be in UTC format");

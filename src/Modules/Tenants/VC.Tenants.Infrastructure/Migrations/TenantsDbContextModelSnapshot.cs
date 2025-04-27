@@ -52,15 +52,6 @@ namespace VC.Tenants.Infrastructure.Migrations
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<DateTime>("ConfirmationTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("Email")
-                                .HasColumnType("text");
-
-                            b1.Property<bool>("IsVerify")
-                                .HasColumnType("boolean");
-
                             b1.Property<string>("Phone")
                                 .HasColumnType("text");
 
@@ -99,36 +90,37 @@ namespace VC.Tenants.Infrastructure.Migrations
                                         .HasForeignKey("ContactInfoTenantId");
                                 });
 
+                            b1.OwnsOne("VC.Tenants.Entities.EmailAddress", "EmailAddress", b2 =>
+                                {
+                                    b2.Property<Guid>("ContactInfoTenantId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Code")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<DateTime>("ConfirmationTime")
+                                        .HasColumnType("timestamp with time zone");
+
+                                    b2.Property<string>("Email")
+                                        .HasColumnType("text");
+
+                                    b2.Property<bool>("IsVerify")
+                                        .HasColumnType("boolean");
+
+                                    b2.HasKey("ContactInfoTenantId");
+
+                                    b2.ToTable("Tenants", "tenants");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ContactInfoTenantId");
+                                });
+
                             b1.Navigation("Address")
                                 .IsRequired();
-                        });
 
-                    b.OwnsMany("VC.Tenants.Entities.DaySchedule", "WeekSchedule", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("Day")
-                                .HasColumnType("integer");
-
-                            b1.Property<DateTime>("EndWork")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("StartWork")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("TenantId")
-                                .HasColumnType("uuid");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("TenantId");
-
-                            b1.ToTable("DaySchedule", "tenants");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TenantId");
+                            b1.Navigation("EmailAddress")
+                                .IsRequired();
                         });
 
                     b.OwnsOne("VC.Tenants.Entities.TenantConfiguration", "Config", b1 =>
@@ -160,13 +152,57 @@ namespace VC.Tenants.Infrastructure.Migrations
                                 .HasForeignKey("TenantId");
                         });
 
+                    b.OwnsOne("VC.Tenants.Entities.WorkSchedule", "WorkSchedule", b1 =>
+                        {
+                            b1.Property<Guid>("TenantId")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("TenantId");
+
+                            b1.ToTable("Tenants", "tenants");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TenantId");
+
+                            b1.OwnsMany("VC.Tenants.Entities.DaySchedule", "WeekSchedule", b2 =>
+                                {
+                                    b2.Property<Guid>("Id")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<int>("Day")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<DateTime>("EndWork")
+                                        .HasColumnType("timestamp with time zone");
+
+                                    b2.Property<DateTime>("StartWork")
+                                        .HasColumnType("timestamp with time zone");
+
+                                    b2.Property<Guid>("TenantId")
+                                        .HasColumnType("uuid");
+
+                                    b2.HasKey("Id");
+
+                                    b2.HasIndex("TenantId");
+
+                                    b2.ToTable("DaySchedule", "tenants");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TenantId");
+                                });
+
+                            b1.Navigation("WeekSchedule");
+                        });
+
                     b.Navigation("Config")
                         .IsRequired();
 
                     b.Navigation("ContactInfo")
                         .IsRequired();
 
-                    b.Navigation("WeekSchedule");
+                    b.Navigation("WorkSchedule")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

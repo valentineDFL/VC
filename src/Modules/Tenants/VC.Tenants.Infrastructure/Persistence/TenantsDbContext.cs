@@ -20,7 +20,6 @@ public class TenantsDbContext : DbContext
     {
         _tenantResolver = tenantResolver;
         _tenantModuleSettings = tenantModuleSettings.Value;
-        Database.EnsureCreated();
     }
 
     public DbSet<Tenant> Tenants { get; set; }
@@ -77,16 +76,16 @@ public class TenantsDbContext : DbContext
             456
         );
 
+        var emailAddress = EmailAddress.Create("testMail@Gmail.com", true, "adminCode", DateTime.UtcNow);
+
         var contactInfo = ContactInfo.Create
         (
-            "testMail@Gmail.com",
             "+123456789",
             address,
-            true,
-            DateTime.UtcNow
+            emailAddress
         );
 
-        var workSchedule = new List<DaySchedule>
+        var weekSchedule = new List<DaySchedule>
         {
             DaySchedule.Create
             (
@@ -146,6 +145,8 @@ public class TenantsDbContext : DbContext
             )
         };
 
+        var workShedule = WorkSchedule.Create(weekSchedule);
+
         return Tenant.Create
         (
             tenantId,
@@ -154,7 +155,7 @@ public class TenantsDbContext : DbContext
             config,
             TenantStatus.Active,
             contactInfo,
-            workSchedule
+            workShedule
         );
     }
 }

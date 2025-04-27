@@ -18,14 +18,17 @@ internal class TenantRepository : ITenantRepository
 
     public async Task<Tenant?> GetAsync()
         => await _dbContext.Tenants
-            .Include(x => x.WeekSchedule.OrderBy(dd => dd.Day))
+            .Include(x => x.WorkSchedule)
+            .ThenInclude(x => x.WeekSchedule.OrderBy(d => d.Day))
             .AsNoTracking()
             .FirstOrDefaultAsync();
     
-
     public void Remove(Tenant entity)
-        => _dbContext.Remove(entity);
+        => _dbContext.Tenants.Remove(entity);
 
-    public void Update(Tenant entity)
-        => _dbContext.Tenants.Update(entity);
+    public Task UpdateAsync(Tenant entity)
+    {
+        _dbContext.Tenants.Update(entity);
+        return Task.CompletedTask;
+    }
 }

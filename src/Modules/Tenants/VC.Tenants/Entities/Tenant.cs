@@ -11,7 +11,7 @@ public class Tenant
     public const int SlugMinLength = 10;
     public const int SlugMaxLength = 128;
 
-    private Tenant(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, IReadOnlyList<DaySchedule> weekSchedule)
+    private Tenant(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, WorkSchedule workSchedule)
     {
         Id = id;
         Name = name;
@@ -19,7 +19,7 @@ public class Tenant
         Config = config;
         Status = status;
         ContactInfo = contactInfo;
-        WeekSchedule = weekSchedule;
+        WorkSchedule = workSchedule;
     }
 
     private Tenant() { }
@@ -39,9 +39,9 @@ public class Tenant
     
     public ContactInfo ContactInfo { get; private set; }
 
-    public IReadOnlyList<DaySchedule> WeekSchedule { get; private set; }
+    public WorkSchedule WorkSchedule { get; private set; }
 
-    public static Tenant Create(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, IReadOnlyList<DaySchedule> weekSchedule)
+    public static Tenant Create(Guid id, string name, string slug, TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, WorkSchedule workSchedule)
     {
         if(id == Guid.Empty)
             throw new ArgumentException("Id cannot be empty");
@@ -58,17 +58,24 @@ public class Tenant
         if (contactInfo is null)
             throw new ArgumentNullException("Contact Info cannot be null");
 
-        if (weekSchedule.Count != Enum.GetValues(typeof(DayOfWeek)).Length)
-            throw new ArgumentException("Schedule must have 7 days");
+        if(workSchedule is null)
+            throw new ArgumentNullException("WorkSchedule cannot be null");
 
-        if (weekSchedule.DistinctBy(d => d.Day).Count() != weekSchedule.Count)
-            throw new ArgumentException("Schedule Days must be uniqie");
-
-
-        return new Tenant(id, name, slug, config, status, contactInfo, weekSchedule);
+        return new Tenant(id, name, slug, config, status, contactInfo, workSchedule);
     }
 
-    public void VerifyEmail() => ContactInfo = ContactInfo.Create(ContactInfo.Email, ContactInfo.Phone, ContactInfo.Address, true, ContactInfo.ConfirmationTime);
+    public void Update(TenantConfiguration config, TenantStatus status, ContactInfo contactInfo, WorkSchedule workSchedule)
+    {
+        if(Config != config)
+            Config = config;
 
-    public void ChangeTimeToExpireVerifyLink() => ContactInfo = ContactInfo.Create(ContactInfo.Email, ContactInfo.Phone, ContactInfo.Address, false, DateTime.UtcNow.AddMinutes(ContactInfo.LinkMinuteValidTime));
+        if(Status != status)
+            Status = status;
+
+        if(ContactInfo != contactInfo)
+            ContactInfo = contactInfo;
+
+        if(WorkSchedule != workSchedule)
+            WorkSchedule = workSchedule;
+    }
 }

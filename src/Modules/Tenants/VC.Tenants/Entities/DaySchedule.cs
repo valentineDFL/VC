@@ -1,6 +1,7 @@
-﻿namespace VC.Tenants.Entities;
+﻿
+namespace VC.Tenants.Entities;
 
-public class DaySchedule
+public class DaySchedule : ValueObject
 {
     private DaySchedule(Guid id, Guid tenantId, DayOfWeek day, DateTime startWork, DateTime endWork)
     {
@@ -32,5 +33,14 @@ public class DaySchedule
             throw new ArgumentException("StartWork time cannot be equals EndWork time");
 
         return new DaySchedule(id, tenantId, day, startWork, endWork);
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Id;
+        yield return TenantId;
+        yield return Day;
+        yield return StartWork;
+        yield return EndWork;
     }
 }

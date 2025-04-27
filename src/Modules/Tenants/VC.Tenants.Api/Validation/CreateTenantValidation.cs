@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using VC.Tenants.Api.Models.Request.Tenant;
+using VC.Tenants.Api.Models.Request.Create;
 using VC.Tenants.Entities;
 
 namespace VC.Tenants.Api.Validation;
@@ -14,11 +14,6 @@ internal class CreateTenantValidation : AbstractValidator<CreateTenantRequest>
         RuleFor(ctr => ctr.Name)
             .MinimumLength(Tenant.NameMinLenght)
             .MaximumLength(Tenant.NameMaxLenght)
-            .NotEmpty();
-
-        RuleFor(ctr => ctr.Slug)
-            .MinimumLength(Tenant.SlugMinLength)
-            .MaximumLength(Tenant.SlugMaxLength)
             .NotEmpty();
 
         RuleFor(ctr => ctr.Config)
@@ -55,17 +50,12 @@ internal class CreateTenantValidation : AbstractValidator<CreateTenantRequest>
         RuleFor(ctr => ctr.ContactInfo)
             .ChildRules(con =>
             {
-                con.RuleFor(ctr => ctr.Email)
-                .MaximumLength(ContactInfo.EmailAddressMaxLength)
-                .NotNull()
-                .EmailAddress();
-
                 con.RuleFor(ctr => ctr.Phone)
                 .MinimumLength(ContactInfo.PhoneNumberMinLength)
                 .MaximumLength(ContactInfo.PhoneNumberMaxLength)
                 .NotEmpty();
 
-                con.RuleFor(ctr => ctr.Address)
+                con.RuleFor(ctr => ctr.AddressDto)
                 .NotNull()
                 .ChildRules(add =>
                 {
@@ -88,15 +78,21 @@ internal class CreateTenantValidation : AbstractValidator<CreateTenantRequest>
                     .Must(tn => tn >= Address.HouseMinNum && tn <= Address.HouseMaxNum);
                 });
 
+                con.RuleFor(ctr => ctr.EmailAddressDto)
+                .ChildRules(ead =>
+                {
+                    ead.RuleFor(em => em.Email)
+                    .NotEmpty()
+                    .MaximumLength(EmailAddress.EmailAddressMaxLength)
+                    .EmailAddress();
+                });
             });
 
         RuleFor(ctr => ctr.WorkSchedule)
-            .NotNull();
-
-        RuleFor(ctr => ctr.WorkSchedule)
+            .NotNull()
             .ChildRules(wc =>
             {
-                wc.RuleFor(wc => wc)
+                wc.RuleFor(wc => wc.WeekSchedule)
                 .NotNull()
                 .Must(wk => wk.Count == Enum.GetValues(typeof(DayOfWeek)).Length)
                 .Must(wk => wk.DistinctBy(wd => wd.Day).Count() == wk.Count)

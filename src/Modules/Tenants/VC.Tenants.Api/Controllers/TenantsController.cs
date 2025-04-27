@@ -2,14 +2,12 @@
 using FluentValidation;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using VC.MailkitIntegration;
-using VC.Tenants.Api.Models.Request.Tenant;
+using VC.Tenants.Api.Models.Request.Create;
+using VC.Tenants.Api.Models.Request.Update;
 using VC.Tenants.Api.Models.Response;
 using VC.Tenants.Application.Models.Create;
 using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Application.Tenants;
-using VC.Utilities;
 
 namespace VC.Tenants.Api.Controllers;
 
@@ -22,25 +20,16 @@ public class TenantsController : ControllerBase
     private readonly IValidator<CreateTenantRequest> _createTenantValidator;
     private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
 
-    private readonly ISendMailService _mailSenderService;
-
-    private readonly EndpointsUrls _endpointsUrls;
-
     private readonly IMapper _mapper;
 
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
         IValidator<UpdateTenantRequest> updateTenantValidator,
-        ISendMailService mailSenderService,
-        IOptions<EndpointsUrls> options,
         IMapper mapper)
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
         _updateTenantValidator = updateTenantValidator;
-
-        _mailSenderService = mailSenderService;
-        _endpointsUrls = options.Value;
 
         _mapper = mapper;
     }
@@ -61,8 +50,8 @@ public class TenantsController : ControllerBase
     /// <summary>
     /// Эндпоинт принимает дату только в формате UTC
     /// </summary>
-    [HttpPost("tenants/tenant")]
-    public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
+    [HttpPost]
+    public async Task<ActionResult> CreateAsync(CreateTenantRequest createRequest)
     {
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
@@ -73,13 +62,6 @@ public class TenantsController : ControllerBase
 
         var createResult = await _tenantService.CreateAsync(mappedCreateDto);
 
-        Message message = TenantEmailVerifyForm.RegistrationTenantEmailVerifyForm(_endpointsUrls.EmailVerifyEndpointUrl, createRequest.Name, createRequest.ContactInfo.Email);
-
-        var sendResult = await _mailSenderService.SendMailAsync(message);
-
-        if(!sendResult.IsSuccess)
-            return BadRequest(sendResult);
-
         if (!createResult.IsSuccess)
             return BadRequest(createResult);
 
@@ -87,9 +69,9 @@ public class TenantsController : ControllerBase
     }
 
     [HttpGet("verify-email")]
-    public async Task<ActionResult<Result>> VerifyMailAsync()
+    public async Task<ActionResult<Result>> VerifyMailAsync([FromQuery] string code)
     {
-        var verifyResult = await _tenantService.VerifyEmailAsync();
+        var verifyResult = await _tenantService.VerifyEmailAsync(code);
 
         if(verifyResult.IsSuccess)
             return Ok(verifyResult);
@@ -98,27 +80,12 @@ public class TenantsController : ControllerBase
     }
 
     [HttpPost("send-verify-mail")]
-    public async Task<ActionResult<Result>> SendVerifyMailAgain()
+    public async Task<ActionResult<Result>> SendVerifyMailAsync()
     {
-        var getResult = await _tenantService.GetAsync();
+        var sendMailResult = await _tenantService.SendVerificationMailAsync();
 
-        if(!getResult.IsSuccess)
-            return BadRequest(getResult);
-
-        var tenant = getResult.Value;
-        tenant.ChangeTimeToExpireVerifyLink();
-
-        var updateTenantParams = _mapper.Map<UpdateTenantParams>(tenant);
-        var putResult = await _tenantService.UpdateAsync(updateTenantParams);
-
-        if(!putResult.IsSuccess)
-            return BadRequest(putResult);
-
-        Message message = TenantEmailVerifyForm.VerifyTenantEmailForm(_endpointsUrls.EmailVerifyEndpointUrl, tenant.Name, tenant.ContactInfo.Email);
-        var sendResult = await _mailSenderService.SendMailAsync(message);
-
-        if (!sendResult.IsSuccess)
-            return BadRequest(sendResult);
+        if(!sendMailResult.IsSuccess)
+            return BadRequest();
 
         return Ok();
     }

@@ -1,6 +1,7 @@
-﻿namespace VC.Tenants.Entities;
+﻿
+namespace VC.Tenants.Entities;
 
-public class Address
+public class Address : ValueObject
 {
     public const int CountryMinLength = 5;
     public const int CountryMaxLength = 32;
@@ -47,5 +48,13 @@ public class Address
             throw new ArgumentException($"House number {house} must be greater than {HouseMinNum} or equals. Lowest than {HouseMaxNum} or equals.");
 
         return new Address(country, city, street, house);
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Country;
+        yield return City;
+        yield return Street;
+        yield return House;
     }
 }

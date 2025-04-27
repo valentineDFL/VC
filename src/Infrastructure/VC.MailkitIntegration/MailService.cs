@@ -5,7 +5,7 @@ using MimeKit;
 
 namespace VC.MailkitIntegration;
 
-internal class MailService : ISendMailService
+internal class MailService : IMailSenderService
 {
     private SmtpClient _smtpClient;
     private MailSenderInfo _mailSender;

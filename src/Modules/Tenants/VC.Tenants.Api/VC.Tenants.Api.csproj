@@ -18,7 +18,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
-      <ProjectReference Include="..\..\..\Infrastructure\VC.MailkitIntegration\VC.MailkitIntegration.csproj" />
       <ProjectReference Include="..\VC.Tenants.Application\VC.Tenants.Application.csproj" />
     </ItemGroup>
 

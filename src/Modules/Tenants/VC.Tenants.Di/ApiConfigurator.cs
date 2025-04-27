@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using VC.Tenants.Api.Models.Request.Tenant;
+using VC.Tenants.Api.Models.Request.Create;
+using VC.Tenants.Api.Models.Request.Update;
 using VC.Tenants.Api.Validation;
 using VC.Utilities;
 
@@ -13,6 +14,5 @@ internal static class ApiConfigurator
     {
         services.AddScoped<IValidator<CreateTenantRequest>, CreateTenantValidation>();
         services.AddScoped<IValidator<UpdateTenantRequest>, UpdateTenantValidation>();
-        services.Configure<EndpointsUrls>(configuration.GetSection(nameof(EndpointsUrls)));
     }
 }

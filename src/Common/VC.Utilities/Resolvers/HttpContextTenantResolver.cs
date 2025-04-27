@@ -6,7 +6,6 @@ public class HttpContextTenantResolver : ITenantResolver
 {
     private readonly IHttpContextAccessor _context;
 
-
     public HttpContextTenantResolver(IHttpContextAccessor context)
     {
         _context = context;
