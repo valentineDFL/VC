@@ -52,12 +52,6 @@ namespace VC.Tenants.Infrastructure.Migrations
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<string>("Address")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Email")
-                                .HasColumnType("text");
-
                             b1.Property<string>("Phone")
                                 .HasColumnType("text");
 
@@ -67,6 +61,66 @@ namespace VC.Tenants.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("TenantId");
+
+                            b1.OwnsOne("VC.Tenants.Entities.Address", "Address", b2 =>
+                                {
+                                    b2.Property<Guid>("ContactInfoTenantId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("City")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Country")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<int>("House")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("Street")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.HasKey("ContactInfoTenantId");
+
+                                    b2.ToTable("Tenants", "tenants");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ContactInfoTenantId");
+                                });
+
+                            b1.OwnsOne("VC.Tenants.Entities.EmailAddress", "EmailAddress", b2 =>
+                                {
+                                    b2.Property<Guid>("ContactInfoTenantId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Code")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<DateTime>("ConfirmationTime")
+                                        .HasColumnType("timestamp with time zone");
+
+                                    b2.Property<string>("Email")
+                                        .HasColumnType("text");
+
+                                    b2.Property<bool>("IsVerify")
+                                        .HasColumnType("boolean");
+
+                                    b2.HasKey("ContactInfoTenantId");
+
+                                    b2.ToTable("Tenants", "tenants");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ContactInfoTenantId");
+                                });
+
+                            b1.Navigation("Address")
+                                .IsRequired();
+
+                            b1.Navigation("EmailAddress")
+                                .IsRequired();
                         });
 
                     b.OwnsOne("VC.Tenants.Entities.TenantConfiguration", "Config", b1 =>
@@ -98,7 +152,7 @@ namespace VC.Tenants.Infrastructure.Migrations
                                 .HasForeignKey("TenantId");
                         });
 
-                    b.OwnsOne("VC.Tenants.Entities.TenantWorkSchedule", "WorkWeekSchedule", b1 =>
+                    b.OwnsOne("VC.Tenants.Entities.WorkSchedule", "WorkSchedule", b1 =>
                         {
                             b1.Property<Guid>("TenantId")
                                 .HasColumnType("uuid");
@@ -110,16 +164,11 @@ namespace VC.Tenants.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("TenantId");
 
-                            b1.OwnsMany("VC.Tenants.Entities.TenantDayWorkSchedule", "DaysSchedule", b2 =>
+                            b1.OwnsMany("VC.Tenants.Entities.DaySchedule", "WeekSchedule", b2 =>
                                 {
-                                    b2.Property<Guid>("TenantWorkScheduleTenantId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<int>("Id")
+                                    b2.Property<Guid>("Id")
                                         .ValueGeneratedOnAdd()
-                                        .HasColumnType("integer");
-
-                                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
+                                        .HasColumnType("uuid");
 
                                     b2.Property<int>("Day")
                                         .HasColumnType("integer");
@@ -130,15 +179,20 @@ namespace VC.Tenants.Infrastructure.Migrations
                                     b2.Property<DateTime>("StartWork")
                                         .HasColumnType("timestamp with time zone");
 
-                                    b2.HasKey("TenantWorkScheduleTenantId", "Id");
+                                    b2.Property<Guid>("TenantId")
+                                        .HasColumnType("uuid");
 
-                                    b2.ToTable("TenantDayWorkSchedule", "tenants");
+                                    b2.HasKey("Id");
+
+                                    b2.HasIndex("TenantId");
+
+                                    b2.ToTable("DaySchedule", "tenants");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("TenantWorkScheduleTenantId");
+                                        .HasForeignKey("TenantId");
                                 });
 
-                            b1.Navigation("DaysSchedule");
+                            b1.Navigation("WeekSchedule");
                         });
 
                     b.Navigation("Config")
@@ -147,7 +201,7 @@ namespace VC.Tenants.Infrastructure.Migrations
                     b.Navigation("ContactInfo")
                         .IsRequired();
 
-                    b.Navigation("WorkWeekSchedule")
+                    b.Navigation("WorkSchedule")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

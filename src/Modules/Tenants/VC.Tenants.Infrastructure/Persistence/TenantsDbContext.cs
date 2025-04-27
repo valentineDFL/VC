@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VC.Tenants.Entities;
+using VC.Utilities;
 using VC.Utilities.Resolvers;
 
 namespace VC.Tenants.Infrastructure.Persistence;
 
 public class TenantsDbContext : DbContext
 {
-    public DbSet<Tenant> Tenants { get; set; }
+    public const string SchemaName = "tenants";
 
     private readonly ITenantResolver _tenantResolver;
-    private readonly TenantsModuleSettings _tenantModuleOptions;
+    private readonly TenantsModuleSettings _tenantModuleSettings;
 
     public TenantsDbContext(
         DbContextOptions<TenantsDbContext> options, 
@@ -18,13 +19,15 @@ public class TenantsDbContext : DbContext
         IOptions<TenantsModuleSettings> tenantModuleSettings) : base(options)
     {
         _tenantResolver = tenantResolver;
-        _tenantModuleOptions = tenantModuleSettings.Value;
-        Database.EnsureCreated();
+        _tenantModuleSettings = tenantModuleSettings.Value;
     }
+
+    public DbSet<Tenant> Tenants { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("tenants");
+        modelBuilder.HasDefaultSchema(SchemaName);
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantsDbContext).Assembly);
 
         modelBuilder.Entity<Tenant>()
@@ -35,94 +38,124 @@ public class TenantsDbContext : DbContext
     {
         optionsBuilder.UseSeeding((context, flag) =>
         {
-            if (!_tenantModuleOptions.SeedingSettings.IsEnabled)
+            if (!_tenantModuleSettings.SeedingSettings.IsEnabled)
                 return;
 
             var isTenantExists = context.Set<Tenant>()
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (!isTenantExists)
+            if (isTenantExists)
                 return;
 
-            var config = new TenantConfiguration
-            {
-                About = "Тестовые данные компании",
-                Currency = "USD",
-                Language = "RU",
-                TimeZoneId = "UTC"
-            };
-
-            var contactInfo = new ContactInfo
-            {
-                Address = "Ул. Пушкина Дом Колотушкина",
-                Email = "testMail@Gmail.com",
-                Phone = "+123456789"
-            };
-
-            var workSchedule = new TenantWorkSchedule()
-            {
-                DaysSchedule = new List<TenantDayWorkSchedule>
-                {
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Sunday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Monday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Tuesday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Wednesday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Thursday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Friday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                    new TenantDayWorkSchedule()
-                    {
-                        Day = DayOfWeek.Saturday,
-                        StartWork = DateTime.UtcNow,
-                        EndWork = DateTime.UtcNow,
-                    },
-                }
-            };
-
-            var tenant = new Tenant
-            {
-                Id = Guid.CreateVersion7(),
-                Name = "AdminTestTenant",
-                Slug = SeedingDataBaseKeys.SeedTenantSlug,
-                Config = config,
-                Status = TenantStatus.Active,
-                ContactInfo = contactInfo,
-                WorkWeekSchedule = workSchedule
-            };
+            Tenant tenant = CreateSeedingTenant();
 
             context.Set<Tenant>().Add(tenant);
 
             context.SaveChanges();
         });
+    }
+
+    private Tenant CreateSeedingTenant()
+    {
+        var tenantId = TenantsIds.StaticTenantId;
+
+        var config = TenantConfiguration.Create
+            (
+                "Тестовые данные компании",
+                "USD",
+                "RU",
+                "UTC"
+            );
+
+        var address = Address.Create
+        (
+            "Ukraine",
+            "Kiev",
+            "Pushkina Street",
+            456
+        );
+
+        var emailAddress = EmailAddress.Create("testMail@Gmail.com", true, "adminCode", DateTime.UtcNow);
+
+        var contactInfo = ContactInfo.Create
+        (
+            "+123456789",
+            address,
+            emailAddress
+        );
+
+        var weekSchedule = new List<DaySchedule>
+        {
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Sunday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Monday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Tuesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Wednesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Thursday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Friday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Saturday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            )
+        };
+
+        var workShedule = WorkSchedule.Create(weekSchedule);
+
+        return Tenant.Create
+        (
+            tenantId,
+            "AdminTestTenant",
+            SeedingDataBaseKeys.SeedTenantSlug,
+            config,
+            TenantStatus.Active,
+            contactInfo,
+            workShedule
+        );
     }
 }

@@ -1,5 +1,7 @@
 using FluentResults;
-using VC.Tenants.Application.Tenants.Models;
+using VC.MailkitIntegration;
+using VC.Tenants.Application.Models.Create;
+using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Entities;
 using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
@@ -11,98 +13,104 @@ internal class TenantsService : ITenantsService
     private readonly ITenantRepository _tenantRepository;
     private readonly IDbSaver _dbSaver;
 
-    public TenantsService(ITenantRepository tenantRepository, IDbSaver dbSaver)
+    private readonly ISlugGenerator _slugGenerator;
+    private readonly IEmailVerifyCodeGenerator _emailVerifyCodeGenerator;
+
+    private readonly IMailSenderService _mailSenderService;
+
+    private readonly ITEnantEmailVerificationFormFactory _formFactory;
+
+    public TenantsService(ITenantRepository tenantRepository,
+                          IDbSaver dbSaver,
+                          ISlugGenerator slugGenerator,
+                          IEmailVerifyCodeGenerator emailVerifyCodeGenerator,
+                          IMailSenderService mailSenderService,
+                          ITEnantEmailVerificationFormFactory formFactory)
     {
         _tenantRepository = tenantRepository;
         _dbSaver = dbSaver;
+        _slugGenerator = slugGenerator;
+        _emailVerifyCodeGenerator = emailVerifyCodeGenerator;
+        _mailSenderService = mailSenderService;
+        _formFactory = formFactory;
+    }
+
+    public async Task<Result<Tenant>> GetAsync()
+    {
+        var tenant = await _tenantRepository.GetAsync();
+
+        if (tenant is null)
+            return Result.Fail("Tenant Not Found");
+
+        return Result.Ok(tenant);
     }
 
     public async Task<Result> CreateAsync(CreateTenantParams @params)
     {
-        var tenant = BuildTenant(@params);
+        var paramsAddress = @params.ContactInfo.AddressDto;
+        var address = Address.Create(paramsAddress.Country, paramsAddress.City, paramsAddress.Street, paramsAddress.House);
+
+        var paramsEmailAddress = @params.ContactInfo.EmailAddressDto;
+
+        var code = _emailVerifyCodeGenerator.GenerateCode();
+
+        var emailAddress = EmailAddress.Create(paramsEmailAddress.Email, false, code, DateTime.UtcNow.AddMinutes(EmailAddress.CodeMinuteValidTime));
+
+        var contactInfo = ContactInfo.Create(@params.ContactInfo.Phone, address, emailAddress);
+
+        var paramConfig = @params.Config;
+        var config = TenantConfiguration.Create(paramConfig.About, paramConfig.Currency, paramConfig.Language, paramConfig.TimeZoneId);
+
+        var tenantId = Guid.CreateVersion7();
+
+        var weekShedule = @params.WorkSchedule.WeekSchedule.Select(x => DaySchedule.Create(Guid.CreateVersion7(), tenantId, x.Day, x.StartWork, x.EndWork)).ToList();
+        var workShedule = WorkSchedule.Create(weekShedule);
+
+        var slug = _slugGenerator.GenerateSlug(@params.Name);
+        var tenant = Tenant.Create(tenantId, @params.Name, slug, config, @params.Status, contactInfo, workShedule);
 
         await _tenantRepository.AddAsync(tenant);
         await _dbSaver.SaveAsync();
 
+        var message = _formFactory.GetRegistrationMessageForm(tenant.ContactInfo.EmailAddress.Code, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
+
+        var sendResult = await _mailSenderService.SendMailAsync(message);
+
+        if (!sendResult.IsSuccess)
+            return Result.Fail(sendResult.Value);
+
         return Result.Ok();
     }
 
-    private Tenant BuildTenant(CreateTenantParams @params)
+    public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        var configuration = BuildConfiguration(@params.TenantConfig);
+        var tenant = await _tenantRepository.GetAsync();
 
-        var contactInfo = BuildContactInfo(@params.Contact);
+        if (tenant == null)
+            return Result.Fail("Tenant Not Found");
 
-        var workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
+        var config = TenantConfiguration.Create(@params.Config.About, @params.Config.Currency, @params.Config.Language, @params.Config.TimeZoneId);
 
-        return new Tenant()
-        {
-            Id = Guid.NewGuid(),
-            Name = @params.Name,
-            Slug = @params.Slug,
-            Config = configuration,
-            Status = @params.TenantStatus,
-            ContactInfo = contactInfo,
-            WorkWeekSchedule = workSchedule
-        };
-    }
+        var weekSchedule = @params.WorkSchedule.WeekSchedule
+            .Select(d => DaySchedule.Create(d.Id, tenant.Id, d.Day, d.StartWork, d.EndWork))
+            .OrderBy(d => d.Day).ToList();
 
-    private Tenant BuildTenant(UpdateTenantParams @params)
-    {
-        var configuration = BuildConfiguration(@params.TenantConfig);
+        var workSchedule = WorkSchedule.Create(weekSchedule);
 
-        var contactInfo = BuildContactInfo(@params.Contact);
+        var tenantContactInfo = tenant.ContactInfo.EmailAddress;
+        var emailAddress = EmailAddress.Create(@params.ContactInfo.UpdateEmailAddressDto.Email, tenantContactInfo.IsVerify, tenantContactInfo.Code, tenantContactInfo.ConfirmationTime);
 
-        var workSchedule = BuildTenantWorkSchedule(@params.WorkSchedule);
+        var paramsAddress = @params.ContactInfo.AddressDto;
+        var address = Address.Create(paramsAddress.Country, paramsAddress.City, paramsAddress.Street, paramsAddress.House);
 
-        return new Tenant()
-        {
-            Id = @params.Id,
-            Name = @params.Name,
-            Slug = @params.Slug,
-            Config = configuration,
-            Status = @params.TenantStatus,
-            ContactInfo = contactInfo,
-            WorkWeekSchedule = workSchedule
-        };
-    }
+        var contactInfo = ContactInfo.Create(@params.ContactInfo.Phone, address, emailAddress);
 
-    private TenantConfiguration BuildConfiguration(TenantConfigurationDto dto)
-    {
-        return new TenantConfiguration()
-        {
-            About = dto.About,
-            Currency = dto.Currency,
-            Language = dto.Language,
-            TimeZoneId = dto.TimeZoneId,
-        };
-    }
+        tenant.Update(config, @params.Status, contactInfo, workSchedule);
 
-    private ContactInfo BuildContactInfo(ContactDto dto)
-    {
-        return new ContactInfo()
-        {
-            Email = dto.Email,
-            Phone = dto.Phone,
-            Address = dto.Address,
-        };
-    }
+        await _tenantRepository.UpdateAsync(tenant);
+        await _dbSaver.SaveAsync();
 
-    private TenantWorkSchedule BuildTenantWorkSchedule(TenantWeekWorkSheduleDto dto)
-    {
-        var daysSchedule = new List<TenantDayWorkSchedule>();
-
-        foreach (var day in dto.WorkDays)
-        {
-            daysSchedule.Add(new TenantDayWorkSchedule()
-            {
-                Day = day.Day,
-                StartWork = day.StartWork.ToUniversalTime(),
-                EndWork = day.EndWork.ToUniversalTime()
-            });
-        }
-
-        return new TenantWorkSchedule() { DaysSchedule = daysSchedule };
+        return Result.Ok();
     }
 
     public async Task<Result> DeleteAsync()
@@ -119,44 +127,61 @@ internal class TenantsService : ITenantsService
         return Result.Ok();
     }
 
-    public async Task<Result<Tenant>> GetAsync()
+    public async Task<Result> VerifyEmailAsync(string code)
     {
         var tenant = await _tenantRepository.GetAsync();
 
         if (tenant is null)
             return Result.Fail("Tenant Not Found");
 
-        return Result.Ok(tenant);
-    }
+        if (tenant.ContactInfo.EmailAddress.IsVerify)
+            return Result.Fail("Tenant has already been verified");
 
-    public async Task<Result> UpdateAsync(UpdateTenantParams @params)
-    {
-        var existingTenant = await _tenantRepository.GetAsync();
+        if (tenant.ContactInfo.EmailAddress.ConfirmationTimeExpired)
+            return Result.Fail("Confirmation Time has expired");
 
-        if (existingTenant is null)
-            return Result.Fail("Tenant not found");
+        if (tenant.ContactInfo.EmailAddress.Code != code)
+            return Result.Fail("Codes does not equals");
 
-        var tenant = BuildTenant(@params);
+        var emailAddres = tenant.ContactInfo.EmailAddress;
+        var updatedEmailAddress = EmailAddress.Create(emailAddres.Email, true, emailAddres.Code, emailAddres.ConfirmationTime);
+        var updatedContactInfo = ContactInfo.Create(tenant.ContactInfo.Phone, tenant.ContactInfo.Address, updatedEmailAddress);
 
-        UpdateFindedTenant(tenant, existingTenant);
+        tenant.Update(tenant.Config, tenant.Status, updatedContactInfo, tenant.WorkSchedule);
 
-        _tenantRepository.Update(existingTenant);
+        await _tenantRepository.UpdateAsync(tenant);
+
         await _dbSaver.SaveAsync();
 
         return Result.Ok();
     }
 
-    private void UpdateFindedTenant(Tenant from, Tenant to)
+    public async Task<Result> SendVerificationMailAsync()
     {
-        to.Name = from.Name;
-        to.Slug = from.Slug;
+        var tenant = await _tenantRepository.GetAsync();
 
-        to.Config = from.Config;
+        if (tenant == null)
+            return Result.Fail("Tenant not found");
 
-        to.Status = from.Status;
+        var emailAddress = tenant.ContactInfo.EmailAddress;
 
-        to.ContactInfo = from.ContactInfo;
+        var newVerifyCode = _emailVerifyCodeGenerator.GenerateCode();
+        var updatedEmailAddress = EmailAddress.Create(emailAddress.Email, emailAddress.IsVerify, newVerifyCode, DateTime.UtcNow.AddMinutes(EmailAddress.CodeMinuteValidTime));
 
-        to.WorkWeekSchedule = from.WorkWeekSchedule;
+        var updatedContactInfo = ContactInfo.Create(tenant.ContactInfo.Phone, tenant.ContactInfo.Address, updatedEmailAddress);
+
+        tenant.Update(tenant.Config, tenant.Status, updatedContactInfo, tenant.WorkSchedule);
+
+        await _tenantRepository.UpdateAsync(tenant);
+
+        await _dbSaver.SaveAsync();
+
+        var message = _formFactory.GetVerifyMessageEmailForm(newVerifyCode, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
+        var sendMailResult = await _mailSenderService.SendMailAsync(message);
+
+        if (!sendMailResult.IsSuccess)
+            return Result.Fail(sendMailResult.Value);
+
+        return Result.Ok();
     }
 }

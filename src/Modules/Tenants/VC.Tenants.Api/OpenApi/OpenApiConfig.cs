@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
 using VC.Utilities;
 
 namespace VC.Tenants.Api.OpenApi;
