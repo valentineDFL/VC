@@ -16,4 +16,9 @@ public class Resource : AggregateRoot<Guid>, IHasTenantId
     public Guid TenantId { get; private set; }
     public string Title { get; set; }
     public string Description { get; set; }
+
+    /// <summary>
+    /// Количество ресурса.
+    /// </summary>
+    public int Count { get; set; }
 }
