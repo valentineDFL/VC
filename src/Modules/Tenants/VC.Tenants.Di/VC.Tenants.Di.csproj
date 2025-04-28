@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
       <ProjectReference Include="..\VC.Tenants.Api\VC.Tenants.Api.csproj" />
       <ProjectReference Include="..\VC.Tenants.Application\VC.Tenants.Application.csproj" />

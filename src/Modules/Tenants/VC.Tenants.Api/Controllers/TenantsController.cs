@@ -1,7 +1,12 @@
-﻿using FluentValidation;
+﻿using FluentResults;
+using FluentValidation;
+using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
-using VC.Tenants.Api.Endpoints.Tenants.Models.Request;
-using VC.Tenants.Api.Endpoints.Tenants.Models.Response;
+using VC.Tenants.Api.Models.Request.Create;
+using VC.Tenants.Api.Models.Request.Update;
+using VC.Tenants.Api.Models.Response;
+using VC.Tenants.Application.Models.Create;
+using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Application.Tenants;
 
 namespace VC.Tenants.Api.Controllers;
@@ -15,49 +20,79 @@ public class TenantsController : ControllerBase
     private readonly IValidator<CreateTenantRequest> _createTenantValidator;
     private readonly IValidator<UpdateTenantRequest> _updateTenantValidator;
 
+    private readonly IMapper _mapper;
+
     public TenantsController(ITenantsService tenantService,
         IValidator<CreateTenantRequest> createTenantValidator,
-        IValidator<UpdateTenantRequest> updateTenantValidator
-        )
+        IValidator<UpdateTenantRequest> updateTenantValidator,
+        IMapper mapper)
     {
         _tenantService = tenantService;
         _createTenantValidator = createTenantValidator;
         _updateTenantValidator = updateTenantValidator;
+
+        _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<ActionResult<ResponseTenantDto>> GetAsync()
     {
-        var response = await _tenantService.GetAsync();
+        var getResult = await _tenantService.GetAsync();
 
-        if (!response.IsSuccess)
-            return BadRequest(response);
+        if (!getResult.IsSuccess)
+            return BadRequest(getResult);
 
-        var mappedResponseDto = response
-            .Value
-            .ToResponseDto();
+        var mappedResponseDto = _mapper.Map<ResponseTenantDto>(getResult.Value);
 
         return Ok(mappedResponseDto);
     }
 
+    /// <summary>
+    /// Эндпоинт принимает дату только в формате UTC
+    /// </summary>
     [HttpPost]
-    public async Task<ActionResult> AddAsync(CreateTenantRequest createRequest)
+    public async Task<ActionResult> CreateAsync(CreateTenantRequest createRequest)
     {
         var validationResult = await _createTenantValidator.ValidateAsync(createRequest);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(validationResult);
 
-        var mappedCreateDto = createRequest.ToCreateTenantParams();
+        var mappedCreateDto = _mapper.Map<CreateTenantParams>(createRequest);
 
-        var response = await _tenantService.CreateAsync(mappedCreateDto);
+        var createResult = await _tenantService.CreateAsync(mappedCreateDto);
 
-        if (response.IsSuccess)
-            return Ok(response);
+        if (!createResult.IsSuccess)
+            return BadRequest(createResult);
 
-        return BadRequest(response);
+        return Ok(createResult);
     }
 
+    [HttpGet("verify-email")]
+    public async Task<ActionResult<Result>> VerifyMailAsync([FromQuery] string code)
+    {
+        var verifyResult = await _tenantService.VerifyEmailAsync(code);
+
+        if(verifyResult.IsSuccess)
+            return Ok(verifyResult);
+
+        return BadRequest(verifyResult);
+    }
+
+    [HttpPost("send-verify-mail")]
+    public async Task<ActionResult<Result>> SendVerifyMailAsync()
+    {
+        var sendMailResult = await _tenantService.SendVerificationMailAsync();
+
+        if(!sendMailResult.IsSuccess)
+            return BadRequest();
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Эндпоинт принимает дату только в формате UTC
+    /// </summary>
     [HttpPut]
     public async Task<ActionResult> UpdateAsync(UpdateTenantRequest updateRequest)
     {
@@ -66,24 +101,24 @@ public class TenantsController : ControllerBase
         if (!validationResult.IsValid)
             return BadRequest(validationResult);
 
-        var mappedUpdateDto = updateRequest.ToTenantUpdateDto();
+        var mappedUpdateDto = _mapper.Map<UpdateTenantRequest, UpdateTenantParams>(updateRequest);
 
-        var response = await _tenantService.UpdateAsync(mappedUpdateDto);
+        var updateResult = await _tenantService.UpdateAsync(mappedUpdateDto);
 
-        if (response.IsSuccess)
-            return Ok(response);
+        if (updateResult.IsSuccess)
+            return Ok(updateResult);
 
-        return BadRequest(response);
+        return BadRequest(updateResult);
     }
 
     [HttpDelete]
     public async Task<ActionResult> DeleteByIdAsync()
     {
-        var response = await _tenantService.DeleteAsync();
+        var deleteResult = await _tenantService.DeleteAsync();
 
-        if (response.IsSuccess)
+        if (deleteResult.IsSuccess)
             return Ok();
 
-        return BadRequest(response);
+        return BadRequest(deleteResult);
     }
 }
