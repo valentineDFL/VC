@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
+    <ProjectReference Include="..\VC.Recources.Application\VC.Recources.Application.csproj" />
+    <ProjectReference Include="..\VC.Recources.Infrastructure\VC.Recources.Infrastructure.csproj" />
+    <ProjectReference Include="..\VC.Recources\VC.Recources.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

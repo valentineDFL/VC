@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
 using VC.Integrations.Di;
+using VC.Recources.Di;
 using VC.Tenants.Di;
 using VC.Utilities;
 
@@ -12,6 +13,7 @@ builder.Services.AddControllers().AddApplicationPart(typeof(VC.Tenants.Api.Contr
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
+builder.Services.ConfigureResourceModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
