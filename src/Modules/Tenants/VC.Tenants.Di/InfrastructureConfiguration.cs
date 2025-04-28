@@ -5,7 +5,6 @@ using VC.Tenants.Infrastructure;
 using VC.Tenants.Infrastructure.Persistence;
 using VC.Tenants.Infrastructure.Persistence.Repositories;
 using VC.Tenants.Repositories;
-using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Di;
 
@@ -24,6 +23,6 @@ public static class InfrastructureConfiguration
     private static void ConfigureRepositories(IServiceCollection services)
     {
         services.AddScoped<ITenantRepository, TenantRepository>();
-        services.AddScoped<IDbSaver, DbSaver>();
+        services.AddScoped<IDbSaver, TenantDbSaver>();
     }
 }

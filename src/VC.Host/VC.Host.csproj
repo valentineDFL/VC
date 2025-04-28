@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -27,6 +27,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
+      <ProjectReference Include="..\Modules\Resources\VC.Recources.Di\VC.Recources.Di.csproj" />
+      <ProjectReference Include="..\Modules\Resources\VC.Resources.Api\VC.Resources.Api.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Api\VC.Tenants.Api.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Di\VC.Tenants.Di.csproj" />
     </ItemGroup>

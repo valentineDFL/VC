@@ -1,4 +1,4 @@
-namespace VC.Tenants.Repositories;
+namespace VC.Utilities;
 
 public interface IRepositoryBase<TEntity> where TEntity : class
 {

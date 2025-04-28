@@ -1,8 +1,8 @@
 using FluentResults;
 using VC.Tenants.Application.Tenants.Models;
 using VC.Tenants.Entities;
+using VC.Tenants.Infrastructure;
 using VC.Tenants.Repositories;
-using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Application.Tenants;
 
@@ -149,6 +149,7 @@ internal class TenantsService : ITenantsService
     private void UpdateFindedTenant(Tenant from, Tenant to)
     {
         to.Name = from.Name;
+
         to.Slug = from.Slug;
 
         to.Config = from.Config;

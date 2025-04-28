@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using VC.Tenants.Repositories;
+using VC.Utilities;
 
 namespace VC.Tenants.Infrastructure.Persistence.Repositories;
 
