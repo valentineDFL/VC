@@ -3,17 +3,19 @@ using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
 using VC.Integrations.Di;
-using VC.Recources.Di;
+using VC.Services.Di;
 using VC.Tenants.Di;
 using VC.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddApplicationPart(typeof(VC.Tenants.Api.Controllers.TenantsController).Assembly);
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(VC.Tenants.Api.Entry).Assembly)
+    .AddApplicationPart(typeof(VC.Services.Api.Entry).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
-builder.Services.ConfigureResourceModule(builder.Configuration);
+builder.Services.ConfigureServicesModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();

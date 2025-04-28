@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Api.Models.Request.Create;
 using VC.Tenants.Api.Models.Request.Update;
 using VC.Tenants.Api.Validation;
-using VC.Utilities;
 
 namespace VC.Tenants.Di;
 
