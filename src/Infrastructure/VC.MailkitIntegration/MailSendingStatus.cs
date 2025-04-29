@@ -1,6 +1,6 @@
 ﻿namespace VC.MailkitIntegration;
 
-public enum MailSendStatus
+public enum MailSendingStatus
 {
     Success = 200,
     Fail = 400,
