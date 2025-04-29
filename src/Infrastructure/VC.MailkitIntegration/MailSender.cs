@@ -5,12 +5,12 @@ using MimeKit;
 
 namespace VC.MailkitIntegration;
 
-internal class MailService : IMailSenderService
+internal class MailSender : IMailSender
 {
     private SmtpClient _smtpClient;
     private MailSenderInfo _mailSender;
 
-    public MailService(IOptions<MailSenderInfo> options)
+    public MailSender(IOptions<MailSenderInfo> options)
     {
         _mailSender = options.Value;
         _smtpClient = new SmtpClient();
@@ -18,13 +18,13 @@ internal class MailService : IMailSenderService
         _smtpClient.Authenticate(_mailSender.SenderMailName, _mailSender.SenderAppPassword);
     }
 
-    ~MailService()
+    public void Dispose()
     {
         _smtpClient.Disconnect(true);
         _smtpClient.Dispose();
     }
 
-    public async Task<Result<string>> SendMailAsync(Message message)
+    public async Task<Result> SendMailAsync(Message message)
     {
         try
         {
@@ -40,11 +40,11 @@ internal class MailService : IMailSenderService
             };
 
             await _smtpClient.SendAsync(mimeMessage);
-            return Result.Ok(MailSendStatus.Success.ToString());
+            return Result.Ok();
         }
         catch(Exception ex)
         {
-            return Result.Fail($"Status: {MailSendStatus.Fail} Message: {ex.Message}");
+            return Result.Fail($"Status: {MailSendingStatus.Fail} Message: {ex.Message}");
         }
     }
 }

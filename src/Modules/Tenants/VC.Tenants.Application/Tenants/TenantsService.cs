@@ -16,7 +16,7 @@ internal class TenantsService : ITenantsService
     private readonly ISlugGenerator _slugGenerator;
     private readonly IEmailVerifyCodeGenerator _emailVerifyCodeGenerator;
 
-    private readonly IMailSenderService _mailSenderService;
+    private readonly IMailSender _mailSenderService;
 
     private readonly ITEnantEmailVerificationFormFactory _formFactory;
 
@@ -24,7 +24,7 @@ internal class TenantsService : ITenantsService
                           IDbSaver dbSaver,
                           ISlugGenerator slugGenerator,
                           IEmailVerifyCodeGenerator emailVerifyCodeGenerator,
-                          IMailSenderService mailSenderService,
+                          IMailSender mailSenderService,
                           ITEnantEmailVerificationFormFactory formFactory)
     {
         _tenantRepository = tenantRepository;
@@ -77,7 +77,7 @@ internal class TenantsService : ITenantsService
         var sendResult = await _mailSenderService.SendMailAsync(message);
 
         if (!sendResult.IsSuccess)
-            return Result.Fail(sendResult.Value);
+            return Result.Fail(sendResult.Errors);
 
         return Result.Ok();
     }
@@ -180,7 +180,7 @@ internal class TenantsService : ITenantsService
         var sendMailResult = await _mailSenderService.SendMailAsync(message);
 
         if (!sendMailResult.IsSuccess)
-            return Result.Fail(sendMailResult.Value);
+            return Result.Fail(sendMailResult.Errors);
 
         return Result.Ok();
     }

@@ -9,7 +9,7 @@ public class ContactInfo : ValueObject
     public const int PhoneNumberMinLength = 15;
     public const int PhoneNumberMaxLength = 16;
 
-    private ContactInfo(string? phone, Address address, EmailAddress emailAddress)
+    private ContactInfo(string phone, Address address, EmailAddress emailAddress)
     {
         Phone = phone;
         Address = address;
@@ -18,14 +18,17 @@ public class ContactInfo : ValueObject
 
     private ContactInfo() { }
 
-    public string? Phone { get; private set; }
+    public string Phone { get; private set; }
 
     public Address Address { get; private set; }
 
     public EmailAddress EmailAddress { get; private set; }
 
-    public static ContactInfo Create(string? phone, Address address, EmailAddress emailAddress)
+    public static ContactInfo Create(string phone, Address address, EmailAddress emailAddress)
     {
+        if (phone.Length > PhoneNumberMaxLength || phone.Length < PhoneNumberMinLength)
+            throw new ArgumentException($"Phone Length must be equals {PhoneNumberMinLength} or {PhoneNumberMaxLength} but he {phone.Length}");
+
         if(address is null)
             throw new ArgumentNullException("Address cannot be null");
 
