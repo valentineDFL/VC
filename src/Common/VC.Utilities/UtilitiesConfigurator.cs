@@ -9,5 +9,6 @@ public static class UtilitiesConfigurator
     public static void ConfigureUtilities(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ITenantResolver, HttpContextTenantResolver>();
+        services.AddScoped<IDateTime, DateTimeProvider>();
     }
 }

@@ -9,11 +9,10 @@ using VC.Services.Repositories;
 
 namespace VC.Services.Api.Controllers;
 
-[ApiController]
 [Route("api/resources")]
-[ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-public class ResourcesController(IResourcesService _resourcesService, IUnitOfWork _unitOfWork)
-    : ControllerBase
+public class ResourcesController(
+    IResourcesService _resourcesService,
+    IUnitOfWork _unitOfWork) : ApiController
 {
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Response>> GetAsync(Guid id)

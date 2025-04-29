@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VC.Services.Application.ServicesUseCases;
 using VC.Services.Infrastructure.Persistence;
+using VC.Services.Infrastructure.Persistence.Queries;
 using VC.Services.Infrastructure.Persistence.Repositories;
 using VC.Services.Repositories;
 
@@ -26,6 +28,11 @@ internal static class InfrastructureConfiguration
     {
         services.AddScoped<IResourcesRepository, ResourcesRepository>();
         services.AddScoped<IServicesRepository, ServicesRepository>();
+        services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+        
+        
+        services.AddScoped<IServiceDetailsQuery, ServiceDetailsQuery>();
+        
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

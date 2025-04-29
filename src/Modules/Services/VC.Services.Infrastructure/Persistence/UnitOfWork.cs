@@ -6,7 +6,8 @@ namespace VC.Services.Infrastructure.Persistence;
 internal class UnitOfWork(
     DatabaseContext _dbContext,
     IResourcesRepository _resourcesRepository,
-    IServicesRepository _servicesRepository
+    IServicesRepository _servicesRepository,
+    ICategoriesRepository _categoriesRepository
     ) : IUnitOfWork, IDisposable
 {
     private IDbContextTransaction _transaction;
@@ -14,6 +15,7 @@ internal class UnitOfWork(
     
     public IResourcesRepository Resources => _resourcesRepository;
     public IServicesRepository Services => _servicesRepository;
+    public ICategoriesRepository Categories => _categoriesRepository;
     
     public void BeginTransaction()
     {

@@ -33,4 +33,9 @@ internal class ServicesRepository : IServicesRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<bool> ExistsAsync(string title)
+    {
+        throw new NotImplementedException();
+    }
 }

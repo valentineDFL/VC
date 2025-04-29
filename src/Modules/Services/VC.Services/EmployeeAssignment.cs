@@ -5,26 +5,33 @@ namespace VC.Services;
 /// <summary>
 /// Назначение сотрудника на услугу
 /// </summary>
-public class EmployeeAssignment : ValueObject
+public class EmployeeAssignment : Entity<Guid>
 {
-    public Guid EmployeeId { get; }
-    public decimal Price { get; }
-    public TimeSpan Duration { get; }
+    public Guid EmployeeId { get; private set; }
+    public decimal Price { get; private set; }
+    public TimeSpan Duration { get; private set; }
 
     public EmployeeAssignment(
-        Guid EmployeeId,
-        decimal Price,
-        TimeSpan Duration)
+        Guid id,
+        Guid employeeId,
+        decimal price,
+        TimeSpan duration)
     {
-        this.EmployeeId = EmployeeId;
-        this.Price = Price;
-        this.Duration = Duration;
+        Id = id;
+        EmployeeId = employeeId;
+        Price = price;
+        Duration = duration;
     }
 
-    protected override IEnumerable<object> GetEqualityComponents()
+    public void UpdatePrice(decimal newPrice)
     {
-        yield return EmployeeId;
-        yield return Price;
-        yield return Duration;
+        if (newPrice <= 0) throw new ArgumentException("Price must be positive.");
+        Price = newPrice;
+    }
+
+    public void UpdateDuration(TimeSpan newDuration)
+    {
+        if (newDuration <= TimeSpan.Zero) throw new ArgumentException("Duration must be positive.");
+        Duration = newDuration;
     }
 }

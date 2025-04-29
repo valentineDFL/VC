@@ -14,6 +14,11 @@ internal class ResourcesRepository : IResourcesRepository
         throw new NotImplementedException();
     }
 
+    public Task<ICollection<Resource>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task AddAsync(Resource service, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

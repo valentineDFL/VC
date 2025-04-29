@@ -4,6 +4,7 @@ public interface IUnitOfWork
 {
     public IResourcesRepository Resources { get; }
     public IServicesRepository Services { get; }
+    public ICategoriesRepository Categories { get; }
     
     void BeginTransaction();
     

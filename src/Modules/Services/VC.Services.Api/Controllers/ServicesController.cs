@@ -2,38 +2,44 @@
 using VC.Services.Api.Models.Services;
 using VC.Services.Application.ServicesUseCases;
 using VC.Services.Application.ServicesUseCases.Models;
-using VC.Services.Repositories;
 
 namespace VC.Services.Api.Controllers;
 
-[ApiController]
 [Route("api/services")]
-[ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-public class ServicesController(IServicesService _servicesService, IUnitOfWork _unitOfWork)
-    : ControllerBase
+public class ServicesController : ApiController
 {
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Service>> GetAsync(Guid id)
+    public async Task<IActionResult> GetAsync(Guid id,
+        [FromServices] IServiceDetailsQuery serviceDetailsQuery)
     {
-        var response = await _servicesService.GetByIdAsync(id);
-        if (!response.IsSuccess)
-            return new BadRequestObjectResult(new { Errors = response });
+        var serviceDetails = await serviceDetailsQuery.ExecuteAsync(id);
+        if (serviceDetails is null)
+            return NotFound();
 
-        return Ok(response.Value);
+        return Ok(serviceDetails);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(CreateServiceRequest req)
+    public async Task<ActionResult> CreateAsync(CreateServiceRequest req,
+        [FromServices] ICreateServiceCommand createServiceCommand)
     {
-        await _unitOfWork.BeginTransactionAsync();
+        var dto = new CreateServiceParams(
+            req.Title,
+            req.BasePrice,
+            req.BaseDuration,
+            req.Description,
+            req.CategoryId,
+            req.RequiredResources,
+            req.EmployeeAssignments?.Select(ea => new CreateServiceParams.EmployeeAssignmentDto()
+            {
+                EmployeeId = ea.EmployeeId,
+                Duration = ea.Duration,
+                Price = ea.Price,
+            }).ToList());
 
-        var dto = new CreateServiceParams();
-
-        var response = await _servicesService.CreateAsync(dto);
+        var response = await createServiceCommand.ExecuteAsync(dto);
         if (!response.IsSuccess)
             return new BadRequestObjectResult(new { Errors = response });
-
-        await _unitOfWork.CommitAsync();
 
         return Ok(response);
     }
