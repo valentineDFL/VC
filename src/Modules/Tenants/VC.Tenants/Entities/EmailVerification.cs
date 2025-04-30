@@ -6,17 +6,14 @@ public class EmailVerification
 
     public const int CodeMaxLenght = 10;
 
-    private EmailVerification(Guid id, Guid tenantId, EmailAddress email, string code, DateTime expirationTime, bool isConfirmed)
+    private EmailVerification(Guid tenantId, EmailAddress email, string code)
     {
-        Id = id;
         TenantId = tenantId;
         Email = email;
         Code = code;
-        ExpirationTime = expirationTime;
-        IsConfirmed = isConfirmed;
     }
 
-    public Guid Id { get; private set; }
+    public EmailVerification() { }
 
     public Guid TenantId { get; private set; }
 
@@ -27,26 +24,15 @@ public class EmailVerification
     /// </summary>
     public string Code { get; private set; }
 
-    /// <summary>
-    /// Время до которого код будет действителен
-    /// </summary>
-    public DateTime ExpirationTime { get; private set; }
-
-    public bool IsConfirmed { get; private set; }
-
-    public bool ConfirmationTimeExpired => ExpirationTime < DateTime.UtcNow;
-
-    public static EmailVerification Create(Guid id, Guid tenantId, EmailAddress email, string code, DateTime expirationTime, bool isConfirmed)
+    public static EmailVerification Create(Guid tenantId, EmailAddress email, string code)
     {
-        return new EmailVerification(id, tenantId, email, code, expirationTime, isConfirmed);
-    }
+        if (tenantId == Guid.Empty) throw new ArgumentException("Tenant id is empty!");
 
-    public void Confirm(string code)
-    {
-        if (IsConfirmed) throw new InvalidOperationException("Already confirmed.");
-        if (DateTime.UtcNow > ExpirationTime) throw new InvalidOperationException("Code expired.");
-        if (Code != code) throw new InvalidOperationException("Invalid code.");
+        if(email is null) throw new ArgumentNullException("Email is null!");
 
-        IsConfirmed = true;
+        if (code.Length == 0 || code.Length > CodeMaxLenght)
+            throw new ArgumentException($"Code Length must be higter than 0 but he {code.Length}");
+
+        return new EmailVerification(tenantId, email, code);
     }
 }
