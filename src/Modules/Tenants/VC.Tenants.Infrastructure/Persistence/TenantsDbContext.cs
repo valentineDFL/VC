@@ -45,7 +45,7 @@ public class TenantsDbContext : DbContext
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (isTenantExists)
+            if (!isTenantExists)
                 return;
 
             Tenant tenant = CreateSeedingTenant();
@@ -62,7 +62,7 @@ public class TenantsDbContext : DbContext
 
         var config = TenantConfiguration.Create
             (
-                "Тестовые данные компании",
+                "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ",
                 "USD",
                 "RU",
                 "UTC"

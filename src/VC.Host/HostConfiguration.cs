@@ -24,10 +24,22 @@ internal static class HostConfiguration
                     Version = "v1",
                     Title = "Универсальная платформа для управления услугами и онлайн-бронирования с поддержкой мультитенантности",
                     Description = """
-                              <a href="http://localhost:5056/scalar/tenants">Управление арендаторами</a><br/>
-                              <a href="http://localhost:5056/scalar/bookings">Управление бронированиями</a><br/>
-                         
-                              GitLab - https://gitlab.com/tech-power-partners/vclients/vc
+                                <p>
+                                  <h3><a href="http://localhost:5056/scalar/tenants"
+                                    title="click">Управление арендаторами</a></h3>
+                                </p>
+                                <p>
+                                  <h3><a href="http://localhost:5056/scalar/bookings"
+                                    title="click">Управление бронированиями</a></h3>
+                                </p>
+                                <p>
+                                  <h3><a href="http://localhost:5056/scalar/resources"
+                                    title="click">Управление ресурсами</a></h3>
+                                </p><br/>
+                                <p>
+                                  <a href="https://gitlab.com/tech-power-partners/vclients/vc 
+                                    title="click"">GitLab - vclients</a>
+                                </p>
                               """
                 };
 
