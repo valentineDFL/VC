@@ -18,14 +18,14 @@ internal class TenantsService : ITenantsService
 
     private readonly IMailSender _mailSenderService;
 
-    private readonly ITEnantEmailVerificationFormFactory _formFactory;
+    private readonly ITEnantEmailVerificationMessagesFactory _formFactory;
 
     public TenantsService(ITenantRepository tenantRepository,
                           IDbSaver dbSaver,
                           ISlugGenerator slugGenerator,
                           IEmailVerifyCodeGenerator emailVerifyCodeGenerator,
                           IMailSender mailSenderService,
-                          ITEnantEmailVerificationFormFactory formFactory)
+                          ITEnantEmailVerificationMessagesFactory formFactory)
     {
         _tenantRepository = tenantRepository;
         _dbSaver = dbSaver;
@@ -52,9 +52,7 @@ internal class TenantsService : ITenantsService
 
         var paramsEmailAddress = @params.ContactInfo.EmailAddressDto;
 
-        var code = _emailVerifyCodeGenerator.GenerateCode();
-
-        var emailAddress = EmailAddress.Create(paramsEmailAddress.Email, false, code, DateTime.UtcNow.AddMinutes(EmailAddress.CodeMinuteValidTime));
+        var emailAddress = EmailAddress.Create(paramsEmailAddress.Email);
 
         var contactInfo = ContactInfo.Create(@params.ContactInfo.Phone, address, emailAddress);
 
@@ -72,7 +70,13 @@ internal class TenantsService : ITenantsService
         await _tenantRepository.AddAsync(tenant);
         await _dbSaver.SaveAsync();
 
-        var message = _formFactory.GetRegistrationMessageForm(tenant.ContactInfo.EmailAddress.Code, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
+        var code = _emailVerifyCodeGenerator.GenerateCode();
+
+        var email = EmailVerification.Create(Guid.CreateVersion7(), tenantId, emailAddress, code, DateTime.UtcNow.AddMinutes(EmailVerification.CodeMinuteValidTime), false);
+
+
+
+        var message = _formFactory.CreateAfterRegistration(code, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
 
         var sendResult = await _mailSenderService.SendMailAsync(message);
 
@@ -98,12 +102,17 @@ internal class TenantsService : ITenantsService
         var workSchedule = WorkSchedule.Create(weekSchedule);
 
         var tenantContactInfo = tenant.ContactInfo.EmailAddress;
-        var emailAddress = EmailAddress.Create(@params.ContactInfo.UpdateEmailAddressDto.Email, tenantContactInfo.IsVerify, tenantContactInfo.Code, tenantContactInfo.ConfirmationTime);
+        var emailAddress = EmailAddress.Create(@params.ContactInfo.UpdateEmailAddressDto.Email);
 
         var paramsAddress = @params.ContactInfo.AddressDto;
         var address = Address.Create(paramsAddress.Country, paramsAddress.City, paramsAddress.Street, paramsAddress.House);
 
         var contactInfo = ContactInfo.Create(@params.ContactInfo.Phone, address, emailAddress);
+
+        if(tenant.ContactInfo.EmailAddress != emailAddress)
+        {
+
+        }
 
         tenant.Update(config, @params.Status, contactInfo, workSchedule);
 
@@ -120,7 +129,7 @@ internal class TenantsService : ITenantsService
         if (existingTenant is null)
             return Result.Fail("Tenant Not found");
 
-        _tenantRepository.Remove(existingTenant);
+        await _tenantRepository.RemoveAsync(existingTenant);
 
         await _dbSaver.SaveAsync();
 
@@ -176,7 +185,7 @@ internal class TenantsService : ITenantsService
 
         await _dbSaver.SaveAsync();
 
-        var message = _formFactory.GetVerifyMessageEmailForm(newVerifyCode, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
+        var message = _formFactory.CreateMessageForVerify(newVerifyCode, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
         var sendMailResult = await _mailSenderService.SendMailAsync(message);
 
         if (!sendMailResult.IsSuccess)

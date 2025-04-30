@@ -2,9 +2,9 @@
 
 namespace VC.Tenants.Application;
 
-internal class TenantEmailVerifyMessagesFactory : ITEnantEmailVerificationFormFactory
+internal class TenantEmailVerifyMessagesFactory : ITEnantEmailVerificationMessagesFactory
 {
-    public Message GetRegistrationMessageForm(string code, string receiverName, string receiverMail)
+    public Message CreateAfterRegistration(string code, string receiverName, string receiverMail)
     {
         var subject = "Регистрация на сайте";
         var header = "Спасибо за регистрацию на сайте!";
@@ -14,7 +14,7 @@ internal class TenantEmailVerifyMessagesFactory : ITEnantEmailVerificationFormFa
         return new Message(subject, text, receiverName, receiverMail, header);
     }
 
-    public Message GetVerifyMessageEmailForm(string code, string receiverName, string receiverMail)
+    public Message CreateMessageForVerify(string code, string receiverName, string receiverMail)
     {
         var subject = "Подтверждение почты";
         var header = "Вы не подтвердили почту!";

@@ -1,4 +1,6 @@
-﻿namespace VC.Tenants.Application;
+﻿using VC.Tenants.Application;
+
+namespace VC.Tenants.Infrastructure.Implementations;
 
 internal class DyDateCodeGenerator : IEmailVerifyCodeGenerator
 {
