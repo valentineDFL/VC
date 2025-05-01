@@ -23,8 +23,12 @@ internal class TenantRepository : ITenantRepository
             .AsNoTracking()
             .FirstOrDefaultAsync();
     
-    public void Remove(Tenant entity)
-        => _dbContext.Tenants.Remove(entity);
+    public Task RemoveAsync(Tenant entity)
+    {
+        _dbContext.Tenants.Remove(entity);
+
+        return Task.CompletedTask;
+    }
 
     public Task UpdateAsync(Tenant entity)
     {

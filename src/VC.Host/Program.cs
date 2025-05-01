@@ -3,7 +3,6 @@ using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
 using VC.Integrations.Di;
-using VC.Services.Di;
 using VC.Tenants.Di;
 using VC.Utilities;
 
