@@ -1,4 +1,5 @@
 ﻿using VC.Tenants.Application;
+using VC.Tenants.Entities;
 
 namespace VC.Tenants.Infrastructure.Implementations;
 
@@ -7,6 +8,11 @@ internal class DyDateCodeGenerator : IEmailVerifyCodeGenerator
     public string GenerateCode()
     {
         int hashCode = DateTime.UtcNow.GetHashCode();
-        return hashCode > 0 ? hashCode.ToString() : (-hashCode).ToString();
+        string stringHashCode = hashCode > 0 ? hashCode.ToString() : (-hashCode).ToString();
+
+        if(stringHashCode.Length > EmailVerification.CodeMaxLenght)
+            stringHashCode = stringHashCode.Substring(0, EmailVerification.CodeMaxLenght - 1);
+
+        return stringHashCode;
     }
 }

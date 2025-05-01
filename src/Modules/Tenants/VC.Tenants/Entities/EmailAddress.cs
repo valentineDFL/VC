@@ -18,7 +18,8 @@ public class EmailAddress : ValueObject
 
     public static EmailAddress Create(string email, bool isConfirmed = false)
     {
-        if (string.IsNullOrEmpty(email)) throw new ArgumentNullException("Email cannot be null or empty");
+        if (string.IsNullOrEmpty(email)) 
+            throw new ArgumentNullException("Email cannot be null or empty");
 
         if (email.Length > EmailAddressMaxLength)
             throw new ArgumentException($"EmailAddress length must be lowest than {EmailAddressMaxLength} or equals.");
