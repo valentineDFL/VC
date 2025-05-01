@@ -1,13 +1,14 @@
-﻿namespace VC.Services.Application.ServicesUseCases.Models;
+namespace VC.Services.Application.ServicesUseCases.Models;
 
-public record CreateServiceParams(
+public record UpdateServiceParams(
+    Guid Id,
     string Title,
     decimal BasePrice,
     TimeSpan BaseDuration,
     string? Description = null,
     Guid? CategoryId = null,
     List<Guid>? RequiredResources = null,
-    List<CreateServiceParams.EmployeeAssignmentDto>? EmployeeAssignments = null)
+    List<UpdateServiceParams.EmployeeAssignmentDto>? EmployeeAssignments = null)
 {
     public class EmployeeAssignmentDto
     {

@@ -4,7 +4,7 @@ using VC.Services.Application.ServicesUseCases.Models;
 
 namespace VC.Services.Infrastructure.Persistence.Queries;
 
-public class ServiceDetailsQuery(DatabaseContext _dbContext) : IServiceDetailsQuery
+public class GetServiceDetailsUseCase(DatabaseContext _dbContext) : IGetServiceDetailsUseCase
 {
     public async Task<ServiceDetailsDto?> ExecuteAsync(Guid serviceId)
     {
@@ -51,12 +51,11 @@ public class ServiceDetailsQuery(DatabaseContext _dbContext) : IServiceDetailsQu
                 {
                     Id = r.Id,
                     Title = r.Title,
-                    Count = r.Count
+                    Count = (int)r.Count
                 }).ToList(),
                 IsActive = g.Key.Service.IsActive,
                 EmployeeAssignments = g.Key.Service.EmployeeAssignments.Select(a => new EmployeeAssignmentDto
                 {
-                    Id = a.Id,
                     EmployeeId = a.EmployeeId,
                     Price = a.Price,
                     Duration = a.Duration

@@ -2,5 +2,5 @@
 
 public record CreateResourceParams(
     string Title,
-    string Description
-);
+    string Description,
+    int Count);

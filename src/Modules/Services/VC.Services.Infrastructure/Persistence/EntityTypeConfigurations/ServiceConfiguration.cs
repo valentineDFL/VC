@@ -30,20 +30,29 @@ internal class ServiceConfiguration : IEntityTypeConfiguration<Service>
         builder.Property(s => s.RequiredResources).HasColumnType("uuid[]");
 
         builder.OwnsMany(
-            s => s.EmployeeAssignments,
-            a =>
+            s => s.EmployeeAssignments, 
+            employeeAssignment =>
             {
-                a.ToTable("ServiceEmployeeAssignments");
-                a.Property(e => e.Id).ValueGeneratedNever();
-                a.HasKey(e => e.Id);
-                a.WithOwner().HasForeignKey("ServiceId");
-        
-                a.Property(e => e.Duration)
+                employeeAssignment.ToTable("EmployeeAssignments");
+                
+                employeeAssignment.HasIndex(e => e.EmployeeId);
+                employeeAssignment.Property(e => e.EmployeeId)
+                    .IsRequired();
+                
+                employeeAssignment.Property(e => e.Price)
+                    .IsRequired();
+                
+                employeeAssignment.Property(e => e.Duration)
                     .HasConversion(
                         v => v.Ticks,
                         v => TimeSpan.FromTicks(v)
-                    );
-            });
+                    )
+                    .IsRequired();
+            }
+        );
+        
+        builder.Metadata.FindNavigation(nameof(Service.EmployeeAssignments))
+            ?.SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(s => s.TenantId)
             .IsRequired();

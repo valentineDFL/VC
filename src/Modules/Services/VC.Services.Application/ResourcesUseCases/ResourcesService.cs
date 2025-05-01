@@ -9,21 +9,20 @@ public class ResourcesService(
     ITenantResolver _tenantResolver,
     IUnitOfWork _unitOfWork) : IResourcesService
 {
-    public async Task<Result<Resource>> GetAsync(Guid id)
+    public async Task<Result<Resource?>> GetAsync(Guid id)
     {
-        var resource = await _unitOfWork.Resources.GetByIdAsync(id);
-        if (resource is null)
-            return Result.Fail("Resource not found");
-
-        return Result.Ok(resource);
+        return await _unitOfWork.Resources.GetByIdAsync(id);
     }
 
-    public async Task<Result> CreateAsync(CreateResourceParams dto)
+    public async Task<Result> CreateAsync(CreateResourceParams parameters)
     {
-        var resource = new Resource(Guid.CreateVersion7(), _tenantResolver.Resolve())
+        var resource = new Resource(
+            Guid.CreateVersion7(),
+            _tenantResolver.Resolve(),
+            parameters.Title,
+            parameters.Count)
         {
-            Title = dto.Title,
-            Description = dto.Description
+            Description = parameters.Description
         };
 
         await _unitOfWork.Resources.AddAsync(resource);
@@ -31,17 +30,28 @@ public class ResourcesService(
         return Result.Ok();
     }
 
-    public async Task<Result> UpdateAsync(UpdateResourceParams dto)
+    public async Task<Result> UpdateAsync(UpdateResourceParams parameters)
     {
-        var resource = await _unitOfWork.Resources.GetByIdAsync(dto.Id);
-
+        var resource = await _unitOfWork.Resources.GetByIdAsync(parameters.Id);
         if (resource is null)
             return Result.Fail("Resource not found");
 
-        resource.Title = dto.Title;
-        resource.Description = dto.Description;
+        resource.Title = parameters.Title;
+        resource.Description = parameters.Description;
+        resource.Count = parameters.Count;
         
         await _unitOfWork.Resources.UpdateAsync(resource);
+        await _unitOfWork.SaveChangesAsync();
+        return Result.Ok();
+    }
+    
+    public async Task<Result> RemoveAsync(Guid id)
+    {
+        var resource = await _unitOfWork.Resources.GetByIdAsync(id);
+        if (resource is null)
+            return Result.Fail("Resource not found");
+        
+        await _unitOfWork.Resources.RemoveAsync(resource);
         await _unitOfWork.SaveChangesAsync();
         return Result.Ok();
     }

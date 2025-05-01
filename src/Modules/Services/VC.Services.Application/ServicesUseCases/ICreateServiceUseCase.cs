@@ -5,14 +5,14 @@ using VC.Utilities.Resolvers;
 
 namespace VC.Services.Application.ServicesUseCases;
 
-public interface ICreateServiceCommand
+public interface ICreateServiceUseCase
 {
     Task<Result<Guid>> ExecuteAsync(CreateServiceParams parameters, CancellationToken cancellationToken = default);
 }
 
-public class CreateServiceCommand(
+public class CreateServiceUseCase(
     ITenantResolver _tenantResolver,
-    IUnitOfWork _unitOfWork) : ICreateServiceCommand
+    IUnitOfWork _unitOfWork) : ICreateServiceUseCase
 {
     public async Task<Result<Guid>> ExecuteAsync(CreateServiceParams parameters, CancellationToken cancellationToken)
     {

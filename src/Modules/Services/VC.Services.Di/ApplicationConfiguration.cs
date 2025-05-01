@@ -11,7 +11,7 @@ internal static class ApplicationConfiguration
     public static void ConfigureServicesApplication(this IServiceCollection services)
     {
         services.AddScoped<IResourcesService, ResourcesService>();
-        services.AddScoped<ICreateServiceCommand, CreateServiceCommand>();
+        services.AddScoped<ICreateServiceUseCase, CreateServiceUseCase>();
         
         services.AddValidatorsFromAssemblyContaining<CreateResourceDtoValidator>(includeInternalTypes: true);
     }

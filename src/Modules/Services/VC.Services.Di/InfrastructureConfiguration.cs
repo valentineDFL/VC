@@ -31,7 +31,7 @@ internal static class InfrastructureConfiguration
         services.AddScoped<ICategoriesRepository, CategoriesRepository>();
         
         
-        services.AddScoped<IServiceDetailsQuery, ServiceDetailsQuery>();
+        services.AddScoped<IGetServiceDetailsUseCase, GetServiceDetailsUseCase>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

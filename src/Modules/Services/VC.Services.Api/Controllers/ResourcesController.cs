@@ -1,29 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VC.Services.Api.Models.Resources.CreateResource;
-using VC.Services.Api.Models.Resources.Responses;
+﻿using VC.Services.Api.Models.Resources.CreateResource;
 using VC.Services.Api.Models.Resources.UpdateResource;
 using VC.Services.Api.Validations;
 using VC.Services.Application.ResourcesUseCases;
+using VC.Services.Application.ResourcesUseCases.Models;
 using VC.Services.Application.ResourcesUseCases.Validators;
 using VC.Services.Repositories;
 
 namespace VC.Services.Api.Controllers;
 
-[Route("api/resources")]
+[Route("api/v1/resources")]
 public class ResourcesController(
     IResourcesService _resourcesService,
     IUnitOfWork _unitOfWork) : ApiController
 {
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Response>> GetAsync(Guid id)
+    public async Task<ActionResult<Resource>> GetAsync(Guid id)
     {
-        var response = await _resourcesService.GetAsync(id);
-        if (!response.IsSuccess)
-            return new BadRequestObjectResult(new { Errors = response });
+        var result = await _resourcesService.GetAsync(id);
+        if (!result.IsSuccess)
+            return BadRequest(result);
 
-        var mappedResource = response.Value.ToResponseDto();
-
-        return Ok(mappedResource);
+        return Ok(result);
     }
 
     [HttpPost]
@@ -31,20 +28,18 @@ public class ResourcesController(
     {
         await _unitOfWork.BeginTransactionAsync();
 
-        var dto = req.ToCreateParams();
-
+        var parameters = new CreateResourceParams(req.Title, req.Description, req.Count);
         var validator = new CreateResourceDtoValidator();
-        var result = await validator.ValidateAsync(dto);
-        if (!result.IsValid)
-            return result.ToErrorActionResult();
+        var validationResult = await validator.ValidateAsync(parameters);
+        if (!validationResult.IsValid)
+            return validationResult.ToErrorActionResult();
 
-        var response = await _resourcesService.CreateAsync(dto);
-        if (!response.IsSuccess)
-            return new BadRequestObjectResult(new { Errors = response });
+        var result = await _resourcesService.CreateAsync(parameters);
+        if (!result.IsSuccess)
+            return BadRequest(result);
 
         await _unitOfWork.CommitAsync();
-
-        return Ok(response);
+        return Ok(result);
     }
 
     [HttpPut("{id:guid}")]
@@ -52,19 +47,27 @@ public class ResourcesController(
     {
         await _unitOfWork.BeginTransactionAsync();
 
-        var dto = req.ToUpdateDto(id);
+        var parameters = new UpdateResourceParams(id, req.Title, req.Description, req.Count);
 
         var validator = new UpdateResourceDtoValidator();
-        var result = await validator.ValidateAsync(dto);
-        if (!result.IsValid)
-            return result.ToErrorActionResult();
+        var validationResult = await validator.ValidateAsync(parameters);
+        if (!validationResult.IsValid)
+            return validationResult.ToErrorActionResult();
 
-        var response = await _resourcesService.UpdateAsync(dto);
-        if (!response.IsSuccess)
-            return new BadRequestObjectResult(new { Errors = response });
+        var result = await _resourcesService.UpdateAsync(parameters);
+        if (!result.IsSuccess)
+            return BadRequest(result);
 
         await _unitOfWork.CommitAsync();
+        return Ok(result);
+    }
 
-        return Ok(response);
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> RemoveAsync(Guid id)
+    {
+        var result = await _resourcesService.RemoveAsync(id);
+        if (!result.IsSuccess)
+            return BadRequest(result);
+        return Ok(result);
     }
 }

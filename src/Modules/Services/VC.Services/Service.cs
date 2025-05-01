@@ -52,32 +52,22 @@ public class Service : AggregateRoot<Guid>, IHasTenantId
     /// </summary>
     public void AssignEmployee(Guid employeeId, decimal? customPrice, TimeSpan? customDuration)
     {
-        var existingAssignment = _employeeAssignments.FirstOrDefault(a => a.EmployeeId == employeeId);
-        
-        if (existingAssignment != null)
+        var price = customPrice ?? BasePrice;
+        var duration = customDuration ?? BaseDuration;
+
+        var assignment = _employeeAssignments.FirstOrDefault(a => a.EmployeeId == employeeId);
+
+        if (assignment is null)
         {
-            existingAssignment.UpdatePrice(customPrice ?? BasePrice);
-            existingAssignment.UpdateDuration(customDuration ?? BaseDuration);
+            _employeeAssignments.Add(new EmployeeAssignment(employeeId, price, duration));
             return;
         }
+        
+        if (assignment.Price == price && assignment.Duration == duration)
+            return;
 
-        var assignment = new EmployeeAssignment(
-            id: Guid.CreateVersion7(),
-            employeeId: employeeId,
-            price: customPrice ?? BasePrice,
-            duration: customDuration ?? BaseDuration
-        );
-
-        _employeeAssignments.Add(assignment);
-    }
-    
-    public void UpdateEmployeeAssignment(Guid employeeId, decimal newPrice, TimeSpan newDuration)
-    {
-        var assignment = _employeeAssignments.FirstOrDefault(a => a.EmployeeId == employeeId)
-                         ?? throw new DomainException("Employee not assigned.");
-
-        assignment.UpdatePrice(newPrice);
-        assignment.UpdateDuration(newDuration);
+        _employeeAssignments.Remove(assignment);
+        _employeeAssignments.Add(new EmployeeAssignment(employeeId, price, duration));
     }
     
     public void AddResource(Guid resourceId)
@@ -86,5 +76,12 @@ public class Service : AggregateRoot<Guid>, IHasTenantId
             throw new DomainException("Resource already added.");
 
         _requiredResources.Add(resourceId);
+    }
+
+    public void RemoveAllResources() => _requiredResources.Clear();
+
+    public void RemoveEmployeeAssignment(EmployeeAssignment assignment)
+    {
+        _employeeAssignments.Remove(assignment);
     }
 }
