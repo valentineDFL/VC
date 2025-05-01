@@ -9,6 +9,7 @@ namespace VC.Tenants.Infrastructure.Persistence;
 public class TenantsDbContext : DbContext
 {
     public const string SchemaName = "tenants";
+    public const string CacheKeyPrefix = "local";
 
     private readonly ITenantResolver _tenantResolver;
     private readonly TenantsModuleSettings _tenantModuleSettings;
@@ -76,7 +77,7 @@ public class TenantsDbContext : DbContext
             456
         );
 
-        var emailAddress = EmailAddress.Create("testMail@Gmail.com", true, "adminCode", DateTime.UtcNow);
+        var emailAddress = EmailAddress.Create("testMail@Gmail.com", true);
 
         var contactInfo = ContactInfo.Create
         (
