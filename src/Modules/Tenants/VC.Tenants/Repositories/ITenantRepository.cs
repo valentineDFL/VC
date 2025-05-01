@@ -8,7 +8,7 @@ public interface ITenantRepository
 
     public Task AddAsync(Tenant tenant);
 
-    public void Remove(Tenant tenant);
+    public Task RemoveAsync(Tenant tenant);
 
     public Task UpdateAsync(Tenant tenant);
 }

@@ -47,9 +47,6 @@ public class TenantsController : ControllerBase
         return Ok(mappedResponseDto);
     }
 
-    /// <summary>
-    /// Эндпоинт принимает дату только в формате UTC
-    /// </summary>
     [HttpPost]
     public async Task<ActionResult> CreateAsync(CreateTenantRequest createRequest)
     {
@@ -87,12 +84,9 @@ public class TenantsController : ControllerBase
         if(!sendMailResult.IsSuccess)
             return BadRequest();
 
-        return Ok();
+        return Accepted();
     }
 
-    /// <summary>
-    /// Эндпоинт принимает дату только в формате UTC
-    /// </summary>
     [HttpPut]
     public async Task<ActionResult> UpdateAsync(UpdateTenantRequest updateRequest)
     {
