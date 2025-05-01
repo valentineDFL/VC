@@ -13,7 +13,7 @@ internal static class InfrastructureConfiguration
 {
     public static void ConfigureServicesInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionString("PostgresSQL");
+        var connectionString = configuration.GetConnectionString("PostgresSQL");
 
         services.AddDbContext<DatabaseContext>(options => options
             .UseNpgsql(
@@ -29,7 +29,6 @@ internal static class InfrastructureConfiguration
         services.AddScoped<IResourcesRepository, ResourcesRepository>();
         services.AddScoped<IServicesRepository, ServicesRepository>();
         services.AddScoped<ICategoriesRepository, CategoriesRepository>();
-        
         
         services.AddScoped<IGetServiceDetailsUseCase, GetServiceDetailsUseCase>();
         

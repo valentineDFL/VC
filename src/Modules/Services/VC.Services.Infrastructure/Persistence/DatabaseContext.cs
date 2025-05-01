@@ -10,7 +10,7 @@ public class DatabaseContext : DbContext
 
     private readonly ITenantResolver _tenantResolver;
 
-    private DatabaseContext(DbContextOptions options, ITenantResolver tenantResolver)
+    public DatabaseContext(DbContextOptions<DatabaseContext> options, ITenantResolver tenantResolver)
         : base(options)
     {
         _tenantResolver = tenantResolver;
