@@ -13,7 +13,7 @@ internal static class InfrastructureConfiguration
 {
     public static void ConfigureServicesInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("PostgresSQL");
+        var connectionString = configuration.GetConnectionString("PostgresSql");
 
         services.AddDbContext<DatabaseContext>(options => options
             .UseNpgsql(
