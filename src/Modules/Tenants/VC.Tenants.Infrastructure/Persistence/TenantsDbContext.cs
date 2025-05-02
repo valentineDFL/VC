@@ -46,7 +46,7 @@ public class TenantsDbContext : DbContext
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (!isTenantExists)
+            if (isTenantExists)
                 return;
 
             Tenant tenant = CreateSeedingTenant();
@@ -63,7 +63,7 @@ public class TenantsDbContext : DbContext
 
         var config = TenantConfiguration.Create
             (
-                "�������� ������ ��������",
+                "testtesttestdwihdwd",
                 "USD",
                 "RU",
                 "UTC"
@@ -77,7 +77,7 @@ public class TenantsDbContext : DbContext
             456
         );
 
-        var emailAddress = EmailAddress.Create("testMail@Gmail.com", true);
+        var emailAddress = EmailAddress.Create("v.clients.company@gmail.com", true);
 
         var contactInfo = ContactInfo.Create
         (
