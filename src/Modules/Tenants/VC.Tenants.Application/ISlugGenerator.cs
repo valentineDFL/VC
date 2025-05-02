@@ -1,6 +1,6 @@
 ﻿namespace VC.Tenants.Application;
 
-internal interface ISlugGenerator
+public interface ISlugGenerator
 {
     public string GenerateSlug(string name);
 }

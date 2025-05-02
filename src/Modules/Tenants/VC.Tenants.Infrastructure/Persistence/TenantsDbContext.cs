@@ -9,6 +9,7 @@ namespace VC.Tenants.Infrastructure.Persistence;
 public class TenantsDbContext : DbContext
 {
     public const string SchemaName = "tenants";
+    public const string CacheKeyPrefix = "local";
 
     private readonly ITenantResolver _tenantResolver;
     private readonly TenantsModuleSettings _tenantModuleSettings;
@@ -45,7 +46,7 @@ public class TenantsDbContext : DbContext
                 .IgnoreQueryFilters()
                 .Any(t => t.Slug == SeedingDataBaseKeys.SeedTenantSlug);
 
-            if (!isTenantExists)
+            if (isTenantExists)
                 return;
 
             Tenant tenant = CreateSeedingTenant();
@@ -62,7 +63,7 @@ public class TenantsDbContext : DbContext
 
         var config = TenantConfiguration.Create
             (
-                "�������� ������ ��������",
+                "testtesttestdwihdwd",
                 "USD",
                 "RU",
                 "UTC"
@@ -76,7 +77,7 @@ public class TenantsDbContext : DbContext
             456
         );
 
-        var emailAddress = EmailAddress.Create("testMail@Gmail.com", true, "adminCode", DateTime.UtcNow);
+        var emailAddress = EmailAddress.Create("v.clients.company@gmail.com", true);
 
         var contactInfo = ContactInfo.Create
         (
