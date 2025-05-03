@@ -33,6 +33,6 @@ internal static class InfrastructureConfigurator
     {
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<IEmailVerificationRepository, EmailVerificationRedisRepository>();
-        services.AddScoped<IDbSaver, TenantDbSaver>();
+        services.AddScoped<IUnitOfWork, TenantsUnitOfWork>();
     }
 }

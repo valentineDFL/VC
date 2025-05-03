@@ -10,10 +10,7 @@ namespace VC.Tenants.Application.Tenants;
 
 internal class TenantsService : ITenantsService
 {
-    private readonly ITenantRepository _tenantRepository;
-    private readonly IEmailVerificationRepository _emailVerificationRepository;
-
-    private readonly IDbSaver _dbSaver;
+    private readonly IUnitOfWork _unitOfWork;
 
     private readonly ISlugGenerator _slugGenerator;
     private readonly IEmailVerifyCodeGenerator _emailVerifyCodeGenerator;
@@ -22,17 +19,13 @@ internal class TenantsService : ITenantsService
 
     private readonly ITEnantEmailVerificationMessagesFactory _formFactory;
 
-    public TenantsService(ITenantRepository tenantRepository,
-                          IEmailVerificationRepository emailVerificationRepository,
-                          IDbSaver dbSaver,
+    public TenantsService(IUnitOfWork unitOfWork,
                           ISlugGenerator slugGenerator,
                           IEmailVerifyCodeGenerator emailVerifyCodeGenerator,
                           IMailSender mailSenderService,
                           ITEnantEmailVerificationMessagesFactory formFactory)
     {
-        _tenantRepository = tenantRepository;
-        _emailVerificationRepository = emailVerificationRepository;
-        _dbSaver = dbSaver;
+        _unitOfWork = unitOfWork;
         _slugGenerator = slugGenerator;
         _emailVerifyCodeGenerator = emailVerifyCodeGenerator;
         _mailSenderService = mailSenderService;
@@ -41,7 +34,7 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result<Tenant>> GetAsync()
     {
-        var tenant = await _tenantRepository.GetAsync();
+        var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant is null)
             return Result.Fail("Tenant Not Found");
@@ -53,7 +46,8 @@ internal class TenantsService : ITenantsService
     {
         var tenant = CreateTenantFromParams(@params);
 
-        await _tenantRepository.AddAsync(tenant);
+        await _unitOfWork.BeginTransactionAsync();
+        await _unitOfWork.TenantRepository.AddAsync(tenant);
 
         var code = _emailVerifyCodeGenerator.GenerateCode();
 
@@ -61,8 +55,8 @@ internal class TenantsService : ITenantsService
                                                          tenant.ContactInfo.EmailAddress, 
                                                          code);
 
-        await _emailVerificationRepository.AddAsync(emailVerification);
-        await _dbSaver.SaveAsync();
+        await _unitOfWork.EmailVerificationRepository.AddAsync(emailVerification);
+        await _unitOfWork.CommitAsync();
 
         var message = _formFactory.CreateAfterRegistration(code, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
 
@@ -76,7 +70,9 @@ internal class TenantsService : ITenantsService
 
     public async Task<Result> UpdateAsync(UpdateTenantParams @params)
     {
-        var tenant = await _tenantRepository.GetAsync();
+        await _unitOfWork.BeginTransactionAsync();
+
+        var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant == null)
             return Result.Fail("Tenant Not Found");
@@ -94,34 +90,34 @@ internal class TenantsService : ITenantsService
                                                              emailAddress, 
                                                              _emailVerifyCodeGenerator.GenerateCode());
 
-            await _emailVerificationRepository.UpdateAsync(emailVerification);
+            await _unitOfWork.EmailVerificationRepository.UpdateAsync(emailVerification);
         }
 
         tenant.Update(config, @params.Status, contactInfo, workSchedule);
 
-        await _tenantRepository.UpdateAsync(tenant);
-        await _dbSaver.SaveAsync();
+        await _unitOfWork.TenantRepository.UpdateAsync(tenant);
+        await _unitOfWork.CommitAsync();
 
         return Result.Ok();
     }
 
     public async Task<Result> DeleteAsync()
     {
-        var existingTenant = await _tenantRepository.GetAsync();
+        var existingTenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (existingTenant is null)
             return Result.Fail("Tenant Not found");
 
-        await _tenantRepository.RemoveAsync(existingTenant);
+        await _unitOfWork.TenantRepository.RemoveAsync(existingTenant);
 
-        await _dbSaver.SaveAsync();
+        await _unitOfWork.CommitAsync();
 
         return Result.Ok();
     }
 
     public async Task<Result> VerifyEmailAsync(string code)
     {
-        var tenant = await _tenantRepository.GetAsync();
+        var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant is null)
             return Result.Fail("Tenant Not Found");
@@ -129,7 +125,8 @@ internal class TenantsService : ITenantsService
         if (tenant.ContactInfo.EmailAddress.IsConfirmed)
             return Result.Fail("Tenant has already been verified");
 
-        var emailVerification = await _emailVerificationRepository.GetAsync(tenant.Id, tenant.ContactInfo.EmailAddress.Email);
+        var emailVerification = await _unitOfWork.EmailVerificationRepository
+            .GetAsync(tenant.Id, tenant.ContactInfo.EmailAddress.Email);
 
         if (emailVerification == null)
             return Result.Fail("Confirmation Time has expired");
@@ -143,16 +140,16 @@ internal class TenantsService : ITenantsService
 
         tenant.Update(tenant.Config, tenant.Status, updatedContactInfo, tenant.WorkSchedule);
 
-        await _tenantRepository.UpdateAsync(tenant);
+        await _unitOfWork.TenantRepository.UpdateAsync(tenant);
 
-        await _dbSaver.SaveAsync();
+        await _unitOfWork.CommitAsync();
 
         return Result.Ok();
     }
 
     public async Task<Result> SendVerificationMailAsync()
     {
-        var tenant = await _tenantRepository.GetAsync();
+        var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant == null)
             return Result.Fail("Tenant not found");
@@ -166,12 +163,12 @@ internal class TenantsService : ITenantsService
 
         tenant.Update(tenant.Config, tenant.Status, updatedContactInfo, tenant.WorkSchedule);
 
-        await _tenantRepository.UpdateAsync(tenant);
-
-        await _dbSaver.SaveAsync();
+        await _unitOfWork.BeginTransactionAsync();
+        await _unitOfWork.TenantRepository.UpdateAsync(tenant);
 
         var emailVerification = EmailVerification.Create(tenant.Id, tenant.ContactInfo.EmailAddress, newVerifyCode);
-        await _emailVerificationRepository.UpdateAsync(emailVerification);
+        await _unitOfWork.EmailVerificationRepository.UpdateAsync(emailVerification);
+        await _unitOfWork.CommitAsync();
 
         var message = _formFactory.CreateMessageForVerify(newVerifyCode, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
         var sendMailResult = await _mailSenderService.SendMailAsync(message);
