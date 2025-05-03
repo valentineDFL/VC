@@ -44,7 +44,7 @@ public class CreateServiceUseCase(
         }
 
         await _unitOfWork.Services.AddAsync(service, cancellationToken);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.CommitAsync();
         return Result.Ok(service.Id);
     }
 }

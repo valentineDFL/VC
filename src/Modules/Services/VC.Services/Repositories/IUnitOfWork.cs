@@ -1,24 +1,14 @@
 namespace VC.Services.Repositories;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IDisposable
 {
-    public IResourcesRepository Resources { get; }
-    public IServicesRepository Services { get; }
-    public ICategoriesRepository Categories { get; }
-    
-    void BeginTransaction();
-    
+    IServicesRepository Services { get; }
+    IResourcesRepository Resources { get; }
+    ICategoriesRepository Categories { get; }
+
     Task BeginTransactionAsync();
 
-    void Commit();
-    
     Task CommitAsync();
 
-    void Rollback();
-    
-    Task RollbackAsync();
-    
-    void SaveChanges();
-    
-    Task SaveChangesAsync();
+    Task RollBackAsync();
 }

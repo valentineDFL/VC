@@ -1,4 +1,5 @@
-﻿using VC.Services.Api.Models.Services;
+﻿using FluentResults;
+using VC.Services.Api.Models.Services;
 using VC.Services.Application.ServicesUseCases;
 using VC.Services.Application.ServicesUseCases.Models;
 
@@ -8,7 +9,7 @@ namespace VC.Services.Api.Controllers;
 public class ServicesController : ApiController
 {
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetAsync(Guid id,
+    public async Task<ActionResult<ServiceDetailsDto>> GetAsync(Guid id,
         [FromServices] IGetServiceDetailsUseCase getServiceDetailsUseCase)
     {
         var serviceDetails = await getServiceDetailsUseCase.ExecuteAsync(id);
@@ -19,7 +20,7 @@ public class ServicesController : ApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(CreateServiceRequest req,
+    public async Task<ActionResult<Result<Guid>>> CreateAsync(CreateServiceRequest req,
         [FromServices] ICreateServiceUseCase createServiceUseCase)
     {
         var dto = new CreateServiceParams(
@@ -44,7 +45,7 @@ public class ServicesController : ApiController
     }
     
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult> UpdateAsync(Guid id, UpdateServiceRequest req,
+    public async Task<ActionResult<Result<Guid>>> UpdateAsync(Guid id, UpdateServiceRequest req,
         [FromServices] IUpdateServiceUseCase updateServiceUseCase)
     {
         var dto = new UpdateServiceParams(
@@ -70,7 +71,7 @@ public class ServicesController : ApiController
     }
     
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> DeleteAsync(Guid id,
+    public async Task<ActionResult<Result<Guid>>> DeleteAsync(Guid id,
         [FromServices] IRemoveServiceUseCase removeServiceUseCase)
     {
         var result = await removeServiceUseCase.ExecuteAsync(id);

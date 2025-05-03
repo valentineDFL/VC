@@ -26,7 +26,7 @@ public class ResourcesService(
         };
 
         await _unitOfWork.Resources.AddAsync(resource);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.CommitAsync();
         return Result.Ok();
     }
 
@@ -41,7 +41,7 @@ public class ResourcesService(
         resource.Count = parameters.Count;
         
         await _unitOfWork.Resources.UpdateAsync(resource);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.CommitAsync();
         return Result.Ok();
     }
     
@@ -51,8 +51,8 @@ public class ResourcesService(
         if (resource is null)
             return Result.Fail("Resource not found");
         
-        await _unitOfWork.Resources.RemoveAsync(resource);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.Resources.DeleteAsync(resource);
+        await _unitOfWork.CommitAsync();
         return Result.Ok();
     }
 }

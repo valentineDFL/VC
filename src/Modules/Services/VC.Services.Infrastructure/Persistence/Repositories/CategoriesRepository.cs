@@ -2,10 +2,9 @@ using VC.Services.Repositories;
 
 namespace VC.Services.Infrastructure.Persistence.Repositories;
 
-public class CategoriesRepository : ICategoriesRepository
+public class CategoriesRepository : BaseRepository<Category, Guid>, ICategoriesRepository
 {
-    public Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public CategoriesRepository(DatabaseContext dbContext) : base(dbContext)
     {
-        throw new NotImplementedException();
     }
 }

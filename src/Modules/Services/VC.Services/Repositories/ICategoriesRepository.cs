@@ -1,6 +1,5 @@
 namespace VC.Services.Repositories;
 
-public interface ICategoriesRepository
+public interface ICategoriesRepository : IRepository<Category, Guid>
 {
-    Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }

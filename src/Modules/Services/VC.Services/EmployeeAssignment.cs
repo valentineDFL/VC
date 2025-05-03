@@ -7,9 +7,9 @@ namespace VC.Services;
 /// </summary>
 public class EmployeeAssignment : ValueObject
 {
-    public Guid EmployeeId { get; private set; }
-    public decimal Price { get; set; }
-    public TimeSpan Duration { get; set; }
+    public Guid EmployeeId { get; }
+    public decimal Price { get; }
+    public TimeSpan Duration { get; }
 
     public EmployeeAssignment(
         Guid employeeId,

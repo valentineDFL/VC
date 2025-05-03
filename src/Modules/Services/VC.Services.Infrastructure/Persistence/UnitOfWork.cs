@@ -1,88 +1,82 @@
 using Microsoft.EntityFrameworkCore.Storage;
+using VC.Services.Application.Events;
+using VC.Services.Common;
 using VC.Services.Repositories;
 
 namespace VC.Services.Infrastructure.Persistence;
 
 internal class UnitOfWork(
-    DatabaseContext _dbContext,
-    IResourcesRepository _resourcesRepository,
-    IServicesRepository _servicesRepository,
-    ICategoriesRepository _categoriesRepository
-    ) : IUnitOfWork, IDisposable
+    DatabaseContext dbContext,
+    IDomainEventDispatcher domainEventDispatcher,
+    IServicesRepository servicesRepository,
+    IResourcesRepository resourcesRepository,
+    ICategoriesRepository categoriesRepository) : IUnitOfWork
 {
-    private IDbContextTransaction _transaction;
-    private bool _isCompleted;
-    
-    public IResourcesRepository Resources => _resourcesRepository;
-    public IServicesRepository Services => _servicesRepository;
-    public ICategoriesRepository Categories => _categoriesRepository;
-    
-    public void BeginTransaction()
-    {
-        if (_transaction is not null)
-            throw new InvalidOperationException("Transaction is started");
+    private IDbContextTransaction? _transaction;
+    public IServicesRepository Services => servicesRepository;
+    public IResourcesRepository Resources => resourcesRepository;
+    public ICategoriesRepository Categories => categoriesRepository;
 
-        _transaction = _dbContext.Database.BeginTransaction();
-        _isCompleted = false;
-    }
+    public void Dispose() => dbContext.Dispose();
 
     public async Task BeginTransactionAsync()
     {
         if (_transaction is not null)
-            throw new InvalidOperationException("Transaction is started");
+            throw new InvalidOperationException("Transaction already started!");
 
-        _transaction = await _dbContext.Database.BeginTransactionAsync();
-        _isCompleted = false;
-    }
-
-    public void Commit()
-    {
-        if (_transaction is null)
-            throw new InvalidOperationException("Transaction not started");
-
-        _dbContext.SaveChanges();
-        _transaction.Commit();
-        _isCompleted = true;
+        _transaction = await dbContext.Database.BeginTransactionAsync();
     }
 
     public async Task CommitAsync()
     {
-        if (_transaction is null)
-            throw new InvalidOperationException("Transaction not started");
-
-        await _dbContext.SaveChangesAsync();
-        await _transaction.CommitAsync();
-        _isCompleted = true;
-    }
-
-    public void Rollback()
-    {
-        if (_transaction is null)
-            throw new InvalidOperationException("Transaction not started");
-
-        _transaction.Rollback();
-    }
-
-    public async Task RollbackAsync()
-    {
-        if (_transaction is null)
-            throw new InvalidOperationException("Transaction not started");
-
-        await _transaction.RollbackAsync();
-    }
-
-    public void SaveChanges() => _dbContext.SaveChanges();
-
-    public async Task SaveChangesAsync() => await _dbContext.SaveChangesAsync();
-
-    public void Dispose()
-    {
-        if (!_isCompleted)
+        try
         {
-            Rollback();
+            await dbContext.SaveChangesAsync();
+            
+            if(_transaction is not null)
+                await _transaction.CommitAsync();
+            await DispatchDomainEvents();
         }
+        catch (Exception)
+        {
+            await RollBackAsync();
+            throw;
+        }
+        finally
+        {
+            if(_transaction is not null)
+            {
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
+        }
+    }
 
-        _transaction.Dispose();
-        _dbContext.Dispose();
+    public async Task RollBackAsync()
+    {
+        if (_transaction is null)
+            throw new InvalidOperationException("Transaction must be in progress");
+
+        try
+        {
+            await _transaction.RollbackAsync();
+        }
+        finally
+        {
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+    }
+    
+    private async Task DispatchDomainEvents()
+    {
+        var aggregates = dbContext.ChangeTracker.Entries<AggregateRoot<Guid>>();
+        foreach (var aggregate in aggregates)
+        {
+            foreach (var domainEvent in aggregate.Entity.DomainEvents)
+                await domainEventDispatcher.DispatchAsync(domainEvent);
+            
+            aggregate.Entity.ClearDomainEvents();
+        }
     }
 }

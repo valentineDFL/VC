@@ -12,7 +12,7 @@ public class Employee : AggregateRoot<Guid>, IHasTenantId
         TenantId = tenantId;
         FullName = fullName;
     }
-
+    
     public string FullName { get; set; }
     
     /// <summary>
@@ -20,5 +20,5 @@ public class Employee : AggregateRoot<Guid>, IHasTenantId
     /// </summary>
     public string? Specialisation { get; set; }
     
-    public Guid TenantId { get; }
+    public Guid TenantId { get; private set; }
 }

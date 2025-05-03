@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using VC.Services.Common;
 
 namespace VC.Services.Infrastructure.Persistence;
 
@@ -9,8 +10,7 @@ public class DatabaseContext : DbContext
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
-    {
-    }
+    { }
 
     public DbSet<Resource> Resources { get; set; }
     public DbSet<Service> Services { get; set; }
@@ -19,6 +19,8 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<DomainEvent>();
+
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.HasDefaultSchema(Schema);
     }

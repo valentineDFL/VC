@@ -60,7 +60,7 @@ public class UpdateServiceUseCase(IUnitOfWork _unitOfWork) : IUpdateServiceUseCa
         }
 
         await _unitOfWork.Services.UpdateAsync(service, cancellationToken);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.CommitAsync();
         return Result.Ok(service.Id);
     }
 }

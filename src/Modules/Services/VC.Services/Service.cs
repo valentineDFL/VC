@@ -41,7 +41,7 @@ public class Service : AggregateRoot<Guid>, IHasTenantId
 
     public bool IsActive { get; set; }
 
-    public Guid TenantId { get; set; }
+    public Guid TenantId { get; private set; }
     
     public IReadOnlyCollection<Guid> RequiredResources => _requiredResources.AsReadOnly();
 

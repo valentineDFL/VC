@@ -15,7 +15,7 @@ builder.Services.AddControllers()
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
-//builder.Services.ConfigureServicesModule(builder.Configuration);
+builder.Services.ConfigureServicesModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
@@ -41,8 +41,7 @@ app.MapScalarApiReference(opts =>
     opts.ShowSidebar = true;
 });
 
-app.MapControllers();
-
 app.UseHttpLogging();
+app.MapControllers();
 
 app.Run();

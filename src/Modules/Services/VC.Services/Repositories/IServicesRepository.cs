@@ -1,12 +1,6 @@
 ﻿namespace VC.Services.Repositories;
 
-public interface IServicesRepository
+public interface IServicesRepository : IRepository<Service, Guid>
 {
-    Task<ICollection<Service>> GetByTenantAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<Service?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<ICollection<Service>> GetByFilterAsync(string filter, decimal price, CancellationToken cancellationToken = default);
-    Task AddAsync(Service service, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Service service, CancellationToken cancellationToken = default);
-    Task RemoveAsync(Service service, CancellationToken cancellationToken = default);
-    Task<bool> ExistsAsync(string title);
+    Task<bool> ExistsAsync(string title, CancellationToken cancellationToken = default);
 }

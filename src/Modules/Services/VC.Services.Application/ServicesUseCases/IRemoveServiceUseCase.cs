@@ -16,8 +16,8 @@ public class RemoveServiceUseCase(IUnitOfWork _unitOfWork) : IRemoveServiceUseCa
         if (service is null)
             return Result.Fail("Service not found.");
         
-        await _unitOfWork.Services.RemoveAsync(service, cancellationToken);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.Services.DeleteAsync(service, cancellationToken);
+        await _unitOfWork.CommitAsync();
         return Result.Ok(service.Id);
     }
 }
