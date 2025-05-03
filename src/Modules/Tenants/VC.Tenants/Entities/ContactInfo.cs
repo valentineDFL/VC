@@ -6,7 +6,7 @@ namespace VC.Tenants.Entities;
 /// </summary>
 public class ContactInfo : ValueObject
 {
-    public const int PhoneNumberMinLength = 15;
+    public const int PhoneNumberMinLength = 10;
     public const int PhoneNumberMaxLength = 16;
 
     private ContactInfo(string phone, Address address, EmailAddress emailAddress)
