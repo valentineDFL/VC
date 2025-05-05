@@ -3,7 +3,7 @@ using VC.Tenants.Entities;
 
 namespace VC.Tenants.Infrastructure.Implementations;
 
-internal class DyDateCodeGenerator : IEmailVerifyCodeGenerator
+internal class ByDateCodeGenerator : IEmailVerifyCodeGenerator
 {
     public string GenerateCode()
     {

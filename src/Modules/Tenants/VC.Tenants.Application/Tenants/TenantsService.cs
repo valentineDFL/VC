@@ -3,7 +3,6 @@ using VC.MailkitIntegration;
 using VC.Tenants.Application.Models.Create;
 using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Entities;
-using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Application.Tenants;
@@ -15,20 +14,20 @@ internal class TenantsService : ITenantsService
     private readonly ISlugGenerator _slugGenerator;
     private readonly IEmailVerifyCodeGenerator _emailVerifyCodeGenerator;
 
-    private readonly IMailSender _mailSenderService;
+    private readonly IMailSender _mailSender;
 
-    private readonly ITEnantEmailVerificationMessagesFactory _formFactory;
+    private readonly ITenantEmailVerificationMessagesFactory _formFactory;
 
     public TenantsService(IUnitOfWork unitOfWork,
                           ISlugGenerator slugGenerator,
                           IEmailVerifyCodeGenerator emailVerifyCodeGenerator,
-                          IMailSender mailSenderService,
-                          ITEnantEmailVerificationMessagesFactory formFactory)
+                          IMailSender mailSender,
+                          ITenantEmailVerificationMessagesFactory formFactory)
     {
         _unitOfWork = unitOfWork;
         _slugGenerator = slugGenerator;
         _emailVerifyCodeGenerator = emailVerifyCodeGenerator;
-        _mailSenderService = mailSenderService;
+        _mailSender = mailSender;
         _formFactory = formFactory;
     }
 
@@ -60,7 +59,7 @@ internal class TenantsService : ITenantsService
 
         var message = _formFactory.CreateAfterRegistration(code, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
 
-        var sendResult = await _mailSenderService.SendMailAsync(message);
+        var sendResult = await _mailSender.SendMailAsync(message);
 
         if (!sendResult.IsSuccess)
             return Result.Fail(sendResult.Errors);
@@ -171,7 +170,7 @@ internal class TenantsService : ITenantsService
         await _unitOfWork.CommitAsync();
 
         var message = _formFactory.CreateMessageForVerify(newVerifyCode, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
-        var sendMailResult = await _mailSenderService.SendMailAsync(message);
+        var sendMailResult = await _mailSender.SendMailAsync(message);
 
         if (!sendMailResult.IsSuccess)
             return Result.Fail(sendMailResult.Errors);

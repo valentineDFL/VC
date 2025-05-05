@@ -1,0 +1,473 @@
+﻿using Moq;
+using VC.MailkitIntegration;
+using VC.Tenants.Application.Models.Create;
+using VC.Tenants.Application.Models.Update;
+using VC.Tenants.Entities;
+using VC.Tenants.Infrastructure.Implementations;
+using VC.Tenants.Repositories;
+using VC.Tenants.UnitOfWork;
+using VC.Tenants.Infrastructure.Persistence;
+using VC.Tenants.Application.Tenants;
+using FluentResults;
+using System.Threading.Tasks;
+using Npgsql.Replication;
+
+namespace VC.Tenants.Application.UnitTests;
+
+public class TenantsServiceTests
+{
+    public TenantsServiceTests()
+    {
+        _tenant = GetTenant();
+        _emailVerification = GetEmailVerification();
+        _message = GetMessage();
+
+        _tenantsService = new TenantsService(_unitOfWork.Object,
+                                       _slugGenerator.Object,
+                                       _codeGenerator.Object,
+                                       _mailSender.Object,
+                                       _formFactory.Object);
+
+        InitMailSender();
+        InitTenantsRepository();
+        InitEmailVerificationRepository();
+        InitUnitOfWork();
+        InitMessageFactory();
+        InitOthers();
+    }
+
+    private Tenant _tenant;
+    private EmailVerification _emailVerification;
+    private Message _message;
+
+    private ITenantsService _tenantsService;
+
+    private Mock<ITenantRepository> _tenantsRepository = new Mock<ITenantRepository>();
+    private Mock<IEmailVerificationRepository> _emailVerificationRepository = new Mock<IEmailVerificationRepository>();
+    private Mock<IUnitOfWork> _unitOfWork = new Mock<IUnitOfWork>();
+
+    private Mock<ISlugGenerator> _slugGenerator = new Mock<ISlugGenerator>();
+
+    private Mock<IEmailVerifyCodeGenerator> _codeGenerator = new Mock<IEmailVerifyCodeGenerator>();
+
+    private Mock<IMailSender> _mailSender = new Mock<IMailSender>();
+    private Mock<ITenantEmailVerificationMessagesFactory> _formFactory = new Mock<ITenantEmailVerificationMessagesFactory>();
+
+    [Fact]
+    public async Task GetAsyncTest()
+    {
+        var result = await _tenantsService.GetAsync();
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task CreateAsyncTest()
+    {
+        var result = await _tenantsService.CreateAsync(GetCreateParams());
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task DeleteAsyncTest()
+    {
+        var result = await _tenantsService.DeleteAsync();
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task UpdateAsyncTest()
+    {
+        var result = await _tenantsService.UpdateAsync(GetUpdateParams());
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task VerifyEmailAsyncTest()
+    {
+        var result = await _tenantsService.VerifyEmailAsync(_emailVerification.Code);
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task SendVerificationMailAsync()
+    {
+        var result = await _tenantsService.SendVerificationMailAsync();
+
+        Assert.True(result.IsSuccess);
+    }
+
+    private void InitUnitOfWork()
+    {
+        _unitOfWork.Setup(x => x.Dispose());
+
+        _unitOfWork.Setup(x => x.BeginTransactionAsync());
+
+        _unitOfWork.Setup(x => x.CommitAsync());
+
+        _unitOfWork.Setup(x => x.RollBackAsync());
+
+        _unitOfWork.Setup(x => x.TenantRepository)
+            .Returns(_tenantsRepository.Object);
+
+        _unitOfWork.Setup(x => x.EmailVerificationRepository)
+            .Returns(_emailVerificationRepository.Object);
+    }
+
+    private void InitTenantsRepository()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        _tenantsRepository.Setup(x => x.AddAsync(_tenant));
+
+        _tenantsRepository.Setup(x => x.RemoveAsync(_tenant));
+
+        _tenantsRepository.Setup(x => x.UpdateAsync(_tenant));
+    }
+
+    private void InitEmailVerificationRepository()
+    {
+        _emailVerificationRepository.Setup(x => x.AddAsync(_emailVerification));
+
+        _emailVerificationRepository.Setup(x => x.GetAsync(_tenant.Id, _tenant.ContactInfo.EmailAddress.Email))
+            .Returns(Task.FromResult(_emailVerification));
+
+        _emailVerificationRepository.Setup(x => x.UpdateAsync(_emailVerification));
+
+        _emailVerificationRepository.Setup(x => x.RemoveAsync(_emailVerification));
+    }
+
+    private void InitMailSender()
+    {
+        _mailSender.Setup(x => x.SendMailAsync(_message))
+            .Returns(Task.FromResult(Result.Ok()));
+
+        _mailSender.Setup(x => x.Dispose());
+    }
+
+    private void InitMessageFactory()
+    {
+        _formFactory.Setup(x => x.CreateAfterRegistration(_emailVerification.Code, _tenant.Name, _tenant.ContactInfo.EmailAddress.Email))
+            .Returns(_message);
+
+        _formFactory.Setup(x => x.CreateMessageForVerify(_emailVerification.Code, _tenant.Name, _tenant.ContactInfo.EmailAddress.Email))
+            .Returns(_message);
+    }
+
+    private void InitOthers()
+    {
+        _slugGenerator.Setup(x => x.GenerateSlug(_tenant.Name))
+            .Returns(_tenant.Slug);
+
+        _codeGenerator.Setup(x => x.GenerateCode())
+            .Returns(_emailVerification.Code);
+    }
+
+    private Tenant GetTenant()
+    {
+        var tenantId = Guid.CreateVersion7();
+
+        var config = TenantConfiguration.Create
+            (
+                "testtesttestdwihdwd",
+                "USD",
+                "RU",
+                "UTC"
+            );
+
+        var address = Address.Create
+            (
+                "Ukraine",
+                "Kiev",
+                "Pushkina Street",
+                456
+            );
+
+        var emailAddress = EmailAddress.Create("v.clients.company@gmail.com", false);
+
+        var contactInfo = ContactInfo.Create
+            (
+                "+123456789",
+                address,
+                emailAddress
+            );
+
+        var weekSchedule = new List<DaySchedule>
+        {
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Sunday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Monday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Tuesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Wednesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Thursday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Friday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            DaySchedule.Create
+            (
+                Guid.CreateVersion7(),
+                tenantId,
+                DayOfWeek.Saturday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            )
+        };
+
+        var workShedule = WorkSchedule.Create(weekSchedule);
+
+        return Tenant.Create
+        (
+            tenantId,
+            "AdminTestTenant",
+            SeedingDataBaseKeys.SeedTenantSlug,
+            config,
+            TenantStatus.Active,
+            contactInfo,
+            workShedule
+        );
+    }
+
+    private CreateTenantParams GetCreateParams()
+    {
+        var tenantId = Guid.CreateVersion7();
+
+        var config = new CreateConfigurationDto
+            (
+                "testtesttestdwihdwd",
+                "USD",
+                "RU",
+                "UTC"
+            );
+
+        var address = new CreateAddressDto
+            (
+                "Ukraine",
+                "Kiev",
+                "Pushkina Street",
+                456
+            );
+
+        var emailAddress = new CreateEmailAddressDto("v.clients.company@gmail.com");
+
+        var contactInfo = new CreateContactInfoDto
+            (
+                "+123456789",
+                address,
+                emailAddress
+            );
+
+        var weekSchedule = new List<CreateDayScheduleDto>
+        {
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Sunday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Monday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Tuesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Wednesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Thursday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Friday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new CreateDayScheduleDto
+            (
+                DayOfWeek.Saturday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            )
+        };
+
+        var workShedule = new CreateWorkScheduleDto(weekSchedule);
+
+        return new CreateTenantParams
+        (
+            "AdminTestTenant",
+            config,
+            TenantStatus.Active,
+            contactInfo,
+            workShedule
+        );
+    }
+
+    private UpdateTenantParams GetUpdateParams()
+    {
+        var tenantId = Guid.CreateVersion7();
+
+        var config = new UpdateConfigurationDto
+            (
+                "testtesttestdwihdwd",
+                "USD",
+                "RU",
+                "UTC"
+            );
+
+        var address = new UpdateAddressDto
+            (
+                "Ukraine",
+                "Kiev",
+                "Pushkina Street",
+                456
+            );
+
+        var emailAddress = new UpdateEmailAddressDto("v.clients.company@gmail.com");
+
+        var contactInfo = new UpdateContactInfoDto
+            (
+                "+123456789",
+                address,
+                emailAddress
+            );
+
+        var days = _tenant.WorkSchedule.WeekSchedule.OrderBy(x => x.Day).ToArray();
+
+        var weekSchedule = new List<UpdateScheduleDayDto>
+        {
+            new UpdateScheduleDayDto
+            (
+                days[0].Id,
+                DayOfWeek.Sunday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new UpdateScheduleDayDto
+            (
+                days[1].Id,
+                DayOfWeek.Monday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new UpdateScheduleDayDto
+            (
+                days[2].Id,
+                DayOfWeek.Tuesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new UpdateScheduleDayDto
+            (
+                days[3].Id,
+                DayOfWeek.Wednesday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new UpdateScheduleDayDto
+            (
+                days[4].Id,
+                DayOfWeek.Thursday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new UpdateScheduleDayDto
+            (
+                days[5].Id,
+                DayOfWeek.Friday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            ),
+            new UpdateScheduleDayDto
+            (
+                days[6].Id,
+                DayOfWeek.Saturday,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(8)
+            )
+        };
+
+        var workShedule = new UpdateWorkScheduleDto(weekSchedule);
+
+        return new UpdateTenantParams
+        (
+            "AdminTestTenant",
+            config,
+            TenantStatus.Active,
+            contactInfo,
+            workShedule
+        );
+    }
+
+    private EmailVerification GetEmailVerification()
+    {
+        var emailAddress = EmailAddress.Create(_tenant.ContactInfo.EmailAddress.Email, false);
+
+        return EmailVerification.Create(_tenant.Id, emailAddress, "1234567890");
+    }
+
+    private Message GetMessage()
+    {
+        var subject = "Подтверждение почты";
+        var header = "Вы не подтвердили почту!";
+
+        var text = $"Код подтверждения почты: {_emailVerification.Code}";
+
+        return new Message(subject, text, _tenant.Name, _tenant.ContactInfo.EmailAddress.Email, header);
+    }
+}

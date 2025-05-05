@@ -2,7 +2,7 @@
 
 namespace VC.Tenants.Application;
 
-internal interface ITEnantEmailVerificationMessagesFactory
+internal interface ITenantEmailVerificationMessagesFactory
 {
     public Message CreateAfterRegistration(string text, string receiverName, string receiverMail);
 
