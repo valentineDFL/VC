@@ -4,14 +4,13 @@ namespace VC.Services;
 
 public class Category : AggregateRoot<Guid>, IHasTenantId
 {
-    public Category(Guid id, string title, Category? parentCategory, Guid tenantId) : base(id)
+    public Category(Guid id, string title, Guid tenantId) : base(id)
     {
         Title = title;
-        ParentCategory = parentCategory;
         TenantId = tenantId;
     }
-
-    public string Title { get; }
-    public Category? ParentCategory { get; }
-    public Guid TenantId { get; }
+    
+    public string Title { get; set; }
+    public Category? ParentCategory { get; set; }
+    public Guid TenantId { get; private set; }
 }

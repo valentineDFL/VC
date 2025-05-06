@@ -5,8 +5,9 @@ namespace VC.Services.Application.ResourcesUseCases;
 
 public interface IResourcesService
 {
-    Task<Result<Resource>> GetAsync(Guid id);
-    Task<Result> CreateAsync(CreateResourceParams dto);
+    Task<Result<Resource?>> GetAsync(Guid id);
+    Task<Result> CreateAsync(CreateResourceParams parameters);
 
-    Task<Result> UpdateAsync(UpdateResourceParams dto);
+    Task<Result> UpdateAsync(UpdateResourceParams parameters);
+    Task<Result> RemoveAsync(Guid id);
 }

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
   </ItemGroup>
@@ -13,10 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
     <ProjectReference Include="..\VC.Services.Application\VC.Services.Application.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Models\Services\CreateService\" />
   </ItemGroup>
 
 </Project>

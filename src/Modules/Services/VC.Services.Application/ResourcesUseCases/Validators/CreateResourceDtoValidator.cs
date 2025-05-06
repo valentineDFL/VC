@@ -7,13 +7,16 @@ public class CreateResourceDtoValidator : AbstractValidator<CreateResourceParams
 {
     public CreateResourceDtoValidator()
     {
-        RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(50).WithMessage("Name must not exceed 50 characters")
+        RuleFor(r => r.Title)
+            .NotEmpty()
+            .MaximumLength(50)
             .Must(name => name.All(char.IsLetter)).WithMessage("Name contains invalid characters");
 
-        RuleFor(d => d.Description)
-            .NotEmpty().WithMessage("Description is required")
-            .MaximumLength(500).WithMessage("Description must not exceed 500 characters");
+        RuleFor(r => r.Description)
+            .NotEmpty()
+            .MaximumLength(500);
+        
+        RuleFor(r => r.Count)
+            .GreaterThan(0);
     }
 }
