@@ -1,8 +1,6 @@
-﻿using Org.BouncyCastle.Pqc.Crypto.Lms;
+﻿namespace VC.Tenants.Application;
 
-namespace VC.Tenants.Application;
-
-internal static class ErrorMessages
+public static class ErrorMessages
 {
     public const string TenantNotFound = nameof(TenantNotFound);
 
