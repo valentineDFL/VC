@@ -10,13 +10,14 @@ public class DatabaseContext : DbContext
 
     private readonly ITenantResolver _tenantResolver;
 
-    private DatabaseContext(DbContextOptions options, ITenantResolver tenantResolver)
+    public DatabaseContext(DbContextOptions options, ITenantResolver tenantResolver)
         : base(options)
     {
         _tenantResolver = tenantResolver;
     }
 
     public DbSet<Resource> Resources { get; set; }
+
     public DbSet<Service> Services { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
