@@ -10,8 +10,7 @@ namespace VC.Services.Api.Controllers;
 
 [Route("api/v1/resources")]
 public class ResourcesController(
-    IResourcesService _resourcesService,
-    IUnitOfWork _unitOfWork) : ApiController
+    IResourcesService _resourcesService) : ApiController
 {
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Resource>> GetAsync(Guid id)
@@ -26,8 +25,6 @@ public class ResourcesController(
     [HttpPost]
     public async Task<ActionResult> CreateAsync(CreateResourceRequest req)
     {
-        await _unitOfWork.BeginTransactionAsync();
-
         var parameters = new CreateResourceParams(req.Title, req.Description, req.Count);
         var validator = new CreateResourceDtoValidator();
         var validationResult = await validator.ValidateAsync(parameters);
@@ -38,15 +35,12 @@ public class ResourcesController(
         if (!result.IsSuccess)
             return BadRequest(result);
 
-        await _unitOfWork.CommitAsync();
         return Ok(result);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateAsync(Guid id, UpdateResourceRequest req)
     {
-        await _unitOfWork.BeginTransactionAsync();
-
         var parameters = new UpdateResourceParams(id, req.Title, req.Description, req.Count);
 
         var validator = new UpdateResourceDtoValidator();
@@ -58,7 +52,6 @@ public class ResourcesController(
         if (!result.IsSuccess)
             return BadRequest(result);
 
-        await _unitOfWork.CommitAsync();
         return Ok(result);
     }
 

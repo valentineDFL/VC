@@ -2,10 +2,10 @@ namespace VC.Utilities;
 
 public interface IDateTime
 {
-    public System.DateTime UtcNow { get; }
+    public DateTime UtcNow { get; }
 }
 
-public class DateTimeProvider : IDateTime
+public class SystemDateTimeProvider : IDateTime
 {
-    public DateTime UtcNow => System.DateTime.UtcNow;
+    public DateTime UtcNow => DateTime.UtcNow;
 }

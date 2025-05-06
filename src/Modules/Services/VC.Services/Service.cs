@@ -1,4 +1,5 @@
 ﻿using VC.Services.Common;
+using VC.Services.Events;
 
 namespace VC.Services;
 
@@ -18,6 +19,8 @@ public class Service : AggregateRoot<Guid>, IHasTenantId
         Title = title;
         BasePrice = basePrice;
         BaseDuration = baseDuration;
+        
+        AddDomainEvent(new ServiceCreatedEvent(this));
     }
     
     public string Title { get; set; }
