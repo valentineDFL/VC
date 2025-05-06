@@ -12,19 +12,20 @@ public class EmployeeAssignment : ValueObject
     public TimeSpan Duration { get; }
 
     public EmployeeAssignment(
-        Guid EmployeeId,
-        decimal Price,
-        TimeSpan Duration)
+        Guid employeeId,
+        decimal price,
+        TimeSpan duration)
     {
-        this.EmployeeId = EmployeeId;
-        this.Price = Price;
-        this.Duration = Duration;
+        if (price <= 0) throw new ArgumentException("Price must be positive.");
+        if (duration <= TimeSpan.Zero) throw new ArgumentException("Duration must be positive.");
+
+        EmployeeId = employeeId;
+        Price = price;
+        Duration = duration;
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return EmployeeId;
-        yield return Price;
-        yield return Duration;
     }
 }

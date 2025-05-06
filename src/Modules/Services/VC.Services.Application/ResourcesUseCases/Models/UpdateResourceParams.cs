@@ -3,5 +3,6 @@
 public record UpdateResourceParams(
     Guid Id,
     string Title,
-    string Description);
+    string Description,
+    int Count);
     

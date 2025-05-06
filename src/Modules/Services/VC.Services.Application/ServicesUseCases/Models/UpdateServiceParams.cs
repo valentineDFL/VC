@@ -1,22 +1,19 @@
-﻿namespace VC.Services.Application.ServicesUseCases.Models;
+namespace VC.Services.Application.ServicesUseCases.Models;
 
-public class UpdateServiceParams
+public record UpdateServiceParams(
+    Guid Id,
+    string Title,
+    decimal BasePrice,
+    TimeSpan BaseDuration,
+    string? Description = null,
+    Guid? CategoryId = null,
+    List<Guid>? RequiredResources = null,
+    List<UpdateServiceParams.EmployeeAssignmentDto>? EmployeeAssignments = null)
 {
-    public Guid Id { get; set; }
-
-    public string Title { get; set; }
-
-    public string Description { get; set; }
-
-    public decimal Price { get; set; }
-
-    public TimeSpan Duration { get; set; }
-
-    public Guid? CategoryId { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
-
-    public List<Guid> RequiredResources { get; set; } = [];
+    public class EmployeeAssignmentDto
+    {
+        public Guid EmployeeId { get; set; }
+        public decimal Price { get; set; }
+        public TimeSpan Duration { get; set; }
+    }
 }

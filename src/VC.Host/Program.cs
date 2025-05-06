@@ -43,9 +43,8 @@ app.MapScalarApiReference(opts =>
     opts.ShowSidebar = true;
 });
 
-app.MapControllers();
-
 app.UseHttpLogging();
+app.MapControllers();
 
 app.Run();
 

@@ -10,9 +10,9 @@ internal class ResourceConfiguration : IEntityTypeConfiguration<Resource>
         builder.HasKey(r => r.Id);
 
         builder.Property(r => r.Title)
-            .HasMaxLength(20);
+            .HasMaxLength(100);
 
         builder.Property(r => r.Description)
-            .HasMaxLength(128);
+            .HasMaxLength(300);
     }
 }

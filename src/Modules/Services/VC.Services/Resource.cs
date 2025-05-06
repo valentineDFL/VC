@@ -7,15 +7,16 @@ namespace VC.Services;
 /// </summary>
 public class Resource : AggregateRoot<Guid>, IHasTenantId
 {
-    public Resource(Guid id, Guid tenantId) : base(id)
+    public Resource(Guid id, Guid tenantId, string title, int count) : base(id)
     {
-        Id = id;
         TenantId = tenantId;
+        Title = title;
+        Count = count;
     }
 
     public Guid TenantId { get; private set; }
     public string Title { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// Количество ресурса.
