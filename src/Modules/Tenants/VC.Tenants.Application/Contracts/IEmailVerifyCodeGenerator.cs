@@ -1,4 +1,4 @@
-﻿namespace VC.Tenants.Application;
+﻿namespace VC.Tenants.Application.Contracts;
 
 public interface IEmailVerifyCodeGenerator
 {
