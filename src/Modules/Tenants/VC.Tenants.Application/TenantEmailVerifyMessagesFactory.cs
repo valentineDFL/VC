@@ -1,4 +1,5 @@
 ﻿using VC.MailkitIntegration;
+using VC.Tenants.Application.Contracts;
 
 namespace VC.Tenants.Application;
 

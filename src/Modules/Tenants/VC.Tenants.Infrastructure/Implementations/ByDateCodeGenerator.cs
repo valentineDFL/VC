@@ -1,4 +1,4 @@
-﻿using VC.Tenants.Application;
+﻿using VC.Tenants.Application.Contracts;
 using VC.Tenants.Entities;
 
 namespace VC.Tenants.Infrastructure.Implementations;

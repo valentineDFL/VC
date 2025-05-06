@@ -11,6 +11,8 @@ using VC.Tenants.Application.Tenants;
 using FluentResults;
 using System.Threading.Tasks;
 using Npgsql.Replication;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
+using VC.Tenants.Application.Contracts;
 
 namespace VC.Tenants.Application.UnitTests;
 
@@ -19,14 +21,10 @@ public class TenantsServiceTests
     public TenantsServiceTests()
     {
         _tenant = GetTenant();
+        _createParams = GetCreateParams();
         _emailVerification = GetEmailVerification();
         _message = GetMessage();
-
-        _tenantsService = new TenantsService(_unitOfWork.Object,
-                                       _slugGenerator.Object,
-                                       _codeGenerator.Object,
-                                       _mailSender.Object,
-                                       _formFactory.Object);
+        _updateParams = GetUpdateParams();
 
         InitMailSender();
         InitTenantsRepository();
@@ -34,11 +32,20 @@ public class TenantsServiceTests
         InitUnitOfWork();
         InitMessageFactory();
         InitOthers();
+
+        _tenantsService = new TenantsService(_unitOfWork.Object,
+                                             _slugGenerator.Object,
+                                             _codeGenerator.Object,
+                                             _mailSender.Object,
+                                             _formFactory.Object);
     }
 
     private Tenant _tenant;
     private EmailVerification _emailVerification;
     private Message _message;
+
+    private CreateTenantParams _createParams;
+    private UpdateTenantParams _updateParams;
 
     private ITenantsService _tenantsService;
 
@@ -54,48 +61,216 @@ public class TenantsServiceTests
     private Mock<ITenantEmailVerificationMessagesFactory> _formFactory = new Mock<ITenantEmailVerificationMessagesFactory>();
 
     [Fact]
-    public async Task GetAsyncTest()
+    public async Task GetAsync_TenantFound_RetunrsResultOk()
     {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
         var result = await _tenantsService.GetAsync();
 
         Assert.True(result.IsSuccess);
+        Assert.NotNull(result.Value);
     }
 
     [Fact]
-    public async Task CreateAsyncTest()
+    public async Task GetAsync_TenantNotFound_ReturnsTenantNotFoundError()
     {
-        var result = await _tenantsService.CreateAsync(GetCreateParams());
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult<Tenant>(null));
+
+        var result = await _tenantsService.GetAsync();
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.TenantNotFound));
+    }
+
+    [Fact]
+    public async Task CreateAsync_TenantCreated_ReturnsResultOk()
+    {
+        _mailSender.Setup(x => x.SendMailAsync(_message))
+            .Returns(Task.FromResult(Result.Ok()));
+
+        var result = await _tenantsService.CreateAsync(_createParams);
 
         Assert.True(result.IsSuccess);
     }
 
     [Fact]
-    public async Task DeleteAsyncTest()
+    public async Task CreateAsync_MailNotSent_ReturnsMailNotSentError()
     {
+        _mailSender.Setup(x => x.SendMailAsync(_message))
+            .Returns(Task.FromResult(Result.Fail(ErrorMessages.MessageNotSent)));
+
+        var result = await _tenantsService.CreateAsync(_createParams);
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.MessageNotSent));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_Updated_ReturnsResultOk()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        var result = await _tenantsService.UpdateAsync(_updateParams);
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_TenantNotFound_ReturnsTenantNotFoundError()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult<Tenant>(null));
+
+        var result = await _tenantsService.UpdateAsync(_updateParams);
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.TenantNotFound));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_TenantDeleted_ReturnsResultOk()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
         var result = await _tenantsService.DeleteAsync();
 
         Assert.True(result.IsSuccess);
     }
 
     [Fact]
-    public async Task UpdateAsyncTest()
+    public async Task DeleteAsync_TenantNotFound_ReturnsTenantNotFoundError()
     {
-        var result = await _tenantsService.UpdateAsync(GetUpdateParams());
+        _tenantsRepository.Setup(x => x.RemoveAsync(_tenant));
 
-        Assert.True(result.IsSuccess);
+        var result = await _tenantsService.DeleteAsync();
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.TenantNotFound));
     }
 
     [Fact]
-    public async Task VerifyEmailAsyncTest()
+    public async Task VerifyEmailAsync_TenantNotFound_ReturnsTenantNotFoundError()
     {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult<Tenant>(null));
+
+        var result = await _tenantsService.VerifyEmailAsync(_emailVerification.Code);
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.TenantNotFound));
+    }
+
+    [Fact]
+    public async Task VerifyEmailAsync_TenantHasAlreadyBeenVerified_ReturnsTenantHasAlreadyBeenVerifiedError()
+    {
+        var emailAddress = EmailAddress.Create(_emailVerification.Email.Email, true);
+        
+        var contactInfo = ContactInfo.Create(_tenant.ContactInfo.Phone, _tenant.ContactInfo.Address, emailAddress);
+
+        var tenant = Tenant.Create(_tenant.Id, 
+                                   _tenant.Name, 
+                                   _tenant.Slug, 
+                                   _tenant.Config, 
+                                   _tenant.Status, 
+                                   contactInfo, 
+                                   _tenant.WorkSchedule);
+
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(tenant));
+
+        var result = await _tenantsService.VerifyEmailAsync(_emailVerification.Code);
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.TenantHasAlreadyBeenVerified));
+    }
+
+    [Fact]
+    public async Task VerifyEmailAsync_ConfirmationTimeHasExpired_ReturnsConfirmationTimeHasExpiredError()
+    {
+        _emailVerificationRepository.Setup(x => x.GetAsync(_tenant.Id, _tenant.ContactInfo.EmailAddress.Email))
+            .Returns(Task.FromResult<EmailVerification>(null));
+
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        var result = await _tenantsService.VerifyEmailAsync(_emailVerification.Code);
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.ConfirmationTimeHasExpired));
+    }
+
+    [Fact]
+    public async Task VerifyEmailAsync_CodesDoesNotEquals_ReturnsCodesDoesNotEqualsError()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        var wrongCode = "0987654321";
+        var emailVerification = EmailVerification.Create(_tenant.Id, _emailVerification.Email, wrongCode);
+
+        _emailVerificationRepository.Setup(x => x.GetAsync(_tenant.Id, _tenant.ContactInfo.EmailAddress.Email))
+            .Returns(Task.FromResult(emailVerification));
+
+        var result = await _tenantsService.VerifyEmailAsync(_emailVerification.Code);
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.CodesDoesNotEquals));
+    }
+
+    [Fact]
+    public async Task VerifyEmailAsync_Verified_ReturnsResultOk()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        _emailVerificationRepository.Setup(x => x.GetAsync(_tenant.Id, _tenant.ContactInfo.EmailAddress.Email))
+            .Returns(Task.FromResult(_emailVerification));
+
         var result = await _tenantsService.VerifyEmailAsync(_emailVerification.Code);
 
         Assert.True(result.IsSuccess);
     }
 
     [Fact]
-    public async Task SendVerificationMailAsync()
+    public async Task SendVerificationMailAsync_TenantNotFound_ReturnsTenantNotFoundError()
     {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult<Tenant>(null));
+
+        var result = await _tenantsService.SendVerificationMailAsync();
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.TenantNotFound));
+    }
+
+    [Fact]
+    public async Task SendVerificationMailAsync_MailNotSent_ReturnsMailNotSendError()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        _mailSender.Setup(x => x.SendMailAsync(_message))
+            .Returns(Task.FromResult(Result.Fail(ErrorMessages.MessageNotSent)));
+
+        var result = await _tenantsService.SendVerificationMailAsync();
+
+        Assert.True(!result.IsSuccess);
+        Assert.True(result.Errors.Any(x => x.Message == ErrorMessages.MessageNotSent));
+    }
+
+    [Fact]
+    public async Task SendVerificationMailAsync_MailSent_ReturnsResultOk()
+    {
+        _tenantsRepository.Setup(x => x.GetAsync())
+            .Returns(Task.FromResult(_tenant));
+
+        _mailSender.Setup(x => x.SendMailAsync(_message))
+            .Returns(Task.FromResult(Result.Ok()));
+
         var result = await _tenantsService.SendVerificationMailAsync();
 
         Assert.True(result.IsSuccess);
@@ -120,12 +295,7 @@ public class TenantsServiceTests
 
     private void InitTenantsRepository()
     {
-        _tenantsRepository.Setup(x => x.GetAsync())
-            .Returns(Task.FromResult(_tenant));
-
         _tenantsRepository.Setup(x => x.AddAsync(_tenant));
-
-        _tenantsRepository.Setup(x => x.RemoveAsync(_tenant));
 
         _tenantsRepository.Setup(x => x.UpdateAsync(_tenant));
     }

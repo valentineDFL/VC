@@ -1,6 +1,6 @@
 ﻿using VC.MailkitIntegration;
 
-namespace VC.Tenants.Application;
+namespace VC.Tenants.Application.Contracts;
 
 internal interface ITenantEmailVerificationMessagesFactory
 {

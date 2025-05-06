@@ -1,5 +1,6 @@
 using FluentResults;
 using VC.MailkitIntegration;
+using VC.Tenants.Application.Contracts;
 using VC.Tenants.Application.Models.Create;
 using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Entities;
@@ -36,7 +37,7 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant is null)
-            return Result.Fail("Tenant Not Found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         return Result.Ok(tenant);
     }
@@ -74,7 +75,7 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant == null)
-            return Result.Fail("Tenant Not Found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         var tenantParams = CreateTenantParams(@params, tenant);
 
@@ -105,7 +106,7 @@ internal class TenantsService : ITenantsService
         var existingTenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (existingTenant is null)
-            return Result.Fail("Tenant Not found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         await _unitOfWork.TenantRepository.RemoveAsync(existingTenant);
 
@@ -119,19 +120,19 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant is null)
-            return Result.Fail("Tenant Not Found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         if (tenant.ContactInfo.EmailAddress.IsConfirmed)
-            return Result.Fail("Tenant has already been verified");
+            return Result.Fail(ErrorMessages.TenantHasAlreadyBeenVerified);
 
         var emailVerification = await _unitOfWork.EmailVerificationRepository
             .GetAsync(tenant.Id, tenant.ContactInfo.EmailAddress.Email);
 
         if (emailVerification == null)
-            return Result.Fail("Confirmation Time has expired");
+            return Result.Fail(ErrorMessages.ConfirmationTimeHasExpired);
 
         if (emailVerification.Code != code)
-            return Result.Fail("Codes does not equals");
+            return Result.Fail(ErrorMessages.CodesDoesNotEquals);
 
         var emailAddres = tenant.ContactInfo.EmailAddress;
         var updatedEmailAddress = EmailAddress.Create(emailAddres.Email, true);
@@ -151,7 +152,7 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant == null)
-            return Result.Fail("Tenant not found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         var emailAddress = tenant.ContactInfo.EmailAddress;
 
