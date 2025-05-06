@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VC.Tenants.Application;
+using VC.Tenants.Application.Contracts;
 using VC.Tenants.Application.Tenants;
 using VC.Tenants.Infrastructure.Implementations;
 
@@ -12,8 +13,8 @@ internal static class ApplicationConfigurator
     {
         services.AddScoped<ITenantsService, TenantsService>();
         services.AddScoped<ISlugGenerator, ByNameSlugGenerator>();
-        services.AddScoped<IEmailVerifyCodeGenerator, DyDateCodeGenerator>();
-        services.AddSingleton<ITEnantEmailVerificationMessagesFactory, TenantEmailVerifyMessagesFactory>();
+        services.AddScoped<IEmailVerifyCodeGenerator, ByDateCodeGenerator>();
+        services.AddSingleton<ITenantEmailVerificationMessagesFactory, TenantEmailVerifyMessagesFactory>();
 
         return services;
     }

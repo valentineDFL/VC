@@ -1,8 +1,8 @@
 ﻿using VC.MailkitIntegration;
 
-namespace VC.Tenants.Application;
+namespace VC.Tenants.Application.Contracts;
 
-internal interface ITEnantEmailVerificationMessagesFactory
+internal interface ITenantEmailVerificationMessagesFactory
 {
     public Message CreateAfterRegistration(string text, string receiverName, string receiverMail);
 

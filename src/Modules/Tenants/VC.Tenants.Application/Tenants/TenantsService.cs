@@ -1,9 +1,9 @@
 using FluentResults;
 using VC.MailkitIntegration;
+using VC.Tenants.Application.Contracts;
 using VC.Tenants.Application.Models.Create;
 using VC.Tenants.Application.Models.Update;
 using VC.Tenants.Entities;
-using VC.Tenants.Repositories;
 using VC.Tenants.UnitOfWork;
 
 namespace VC.Tenants.Application.Tenants;
@@ -15,20 +15,20 @@ internal class TenantsService : ITenantsService
     private readonly ISlugGenerator _slugGenerator;
     private readonly IEmailVerifyCodeGenerator _emailVerifyCodeGenerator;
 
-    private readonly IMailSender _mailSenderService;
+    private readonly IMailSender _mailSender;
 
-    private readonly ITEnantEmailVerificationMessagesFactory _formFactory;
+    private readonly ITenantEmailVerificationMessagesFactory _formFactory;
 
     public TenantsService(IUnitOfWork unitOfWork,
                           ISlugGenerator slugGenerator,
                           IEmailVerifyCodeGenerator emailVerifyCodeGenerator,
-                          IMailSender mailSenderService,
-                          ITEnantEmailVerificationMessagesFactory formFactory)
+                          IMailSender mailSender,
+                          ITenantEmailVerificationMessagesFactory formFactory)
     {
         _unitOfWork = unitOfWork;
         _slugGenerator = slugGenerator;
         _emailVerifyCodeGenerator = emailVerifyCodeGenerator;
-        _mailSenderService = mailSenderService;
+        _mailSender = mailSender;
         _formFactory = formFactory;
     }
 
@@ -37,7 +37,7 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant is null)
-            return Result.Fail("Tenant Not Found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         return Result.Ok(tenant);
     }
@@ -60,7 +60,7 @@ internal class TenantsService : ITenantsService
 
         var message = _formFactory.CreateAfterRegistration(code, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
 
-        var sendResult = await _mailSenderService.SendMailAsync(message);
+        var sendResult = await _mailSender.SendMailAsync(message);
 
         if (!sendResult.IsSuccess)
             return Result.Fail(sendResult.Errors);
@@ -75,7 +75,7 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant == null)
-            return Result.Fail("Tenant Not Found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         var tenantParams = CreateTenantParams(@params, tenant);
 
@@ -106,7 +106,7 @@ internal class TenantsService : ITenantsService
         var existingTenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (existingTenant is null)
-            return Result.Fail("Tenant Not found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         await _unitOfWork.TenantRepository.RemoveAsync(existingTenant);
 
@@ -120,19 +120,19 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant is null)
-            return Result.Fail("Tenant Not Found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         if (tenant.ContactInfo.EmailAddress.IsConfirmed)
-            return Result.Fail("Tenant has already been verified");
+            return Result.Fail(ErrorMessages.TenantHasAlreadyBeenVerified);
 
         var emailVerification = await _unitOfWork.EmailVerificationRepository
             .GetAsync(tenant.Id, tenant.ContactInfo.EmailAddress.Email);
 
         if (emailVerification == null)
-            return Result.Fail("Confirmation Time has expired");
+            return Result.Fail(ErrorMessages.ConfirmationTimeHasExpired);
 
         if (emailVerification.Code != code)
-            return Result.Fail("Codes does not equals");
+            return Result.Fail(ErrorMessages.CodesDoesNotEquals);
 
         var emailAddres = tenant.ContactInfo.EmailAddress;
         var updatedEmailAddress = EmailAddress.Create(emailAddres.Email, true);
@@ -152,7 +152,7 @@ internal class TenantsService : ITenantsService
         var tenant = await _unitOfWork.TenantRepository.GetAsync();
 
         if (tenant == null)
-            return Result.Fail("Tenant not found");
+            return Result.Fail(ErrorMessages.TenantNotFound);
 
         var emailAddress = tenant.ContactInfo.EmailAddress;
 
@@ -171,7 +171,7 @@ internal class TenantsService : ITenantsService
         await _unitOfWork.CommitAsync();
 
         var message = _formFactory.CreateMessageForVerify(newVerifyCode, tenant.Name, tenant.ContactInfo.EmailAddress.Email);
-        var sendMailResult = await _mailSenderService.SendMailAsync(message);
+        var sendMailResult = await _mailSender.SendMailAsync(message);
 
         if (!sendMailResult.IsSuccess)
             return Result.Fail(sendMailResult.Errors);
