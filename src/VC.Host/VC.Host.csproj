@@ -28,6 +28,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Infrastructure\VC.Integrations.Di\VC.Integrations.Di.csproj" />
+      <ProjectReference Include="..\Modules\Auth\VC.Auth.Api\VC.Auth.Api.csproj" />
+      <ProjectReference Include="..\Modules\Auth\VC.Auth.Application\VC.Auth.Application.csproj" />
+      <ProjectReference Include="..\Modules\Auth\VC.Auth.Di\VC.Auth.Di.csproj" />
+      <ProjectReference Include="..\Modules\Auth\VC.Auth.Integration\VC.Auth.Integration.csproj" />
       <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Di\VC.Tenants.Di.csproj" />
       <ProjectReference Include="..\Modules\Services\VC.Services.Di\VC.Services.Di.csproj" />

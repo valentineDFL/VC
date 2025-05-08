@@ -2,6 +2,7 @@ using Mapster;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
+using VC.Auth.Di;
 using VC.Integrations.Di;
 using VC.Services.Di;
 using VC.Tenants.Di;
@@ -11,11 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(VC.Tenants.Api.Entry).Assembly)
-    .AddApplicationPart(typeof(VC.Services.Api.Entry).Assembly);
+    .AddApplicationPart(typeof(VC.Services.Api.Entry).Assembly)
+    .AddApplicationPart(typeof(VC.Auth.Api.Entry).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
-//builder.Services.ConfigureServicesModule(builder.Configuration);
+builder.Services.ConfigureServicesModule(builder.Configuration);
+builder.Services.ConfigureAuthModule(builder.Configuration);
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();

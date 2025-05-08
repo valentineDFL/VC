@@ -1,0 +1,28 @@
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using VC.Auth.Models;
+using VC.Utilities.Resolvers;
+
+namespace VC.Auth.Infrastructure.Persistence;
+
+public class AuthDatabaseContext : DbContext
+{
+    public const string Schema = "auth";
+
+    private readonly ITenantResolver _tenantResolver;
+
+    public AuthDatabaseContext(DbContextOptions<AuthDatabaseContext> options, ITenantResolver tenantResolver)
+        : base(options)
+    {
+        _tenantResolver = tenantResolver;
+    }
+
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder.Entity<User>()
+            .HasQueryFilter(r => r.UserId == _tenantResolver.Resolve());
+    }
+}
