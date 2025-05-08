@@ -1,7 +1,7 @@
 using FluentResults;
 using VC.Services.Application.ServicesUseCases.Models;
 using VC.Services.Repositories;
-using VC.Utilities.Resolvers;
+using VC.Shared.Utilities.Resolvers;
 
 namespace VC.Services.Application.ServicesUseCases;
 
