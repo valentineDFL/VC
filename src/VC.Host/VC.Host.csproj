@@ -28,7 +28,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\vc.tenants\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
-      <ProjectReference Include="..\Infrastructure\VC.Integrations.Di\VC.Integrations.Di.csproj" />
       <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
       <ProjectReference Include="..\Modules\Services\VC.Services.Di\VC.Services.Di.csproj" />
     </ItemGroup>

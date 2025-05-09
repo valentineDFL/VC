@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
-using VC.Integrations.Di;
+using VC.Shared.Integrations.Di;
 using VC.Services.Di;
 using VC.Shared.Utilities;
 
@@ -57,15 +57,15 @@ static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
         .Where(t => t.IsSubclassOf(typeof(DbContext)));
 
     await Parallel.ForEachAsync(dbContextsTypes, async (dbContextType, task) =>
-          {
-            var dbContextInstance = scope.ServiceProvider.GetRequiredService(dbContextType);
+    {
+        var dbContextInstance = scope.ServiceProvider.GetRequiredService(dbContextType);
 
-            if (dbContextInstance is not DbContext dbContext)
-                return;
+        if (dbContextInstance is not DbContext dbContext)
+            return;
 
-            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+        var pendingMigrations = dbContext.Database.GetPendingMigrations();
 
-            if (pendingMigrations.Any())
-                await dbContext.Database.MigrateAsync();
-          });
+        if (pendingMigrations.Any())
+            await dbContext.Database.MigrateAsync();
+    });
 }
