@@ -35,7 +35,11 @@ internal static class InfrastructureConfiguration
         services.AddDbContext<DatabaseContext>(options => options
             .UseNpgsql(
                 connectionString,
-                x => { x.MigrationsHistoryTable("__EFMigrationsHistory", DatabaseContext.Schema); }
+                x =>
+                {
+                    x.MigrationsHistoryTable("__EFMigrationsHistory", DatabaseContext.Schema);
+                    x.ConfigureDataSource(b => b.EnableDynamicJson());
+                }
             ));
         
         services.AddScoped<IResourcesRepository, ResourcesRepository>();

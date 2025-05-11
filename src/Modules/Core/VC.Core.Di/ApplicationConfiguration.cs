@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using VC.Core.Application.EmployeesUseCases;
 using VC.Core.Application.Events;
 using VC.Core.Application.ResourcesUseCases;
 using VC.Core.Application.ResourcesUseCases.Validators;
@@ -15,6 +16,9 @@ internal static class ApplicationConfiguration
     {
         services.AddScoped<IResourcesService, ResourcesService>();
         services.AddScoped<ICreateServiceUseCase, CreateServiceUseCase>();
+
+        services.AddScoped<IGetEmployeesUseCase, GetEmployeesUseCase>();
+        services.AddScoped<ICreateEmployeeUseCase, CreateEmployeeUseCase>();
 
         services.ConfigureWorkScheduleApplication();
         

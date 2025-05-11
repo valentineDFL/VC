@@ -5,6 +5,7 @@ using Serilog;
 using VC.Host;
 using VC.Integrations.Di;
 using VC.Core.Di;
+using VC.Host.Common;
 using VC.Tenants.Di;
 using VC.Utilities;
 
@@ -12,7 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(VC.Tenants.Api.Entry).Assembly)
-    .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly);
+    .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly)
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);

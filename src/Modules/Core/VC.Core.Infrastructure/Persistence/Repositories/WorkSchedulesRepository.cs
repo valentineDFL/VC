@@ -17,6 +17,11 @@ internal class WorkSchedulesRepository : BaseRepository<WorkSchedule, Guid>, IWo
     {
         var dayOfWeek = date.ToDateTime(TimeOnly.MinValue).DayOfWeek;
 
-        return DbSet.FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.Items.Any(i => i.DayOfWeek == dayOfWeek), cancellationToken);
+         var queryDayOfWeek = $$"""
+                       [{"DayOfWeek": {{(int)dayOfWeek}}}]
+                       """;
+
+        return DbSet.FirstOrDefaultAsync(w => w.EmployeeId == employeeId &&
+                                              EF.Functions.JsonContains(w.Items, queryDayOfWeek), cancellationToken);
     }
 }
