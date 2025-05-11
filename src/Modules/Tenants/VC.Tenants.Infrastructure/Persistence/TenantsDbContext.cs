@@ -37,7 +37,7 @@ public class TenantsDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSeeding((context, flag) =>
+        optionsBuilder.UseAsyncSeeding(async (context, flag, ct) =>
         {
             if (!_tenantModuleSettings.SeedingSettings.IsEnabled)
                 return;

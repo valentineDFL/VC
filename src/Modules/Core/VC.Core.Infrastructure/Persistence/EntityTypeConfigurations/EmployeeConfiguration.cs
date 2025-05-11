@@ -1,0 +1,20 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VC.Core.Employees;
+
+namespace VC.Core.Infrastructure.Persistence.EntityTypeConfigurations;
+
+internal class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
+{
+    public void Configure(EntityTypeBuilder<Employee> builder)
+    {
+        builder.HasKey(r => r.Id);
+
+        builder.Property(r => r.FullName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(r => r.Specialisation)
+            .HasMaxLength(300);
+    }
+}
