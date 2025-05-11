@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VC.Core.Api\VC.Core.Api.csproj" />
+    <ProjectReference Include="..\VC.Core.Application\VC.Core.Application.csproj" />
+    <ProjectReference Include="..\VC.Core.Infrastructure\VC.Core.Infrastructure.csproj" />
+    <ProjectReference Include="..\VC.Core.Integration\VC.Core.Integration.csproj" />
+    <ProjectReference Include="..\VC.Core\VC.Core.csproj" />
+  </ItemGroup>
+
+</Project>
