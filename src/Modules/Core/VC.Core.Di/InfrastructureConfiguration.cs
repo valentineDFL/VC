@@ -13,7 +13,7 @@ namespace VC.Core.Di;
 
 internal static class InfrastructureConfiguration
 {
-    public static void ConfigureServicesInfrastructure(this IServiceCollection services,
+    public static void ConfigureCoreInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
         services

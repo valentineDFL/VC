@@ -48,4 +48,26 @@ public class WorkSchedule : AggregateRoot<Guid>, IHasTenantId
 
         _exceptions.Add(exception);
     }
+    
+    /// <summary>
+    /// Получить эффективное рабочее время сотрудника на указанную дату.
+    /// </summary>
+    /// <param name="date">Дата на которую производится расчет эффективного рабочего времени.</param>
+    public EffectiveWorkTime GetEffectiveWorkTime(DateOnly date)
+    {
+        var dayOfWeek = date.ToDateTime(TimeOnly.MinValue).DayOfWeek;
+
+        var item = _items.FirstOrDefault(i => i.DayOfWeek == dayOfWeek);
+        if (item is null)
+            return new DayOff();
+
+        var exception = _exceptions.FirstOrDefault(e => e.Date == date);
+        if (exception?.IsDayOff == true)
+            return new DayOff();
+
+        var startTime = exception?.StartTime ?? item.StartTime;
+        var endTime = exception?.EndTime ?? item.EndTime;
+
+        return new Working(startTime, endTime);
+    }
 }

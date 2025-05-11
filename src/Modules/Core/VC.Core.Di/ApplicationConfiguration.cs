@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using VC.Core.Application.EmployeeAvailableSlotsUseCases;
 using VC.Core.Application.EmployeesUseCases;
 using VC.Core.Application.Events;
 using VC.Core.Application.ResourcesUseCases;
@@ -12,7 +13,7 @@ namespace VC.Core.Di;
 
 internal static class ApplicationConfiguration
 {
-    public static void ConfigureServicesApplication(this IServiceCollection services)
+    public static void ConfigureCoreApplication(this IServiceCollection services)
     {
         services.AddScoped<IResourcesService, ResourcesService>();
         services.AddScoped<ICreateServiceUseCase, CreateServiceUseCase>();
@@ -30,10 +31,9 @@ internal static class ApplicationConfiguration
     
     public static void ConfigureWorkScheduleApplication(this IServiceCollection services)
     {
-        services.AddScoped<ICreateWorkScheduleUseCase, CreateWorkScheduleUseCase>();
-        services.AddScoped<ICreateWorkScheduleUseCase, CreateWorkScheduleUseCase>();
         services.AddScoped<IAddWorkingHourExceptionUseCase, AddWorkingHourExceptionUseCase>();
         services.AddScoped<ICreateWorkScheduleUseCase, CreateWorkScheduleUseCase>();
         services.AddScoped<IGetWorkScheduleDetailsUseCase, GetWorkScheduleDetailsUseCase>();
+        services.AddScoped<IGetEmployeeAvailableSlotsUseCase, GetEmployeeAvailableSlotsUseCase>();
     }
 }
