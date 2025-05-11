@@ -1,6 +1,6 @@
 ﻿using VC.Core.Common;
 
-namespace VC.Core;
+namespace VC.Core.Services;
 
 public class Category : AggregateRoot<Guid>, IHasTenantId
 {

@@ -1,10 +1,9 @@
 using FluentResults;
-using VC.Core.Application.WorkScheduleUseCases.Models;
 using VC.Core.Employees;
 using VC.Core.Repositories;
 using VC.Utilities.Resolvers;
 
-namespace VC.Core.Application.WorkScheduleUseCases;
+namespace VC.Core.Application.WorkScheduleUseCases.Models;
 
 public record CreateWorkScheduleParams(
     Guid EmployeeId,

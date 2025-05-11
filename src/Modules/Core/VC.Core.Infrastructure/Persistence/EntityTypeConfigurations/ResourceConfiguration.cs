@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VC.Core.Services;
 
 namespace VC.Core.Infrastructure.Persistence.EntityTypeConfigurations;
 

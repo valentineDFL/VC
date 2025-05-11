@@ -1,4 +1,6 @@
-﻿namespace VC.Core.Repositories;
+﻿using VC.Core.Services;
+
+namespace VC.Core.Repositories;
 
 public interface IServicesRepository : IRepository<Service, Guid>
 {

@@ -7,6 +7,7 @@ using VC.Core.Application.ResourcesUseCases;
 using VC.Core.Application.ResourcesUseCases.Validators;
 using VC.Core.Application.ServicesUseCases;
 using VC.Core.Application.WorkScheduleUseCases;
+using VC.Core.Application.WorkScheduleUseCases.Models;
 using VC.Core.Events;
 
 namespace VC.Core.Di;

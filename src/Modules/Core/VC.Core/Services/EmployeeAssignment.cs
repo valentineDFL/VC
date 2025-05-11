@@ -1,6 +1,6 @@
 using VC.Core.Common;
 
-namespace VC.Core.Employees;
+namespace VC.Core.Services;
 
 /// <summary>
 /// Назначение сотрудника на услугу

@@ -1,4 +1,5 @@
 using VC.Core.Common;
+using VC.Core.Services;
 
 namespace VC.Core.Events;
 

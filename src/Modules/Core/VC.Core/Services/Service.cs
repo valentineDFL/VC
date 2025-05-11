@@ -1,8 +1,7 @@
 ﻿using VC.Core.Common;
-using VC.Core.Employees;
 using VC.Core.Events;
 
-namespace VC.Core;
+namespace VC.Core.Services;
 
 public class Service : AggregateRoot<Guid>, IHasTenantId
 {

@@ -1,6 +1,7 @@
 using FluentResults;
 using VC.Core.Application.ResourcesUseCases.Models;
 using VC.Core.Repositories;
+using VC.Core.Services;
 using VC.Utilities.Resolvers;
 
 namespace VC.Core.Application.ResourcesUseCases;

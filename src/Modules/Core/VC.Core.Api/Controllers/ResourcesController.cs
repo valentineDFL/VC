@@ -4,6 +4,7 @@ using VC.Core.Api.Validations;
 using VC.Core.Application.ResourcesUseCases;
 using VC.Core.Application.ResourcesUseCases.Models;
 using VC.Core.Application.ResourcesUseCases.Validators;
+using VC.Core.Services;
 
 namespace VC.Core.Api.Controllers;
 

@@ -1,6 +1,7 @@
 using FluentResults.Extensions.AspNetCore;
 using VC.Core.Api.Models.WorkSchedules;
 using VC.Core.Application.WorkScheduleUseCases;
+using VC.Core.Application.WorkScheduleUseCases.Models;
 
 namespace VC.Core.Api.Controllers;
 
