@@ -25,7 +25,10 @@ internal class GetEmployeeAvailableSlotsUseCase(
         if (effectiveTime is not Working workingEffectiveTime)
             throw new ApplicationException($"Не обработанный вариант эффективности рабочего времени сотрудника. Type={nameof(effectiveTime)}");
         
-        var serviceDuration = TimeSpan.FromHours(1); // TODO: Зависимость на выбранную услугу
+        // TODO: Зависимость на выбранную услугу. https://ru.yougile.com/team/880985e54735/VClients#VC-31
+        // Нужно переработать AvailableSlotsGenerator чтобы учитывать длительность выполнения услуги выбранным сотрудником.
+        // Исходя из этого, AvailableSlotsGenerator скорее всего переименуется.
+        var serviceDuration = TimeSpan.FromHours(1);
         var slots = _availableSlotsGenerator.GenerateSlots(
             parameters.Date,
             workingEffectiveTime.StartTime,
