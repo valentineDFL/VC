@@ -4,7 +4,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
 using VC.Integrations.Di;
-using VC.Services.Di;
+using VC.Core.Di;
 using VC.Tenants.Di;
 using VC.Utilities;
 
@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(VC.Tenants.Api.Entry).Assembly)
-    .AddApplicationPart(typeof(VC.Services.Api.Entry).Assembly);
+    .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
@@ -65,7 +65,7 @@ static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
             if (dbContextInstance is not DbContext dbContext)
                 return;
 
-            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
 
             if (pendingMigrations.Any())
                 await dbContext.Database.MigrateAsync();
