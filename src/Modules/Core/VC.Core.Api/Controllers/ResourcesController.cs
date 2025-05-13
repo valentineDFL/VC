@@ -4,14 +4,22 @@ using VC.Core.Api.Validations;
 using VC.Core.Application.ResourcesUseCases;
 using VC.Core.Application.ResourcesUseCases.Models;
 using VC.Core.Application.ResourcesUseCases.Validators;
+using VC.Core.Repositories;
 using VC.Core.Services;
 
 namespace VC.Core.Api.Controllers;
 
 [Route("api/v1/resources")]
 public class ResourcesController(
+    IUnitOfWork unitOfWork, 
     IResourcesService _resourcesService) : ApiController
 {
+    [HttpGet]
+    public async Task<IEnumerable<Resource>> GetAllAsync()
+    {
+        return await unitOfWork.Resources.GetAllAsync();
+    }
+    
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Resource>> GetAsync(Guid id)
     {

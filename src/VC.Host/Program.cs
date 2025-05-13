@@ -35,9 +35,20 @@ builder.Services.AddMapster();
 
 VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 await ApplyUnAplliedMigrationsAsync(app);
 
+app.UseCors("AllowAll");
 app.MapPrometheusScrapingEndpoint();
 app.MapHealthChecks("/health");
 app.MapOpenApi();

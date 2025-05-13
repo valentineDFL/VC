@@ -49,6 +49,7 @@ internal static class InfrastructureConfiguration
         services.AddScoped<IWorkSchedulesRepository, WorkSchedulesRepository>();
         
         services.AddScoped<IGetServiceDetailsUseCase, GetServiceDetailsUseCase>();
+        services.AddScoped<IGetAllServicesUseCase, GetAllServicesUseCase>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

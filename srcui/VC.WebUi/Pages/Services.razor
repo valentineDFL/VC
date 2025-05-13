@@ -1,0 +1,92 @@
+@page "/Services"
+@using VC.WebUi.Services
+@inject ApiService ApiService
+
+<h3>Услуги</h3>
+
+@if (_loading)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Длительность</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var service in _services)
+        {
+            <tr>
+                <td>@service.Id</td>
+                <td>@service.Title</td>
+                <td>@service.BasePrice</td>
+                <td>@service.BaseDuration</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => Delete(service.Id)">Удалить</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-primary" @onclick="ShowCreateForm">Добавить услугу</button>
+
+@if (_showCreateForm)
+{
+    <EditForm Model="@_newService" OnValidSubmit="@CreateService">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText @bind-Value="_newService.Title" placeholder="Название" />
+        <InputNumber @bind-Value="_newService.BasePrice" />
+        <InputText @bind-Value="_newService.BaseDuration" />
+
+        <button type="submit" class="btn btn-success">Сохранить</button>
+    </EditForm>
+}
+
+@code {
+    private bool _loading = true;
+    private bool _showCreateForm = false;
+    private List<ServiceDetailsDto> _services = new();
+    private CreateServiceRequest _newService = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _services = await ApiService.GetAllServicesAsync();
+        _loading = false;
+    }
+
+    private async Task CreateService()
+    {
+        var result = await ApiService.CreateServiceAsync(_newService);
+        if (result.IsSuccess)
+        {
+            _services = await ApiService.GetAllServicesAsync();
+            _showCreateForm = false;
+        }
+    }
+
+    private async Task Delete(Guid id)
+    {
+        var result = await ApiService.DeleteServiceAsync(id);
+        if (result.IsSuccess)
+        {
+            _services = await ApiService.GetAllServicesAsync();
+        }
+    }
+
+    private void ShowCreateForm()
+    {
+        _newService = new();
+        _showCreateForm = true;
+    }
+}

@@ -1,0 +1,44 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+<h3>Добро пожаловать в систему управления услугами</h3>
+
+<p>Выберите раздел:</p>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <button class="btn btn-primary w-100" @onclick="() => NavigateTo(Employees)">
+            Сотрудники
+        </button>
+    </div>
+    <div class="col-md-3 mb-3">
+        <button class="btn btn-info w-100" @onclick="() => NavigateTo(Resources)">
+            Ресурсы
+        </button>
+    </div>
+    <div class="col-md-3 mb-3">
+        <button class="btn btn-success w-100" @onclick="() => NavigateTo(Services)">
+            Услуги
+        </button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="alert alert-danger">
+        @_errorMessage
+    </div>
+}
+
+@code {
+    public string Services = "/services";
+    public string Resources = "/resources";
+    public string Employees = "/employees";
+    
+    private string _errorMessage = "";
+
+    private void NavigateTo(string path)
+    {
+        NavigationManager.NavigateTo(path);
+    }
+}

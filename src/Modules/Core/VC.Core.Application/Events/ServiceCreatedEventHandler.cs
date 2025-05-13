@@ -6,6 +6,6 @@ public class ServiceCreatedEventHandler : IDomainEventHandler<ServiceCreatedEven
 {
     public Task HandleAsync(ServiceCreatedEvent domainEvent)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

@@ -8,6 +8,12 @@ namespace VC.Core.Api.Controllers;
 [Route("api/v1/services")]
 public class ServicesController : ApiController
 {
+    [HttpGet]
+    public async Task<ActionResult<List<ServiceDetailsDto>>> GetAsync([FromServices] IGetAllServicesUseCase useCase)
+    {
+        return Ok(await useCase.ExecuteAsync());
+    }
+    
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ServiceDetailsDto>> GetAsync(Guid id,
         [FromServices] IGetServiceDetailsUseCase getServiceDetailsUseCase)
