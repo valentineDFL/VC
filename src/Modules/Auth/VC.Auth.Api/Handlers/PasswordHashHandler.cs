@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace VC.Auth.Application;
+namespace VC.Auth.Api.Handlers;
 
-public class Encrypt : IEncrypt
+public class PasswordHashHandler : IPasswordHashHandler
 {
     public string HashPassword(string password, string salt)
-    {
-        return Convert.ToBase64String(KeyDerivation.Pbkdf2(
+        => Convert.ToBase64String(KeyDerivation.Pbkdf2(
             password,
             System.Text.Encoding.ASCII.GetBytes(salt),
             KeyDerivationPrf.HMACSHA512,
             5000,
             64
         ));
-    }
 }

@@ -1,7 +1,6 @@
-namespace VC.Auth.Api.Models.Requests;
+namespace VC.Auth.Application.UseCases.Models.Requests;
 
 public record RegisterRequest(
     string Username,
-    string Email,
     string Password
 );
