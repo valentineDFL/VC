@@ -1,82 +1,152 @@
 @page "/resources"
 @using VC.WebUi.Services
+@using VC.WebUi.Shared
 @inject ApiService ApiService
+@inject NavigationManager NavigationManager
 
-<h3>Ресурсы</h3>
+<PageHeader Title="Ресурсы"
+            Subtitle="Добавление и контроль ресурсов"
+            PrimaryColor="#00CED1"
+            SecondaryColor="#ACB6E5"
+            OnBack="() => NavigationManager.NavigateTo(_backUrl)" />
 
-@if (_loading)
-{
-    <p><em>Загрузка...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Название</th>
-                <th>Описание</th>
-                <th>Количество</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var resource in _resources)
+<div class="container mt-3">
+    <!-- Поиск -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text" id="search-addon"><i class="bi bi-search"></i></span>
+                <InputText @bind-Value="_searchQuery" placeholder="Поиск по названию или описанию..." class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <button class="btn btn-outline-secondary" @onclick="ResetSearch">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Сбросить
+            </button>
+        </div>
+    </div>
+
+    <!-- Кнопка добавления -->
+    <div class="d-flex justify-content-end mb-4">
+        <button class="btn btn-primary" @onclick="ShowCreateForm">
+            <i class="bi bi-box-seam me-2"></i>Добавить ресурс
+        </button>
+    </div>
+
+    <!-- Форма создания/редактирования -->
+    @if (_showCreateForm || _showEditForm)
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">@(_showEditForm ? "Редактировать ресурс" : "Добавить новый ресурс")</h5>
+                <EditForm Model="@_currentResource" OnValidSubmit="@SubmitResource">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label">Название</label>
+                        <InputText @bind-Value="_currentResource.Title" class="form-control" />
+                        <ValidationMessage For="@(() => _currentResource.Title)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Описание</label>
+                        <InputText @bind-Value="_currentResource.Description" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Количество</label>
+                        <InputNumber @bind-Value="_currentResource.Count" class="form-control" />
+                        <ValidationMessage For="@(() => _currentResource.Count)" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="bi bi-check-circle me-1"></i>Сохранить
+                    </button>
+                    <button type="button" class="btn btn-secondary" @onclick="ResetForm">
+                        <i class="bi bi-x-circle me-1"></i>Отмена
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+    <!-- Список ресурсов -->
+    <div class="row g-4">
+        @if (_loading)
+        {
+            <div class="text-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        }
+        else if (!_filteredResources.Any())
+        {
+            <div class="alert alert-info">Нет доступных ресурсов по вашему запросу.</div>
+        }
+        else
+        {
+            @foreach (var resource in _filteredResources)
             {
-                <tr>
-                    <td>@resource.Id</td>
-                    <td>@resource.Title</td>
-                    <td>@resource.Description</td>
-                    <td>@resource.Count</td>
-                    <td>
-                        <button class="btn btn-danger" @onclick="() => DeleteResource(resource.Id)">Удалить</button>
-                        <button class="btn btn-warning ms-2" @onclick="() => ShowEditForm(resource)">Изменить</button>
-                    </td>
-                </tr>
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100 hover-card">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@resource.Title</h5>
+                            <p class="card-text text-muted">
+                                ID: <strong>@resource.Id</strong><br />
+                                Описание: <strong>@(string.IsNullOrEmpty(resource.Description) ? "—" : resource.Description)</strong><br />
+                                Количество: <strong>@resource.Count</strong>
+                            </p>
+                            <div class="mt-auto d-flex gap-2">
+                                <button class="btn btn-warning btn-sm flex-grow-1" @onclick="() => ShowEditForm(resource)">
+                                    <i class="bi bi-pencil-square"></i> Изменить
+                                </button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteResource(resource.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
+        }
+    </div>
 
-@if (_showCreateForm || _showEditForm)
-{
-    <h4>@(_showEditForm ? "Редактировать ресурс" : "Добавить новый ресурс")</h4>
-    <EditForm Model="@_currentResource" OnValidSubmit="@SubmitResource">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="form-group mb-2">
-            <label>Название</label>
-            <InputText @bind-Value="_currentResource.Title" class="form-control" />
-            <ValidationMessage For="@(() => _currentResource.Title)" />
+    <!-- Ошибки -->
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger mt-4">
+            @_errorMessage
         </div>
+    }
+</div>
 
-        <div class="form-group mb-2">
-            <label>Описание</label>
-            <InputText @bind-Value="_currentResource.Description" class="form-control" />
-        </div>
+<style>
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-        <div class="form-group mb-2">
-            <label>Количество</label>
-            <InputNumber @bind-Value="_currentResource.Count" class="form-control" />
-            <ValidationMessage For="@(() => _currentResource.Count)" />
-        </div>
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
 
-        <button type="submit" class="btn btn-success">Сохранить</button>
-        <button type="button" class="btn btn-secondary ms-2" @onclick="ResetForm">Отмена</button>
-    </EditForm>
-}
-else
-{
-    <button class="btn btn-primary" @onclick="ShowCreateForm">Добавить ресурс</button>
-}
+    .card-title {
+        margin-bottom: 0.5rem;
+    }
+</style>
 
 @code {
+    private string _backUrl = "/";
     private bool _loading = true;
     private bool _showCreateForm = false;
     private bool _showEditForm = false;
+    private string? _errorMessage;
+    private string? _searchQuery;
 
     private List<Resource2> _resources = new();
+    private List<Resource2> _filteredResources = new();
     private Resource2 _currentResource = new();
 
     protected override async Task OnInitializedAsync()
@@ -86,13 +156,36 @@ else
 
     private async Task LoadResources()
     {
+        _loading = true;
         _resources = (await ApiService.GetAllResourcesAsync()).ToList();
+        FilterResources();
         _loading = false;
+    }
+
+    private void FilterResources()
+    {
+        if (string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            _filteredResources = _resources.ToList();
+        }
+        else
+        {
+            var query = _searchQuery.ToLower();
+            _filteredResources = _resources.Where(r =>
+                r.Title.ToLower().Contains(query) ||
+                (r.Description?.ToLower().Contains(query) ?? false)).ToList();
+        }
+    }
+
+    private void ResetSearch()
+    {
+        _searchQuery = "";
+        FilterResources();
     }
 
     private void ShowCreateForm()
     {
-        _currentResource = new Resource2();
+        _currentResource = new();
         _showCreateForm = true;
         _showEditForm = false;
     }
@@ -144,11 +237,7 @@ else
         }
         else
         {
-            // TODO: показать ошибки пользователю
-            foreach (var error in result.Errors ?? new List<IError>())
-            {
-                Console.WriteLine($"Ошибка: {error.Message}");
-            }
+            _errorMessage = result.Errors?.FirstOrDefault()?.Message ?? "Ошибка при сохранении";
         }
     }
 
@@ -157,13 +246,20 @@ else
         _showCreateForm = false;
         _showEditForm = false;
         _currentResource = new Resource2();
+        _errorMessage = null;
     }
 
     private async Task DeleteResource(Guid resourceId)
-    { 
-        await ApiService.DeleteResourceAsync(resourceId);
-        _loading = true;
-        await LoadResources();
-    }
+    {
+        var result = await ApiService.DeleteResourceAsync(resourceId);
 
+        if (result.IsSuccess)
+        {
+            await LoadResources();
+        }
+        else
+        {
+            _errorMessage = result.Errors?.FirstOrDefault()?.Message ?? "Ошибка удаления";
+        }
+    }
 }
