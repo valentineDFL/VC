@@ -1,0 +1,252 @@
+@page "/employees"
+@using VC.WebUi.Services
+@using VC.WebUi.Shared
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<PageHeader Title="Сотрудники"
+            Subtitle="Управление сотрудниками и графиками работы"
+            PrimaryColor="#4e54c8"
+            SecondaryColor="#8f94fb"
+            OnBack="() => NavigationManager.NavigateTo(_backUrl)" />
+
+<div class="container-fluid mt-0">
+    <!-- Поиск -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text" id="search-addon"><i class="bi bi-search"></i></span>
+                <InputText @bind-Value="_searchQuery" placeholder="Поиск по ФИО или специализации..." class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <button class="btn btn-outline-secondary" @onclick="ResetSearch">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Сбросить
+            </button>
+        </div>
+    </div>
+
+    <!-- Кнопка добавления -->
+    <div class="d-flex justify-content-end mb-4">
+        <button class="btn btn-primary" @onclick="ShowCreateForm">
+            <i class="bi bi-person-plus me-2"></i>Добавить сотрудника
+        </button>
+    </div>
+
+    <!-- Форма создания -->
+    @if (_showCreateForm)
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Добавить нового сотрудника</h5>
+                <EditForm Model="@_newEmployee" OnValidSubmit="@CreateEmployee">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label">ФИО</label>
+                        <InputText @bind-Value="_newEmployee.FullName" class="form-control" />
+                        <ValidationMessage For="@(() => _newEmployee.FullName)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Специализация (необязательно)</label>
+                        <InputText @bind-Value="_newEmployee.Specialisation" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="bi bi-check-circle me-1"></i>Сохранить
+                    </button>
+                    <button type="button" class="btn btn-secondary" @onclick="ResetForm">
+                        <i class="bi bi-x-circle me-1"></i>Отмена
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+    <!-- Список сотрудников -->
+    <div class="row g-4">
+        @if (_loading)
+        {
+            <div class="text-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        }
+        else if (!_filteredEmployees.Any())
+        {
+            <div class="alert alert-info">Нет сотрудников по вашему запросу.</div>
+        }
+        else
+        {
+            @foreach (var employee in _filteredEmployees)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100 hover-card">
+                        <div class="card-body d-flex flex-column align-items-center text-center">
+                            <!-- Аватарка -->
+                            <div class="mb-3">
+                                <img src="https://robohash.org/Иван?set=set4" alt="Аватар" class="rounded-circle border" style="width: 100px; height: 100px;" />
+                            </div>
+
+                            <!-- Информация -->
+                            <h5 class="card-title">@employee.FullName</h5>
+                            <p class="card-text text-muted small">
+                                ID: <strong>@employee.Id</strong><br />
+                                Специализация: <strong>@(string.IsNullOrEmpty(employee.Specialisation) ? "—" : employee.Specialisation)</strong>
+                            </p>
+
+                            <!-- Кнопки действий -->
+                            <div class="mt-auto w-100 d-flex gap-2">
+                                <button class="btn btn-info btn-sm flex-grow-1" @onclick="() => ShowSchedule(employee.Id)">
+                                    <i class="bi bi-calendar-week"></i> График
+                                </button>
+                                <button class="btn btn-secondary btn-sm flex-grow-1" @onclick="() => ShowAvailableSlots(employee.Id)">
+                                    <i class="bi bi-clock-history"></i> Слоты
+                                </button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteEmployee(employee.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Ошибки -->
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger mt-4">
+            @_errorMessage
+        </div>
+    }
+</div>
+
+<style>
+    .header-bg {
+        background: linear-gradient(to right, #4e54c8, #8f94fb);
+        border-radius: 1rem;
+    }
+
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .small {
+        font-size: 0.9rem;
+    }
+</style>
+
+@code {
+    private string _backUrl = "/";
+    private bool _loading = true;
+    private bool _showCreateForm = false;
+    private string? _errorMessage;
+    private string? _searchQuery;
+
+    private List<EmployeeDto> _employees = new();
+    private List<EmployeeDto> _filteredEmployees = new();
+
+    private CreateEmployeeParams _newEmployee = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployees()
+    {
+        _loading = true;
+        _employees = await ApiService.GetEmployeesAsync();
+        _filteredEmployees = _employees.ToList();
+        _loading = false;
+    }
+
+    private void ShowCreateForm()
+    {
+        _newEmployee = new();
+        _showCreateForm = true;
+    }
+
+    private void ResetForm()
+    {
+        _newEmployee = new();
+        _showCreateForm = false;
+        _errorMessage = null;
+    }
+
+    private async Task CreateEmployee()
+    {
+        var result = await ApiService.CreateEmployeeAsync(_newEmployee);
+        if (result.IsSuccess)
+        {
+            await LoadEmployees();
+            ResetForm();
+        }
+        else
+        {
+            _errorMessage = result.Errors?.FirstOrDefault()?.Message ?? "Ошибка при создании";
+        }
+    }
+
+    private async Task DeleteEmployee(Guid id)
+    {
+        // TODO: реализовать удаление через API
+        await LoadEmployees();
+    }
+
+    private void ShowSchedule(Guid employeeId) =>
+        NavigationManager.NavigateTo($"/employees/{employeeId}/work-schedule");
+
+    private void ShowAvailableSlots(Guid employeeId)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        NavigationManager.NavigateTo($"/employees/{employeeId}/available-slots?date={today}");
+    }
+
+    private void FilterEmployees()
+    {
+        if (string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            _filteredEmployees = _employees.ToList();
+        }
+        else
+        {
+            var query = _searchQuery.ToLower();
+            _filteredEmployees = _employees.Where(e =>
+                e.FullName.ToLower().Contains(query) ||
+                (e.Specialisation?.ToLower().Contains(query) ?? false)).ToList();
+        }
+    }
+
+    private void ResetSearch()
+    {
+        _searchQuery = "";
+        FilterEmployees();
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+        FilterEmployees();
+        return base.SetParametersAsync(parameters);
+    }
+}

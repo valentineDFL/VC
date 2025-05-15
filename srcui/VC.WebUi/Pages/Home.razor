@@ -1,0 +1,85 @@
+﻿@page "/"
+
+@inject NavigationManager NavigationManager
+
+<div class="container mt-5 text-center">
+    <h3 class="mb-4">Добро пожаловать в систему управления услугами</h3>
+    <p class="mb-5">Выберите раздел для работы:</p>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Сотрудники -->
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 hover-card" @onclick="() => NavigateTo(Employees)">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="bi bi-person-badge icon-large text-primary mb-3"></i>
+                    <h5 class="card-title">Сотрудники</h5>
+                    <p class="card-text text-muted">Управление сотрудниками и графиками</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ресурсы -->
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 hover-card" @onclick="() => NavigateTo(Resources)">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="bi bi-box-seam icon-large text-info mb-3"></i>
+                    <h5 class="card-title">Ресурсы</h5>
+                    <p class="card-text text-muted">Добавление и контроль ресурсов</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Услуги -->
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 hover-card" @onclick="() => NavigateTo(Services)">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="bi bi-list-task icon-large text-success mb-3"></i>
+                    <h5 class="card-title">Услуги</h5>
+                    <p class="card-text text-muted">Настройка и управление услугами</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ошибка -->
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger mt-4">
+            @_errorMessage
+        </div>
+    }
+</div>
+
+<style>
+    .icon-large {
+        font-size: 2.5rem;
+    }
+
+    .hover-card {
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .card-title {
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+
+@code {
+    public string Services = "/services";
+    public string Resources = "/resources";
+    public string Employees = "/employees";
+    
+    private string _errorMessage = "";
+
+    private void NavigateTo(string path)
+    {
+        NavigationManager.NavigateTo(path);
+    }
+}
