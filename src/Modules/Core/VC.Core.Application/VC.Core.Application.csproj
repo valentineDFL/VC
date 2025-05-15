@@ -6,8 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\VC.Utilities\VC.Utilities.csproj" />
+  <ItemGroup>    
+	  <ProjectReference Include="..\..\..\..\..\vc.tenants\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
+
     <ProjectReference Include="..\VC.Core\VC.Core.csproj" />
   </ItemGroup>
 

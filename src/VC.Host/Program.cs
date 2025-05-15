@@ -3,22 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
-using VC.Integrations.Di;
-using VC.Core.Di;
 using VC.Host.Common;
-using VC.Tenants.Di;
-using VC.Utilities;
+using VC.Core.Di;
+using VC.Shared.Utilities;
+using VC.Shared.Integrations.Di;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
-    .AddApplicationPart(typeof(VC.Tenants.Api.Entry).Assembly)
     .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly)
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
-builder.Services.ConfigureTenantsModule(builder.Configuration);
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
 builder.Services.ConfigureCoreModule(builder.Configuration);
@@ -75,15 +72,15 @@ static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
         .Where(t => t.IsSubclassOf(typeof(DbContext)));
 
     await Parallel.ForEachAsync(dbContextsTypes, async (dbContextType, task) =>
-          {
-            var dbContextInstance = scope.ServiceProvider.GetRequiredService(dbContextType);
+    {
+        var dbContextInstance = scope.ServiceProvider.GetRequiredService(dbContextType);
 
-            if (dbContextInstance is not DbContext dbContext)
-                return;
+        if (dbContextInstance is not DbContext dbContext)
+            return;
 
             var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
 
-            if (pendingMigrations.Any())
-                await dbContext.Database.MigrateAsync();
-          });
+        if (pendingMigrations.Any())
+            await dbContext.Database.MigrateAsync();
+    });
 }
