@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VC.Auth.Infrastructure.Persistence;
@@ -11,12 +12,15 @@ using VC.Auth.Infrastructure.Persistence;
 namespace VC.Auth.Infrastructure.Migrations
 {
     [DbContext(typeof(AuthDatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250516134622_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("auth")
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -24,7 +28,7 @@ namespace VC.Auth.Infrastructure.Migrations
 
             modelBuilder.Entity("VC.Auth.Models.User", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("TenantId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -32,17 +36,17 @@ namespace VC.Auth.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Salt")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("UserId");
+                    b.HasKey("TenantId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", "auth");
                 });
 #pragma warning restore 612, 618
         }

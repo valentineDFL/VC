@@ -1,15 +1,10 @@
-
 using VC.Auth.Models;
 
 namespace VC.Auth.Repositories;
 
 public interface IUserRepository
 {
-    Task AddAsync(User user);
+    Task<User> GetByEmailAsync(string email, string tenantId);
 
-    Task GetByEmailAsync(string email);
-
-    Task CreateAsync();
-
-    Task SaveAsync();
+    Task CreateAsync(User user);
 }

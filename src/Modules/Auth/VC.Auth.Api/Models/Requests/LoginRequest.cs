@@ -1,6 +1,10 @@
 namespace VC.Auth.Api.Models.Requests;
 
-public record LoginRequest(
-    string Username,
-    string Password
-);
+public class LoginRequest
+{
+    public string Username { get; set; }
+ 
+    public string Email { get; set; }
+
+    public string Password { get; set; }
+}

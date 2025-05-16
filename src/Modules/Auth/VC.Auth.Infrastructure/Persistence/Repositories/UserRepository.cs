@@ -1,34 +1,27 @@
+using Microsoft.EntityFrameworkCore;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
 
 namespace VC.Auth.Infrastructure.Persistence.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(AuthDatabaseContext _dbContext) : IUserRepository
 {
-    private static IDictionary<string, User> _users = new Dictionary<string, User>();
-    
-    public async Task AddAsync(User user)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<User> GetByEmailAsync(string email, string tenantId)
+        => await _dbContext.Users
+            .FirstOrDefaultAsync(u =>
+                u.Email == email &&
+                u.TenantId.ToString() == tenantId);
 
-    public async Task GetByEmailAsync(string email)
+    public async Task CreateAsync(User user)
     {
-        throw new NotImplementedException();
-    }
+        if (string.IsNullOrWhiteSpace(user.Username) ||
+            string.IsNullOrWhiteSpace(user.Email) ||
+            string.IsNullOrWhiteSpace(user.PasswordHash))
+        {
+            throw new Exception("Some fields are empty");
+        }
 
-    public Task CreateAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task CreateAsync(string user, string password)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task SaveAsync()
-    {
-        throw new NotImplementedException();
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
     }
 }

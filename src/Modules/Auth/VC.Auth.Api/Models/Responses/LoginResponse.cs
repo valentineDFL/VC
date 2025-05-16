@@ -1,5 +1,3 @@
-using VC.Auth.Models;
-
 namespace VC.Auth.Api.Models.Responses;
 
 public class LoginResponse

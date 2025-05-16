@@ -14,7 +14,6 @@ public class AuthDatabaseContext : DbContext
     public AuthDatabaseContext(DbContextOptions<AuthDatabaseContext> options, ITenantResolver tenantResolver)
         : base(options)
     {
-        Database.EnsureCreated();
         _tenantResolver = tenantResolver;
     }
 
@@ -25,8 +24,7 @@ public class AuthDatabaseContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.Entity<User>()
             .HasQueryFilter(u => u.TenantId == _tenantResolver.Resolve());
-
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Email).IsUnique();
+        
+        modelBuilder.HasDefaultSchema(Schema);
     }
 }

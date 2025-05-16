@@ -1,6 +1,7 @@
 using Mapster;
 using Scalar.AspNetCore;
 using Serilog;
+using VC.Auth.Api.Middleware;
 using VC.Host;
 using VC.Auth.Di;
 using VC.Integrations.Di;
@@ -44,6 +45,13 @@ app.MapScalarApiReference(opts =>
     opts.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
     opts.ShowSidebar = true;
 });
+
+app.UseRouting();
+
+app.UseMiddleware<TenantMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
