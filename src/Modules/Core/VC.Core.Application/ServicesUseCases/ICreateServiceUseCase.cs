@@ -2,7 +2,7 @@ using FluentResults;
 using VC.Core.Application.ServicesUseCases.Models;
 using VC.Core.Repositories;
 using VC.Core.Services;
-using VC.Utilities.Resolvers;
+using VC.Shared.Utilities.Resolvers;
 
 namespace VC.Core.Application.ServicesUseCases;
 

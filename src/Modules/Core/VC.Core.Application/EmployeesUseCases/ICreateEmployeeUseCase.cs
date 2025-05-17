@@ -2,7 +2,7 @@ using FluentResults;
 using VC.Core.Application.EmployeesUseCases.Models;
 using VC.Core.Employees;
 using VC.Core.Repositories;
-using VC.Utilities.Resolvers;
+using VC.Shared.Utilities.Resolvers;
 
 namespace VC.Core.Application.EmployeesUseCases;
 
