@@ -2,9 +2,9 @@ using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using VC.Bookings.Api.OpenApi;
+using VC.Orders.Api.OpenApi;
 
-namespace VC.Bookings.Api.Endpoints.Bookings;
+namespace VC.Orders.Api.Endpoints.Orders;
 
 public static partial class BookingsEndpoints
 {

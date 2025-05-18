@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace VC.Bookings.Di;
+namespace VC.Orders.Di;
 
 internal static class ApplicationConfiguration
 {

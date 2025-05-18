@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using VC.Bookings.Api.Endpoints.Bookings;
-using VC.Bookings.Api.OpenApi;
+using VC.Orders.Api.Endpoints.Orders;
+using VC.Orders.Api.OpenApi;
 
-namespace VC.Bookings.Di;
+namespace VC.Orders.Di;
 
-public static class ModuleConfiguration
+public static class OrdersModuleConfigurator
 {
-    public static IServiceCollection Configure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureOrdersModule(this IServiceCollection services, IConfiguration configuration)
     {
         ApplicationConfiguration.Configure(services, configuration);
         return services

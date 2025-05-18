@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.OpenApi;
 
-namespace VC.Bookings.Api.OpenApi;
+namespace VC.Orders.Api.OpenApi;
 
 public class OpenApiConfig
 {

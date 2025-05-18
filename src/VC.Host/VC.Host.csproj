@@ -29,8 +29,8 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\vc.tenants\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.Integrations.Di\VC.Shared.Integrations.Di.csproj" />
       <ProjectReference Include="..\..\..\vc.tenants\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
-      <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
       <ProjectReference Include="..\Modules\Core\VC.Core.Di\VC.Core.Di.csproj" />
+      <ProjectReference Include="..\Modules\Orders\VC.Orders.Di\VC.Orders.Di.csproj" />
     </ItemGroup>
 
 </Project>

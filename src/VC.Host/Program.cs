@@ -5,6 +5,7 @@ using Serilog;
 using VC.Host;
 using VC.Host.Common;
 using VC.Core.Di;
+using VC.Orders.Di;
 using VC.Shared.Utilities;
 using VC.Shared.Integrations.Di;
 
@@ -30,7 +31,7 @@ builder.Host.UseSerilog((context, configuration) =>
 builder.Services.ConfigureHost();
 builder.Services.AddMapster();
 
-VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
+builder.Services.ConfigureOrdersModule(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
