@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Dtos\Create\" />
+      <Folder Include="Dtos\Update\" />
+      <Folder Include="UseCases\" />
+    </ItemGroup>
+
 </Project>

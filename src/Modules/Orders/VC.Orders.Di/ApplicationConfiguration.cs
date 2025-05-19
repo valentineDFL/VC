@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace VC.Orders.Di;
 
-internal static class ApplicationConfiguration
+public static class ApplicationConfiguration
 {
-    public static IServiceCollection Configure(this IServiceCollection services, IConfiguration configuration)
+    public static void Configure(this IServiceCollection services, IConfiguration configuration)
     {
-        return services;
+        
     }
 }

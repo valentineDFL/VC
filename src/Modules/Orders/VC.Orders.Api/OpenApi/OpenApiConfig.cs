@@ -4,8 +4,8 @@ namespace VC.Orders.Api.OpenApi;
 
 public class OpenApiConfig
 {
-    public const string GroupName = "Bookings Module";
-    public const string DocumentName = "bookings";
+    public const string GroupName = "Orders Module";
+    public const string DocumentName = "orders";
     
     public static OpenApiOptions ConfigureOpenApi(OpenApiOptions opts)
     {
@@ -15,7 +15,7 @@ public class OpenApiConfig
                 document.Info = new()
                 {
                     Version = "v1",
-                    Title = "Управление бронированиями"
+                    Title = "Управление заказами"
                 };
             
                 return Task.CompletedTask;

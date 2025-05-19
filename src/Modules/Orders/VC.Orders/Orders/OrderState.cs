@@ -1,4 +1,4 @@
-﻿namespace VC.Order;
+﻿namespace VC.Orders.Orders;
 
 public enum OrderState
 {

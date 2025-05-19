@@ -6,4 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Dtos\Response\" />
+      <Folder Include="Dtos\Request\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VC.Orders.Application\VC.Orders.Application.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\VC.Orders.Api\VC.Orders.Api.csproj" />
       <ProjectReference Include="..\VC.Orders.Application\VC.Orders.Application.csproj" />
+      <ProjectReference Include="..\VC.Orders.Infrastructure\VC.Orders.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
