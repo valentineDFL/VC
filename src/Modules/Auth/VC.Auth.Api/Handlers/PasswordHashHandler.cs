@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using VC.Auth.Interfaces;
 
 namespace VC.Auth.Api.Handlers;
 

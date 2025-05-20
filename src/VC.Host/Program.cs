@@ -1,4 +1,5 @@
 using Mapster;
+using Microsoft.AspNetCore.CookiePolicy;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Auth.Api.Middleware;
@@ -48,10 +49,17 @@ app.MapScalarApiReference(opts =>
 
 app.UseRouting();
 
-app.UseMiddleware<TenantMiddleware>();
+app.UseCookiePolicy( new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+    HttpOnly = HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<TenantMiddleware>();
 
 app.MapControllers();
 

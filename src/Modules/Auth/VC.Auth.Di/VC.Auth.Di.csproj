@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\VC.Auth.Api\VC.Auth.Api.csproj" />
-      <ProjectReference Include="..\VC.Auth.Infrastructure\VC.Auth.Infrastructure.csproj" />
+        <ProjectReference Include="..\VC.Auth.Api\VC.Auth.Api.csproj"/>
+        <ProjectReference Include="..\VC.Auth.Infrastructure\VC.Auth.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0"/>
     </ItemGroup>
 
 </Project>

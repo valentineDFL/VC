@@ -1,22 +1,18 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using FluentResults;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http;
 using VC.Auth.Application.Models.Requests;
+using VC.Auth.Interfaces;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace VC.Auth.Application;
 
 public class UserService(
-    IConfiguration _configuration,
     IUserRepository _userRepository,
     IPasswordHashHandler _passwordHashHandler,
-    ITenantContext _tenantContext) : IUserService
+    IHttpContextAccessor _httpContextAccessor,
+    IJwtOptions jwtOptions) : IUserService
 {
     public async Task<Result> Register(RegisterRequest request)
     {
@@ -38,16 +34,7 @@ public class UserService(
 
     public async Task<Result<string>> Login(LoginRequest request)
     {
-        if (string.IsNullOrEmpty(_tenantContext.CurrentTenant))
-            return Result.Fail<string>("Tenant not specified");
-
-        if (string.IsNullOrWhiteSpace(request.Email) ||
-            string.IsNullOrWhiteSpace(request.Password))
-        {
-            return Result.Fail("Invalid email or password");
-        }
-
-        var user = await _userRepository.GetByEmailAsync(request.Email, _tenantContext.CurrentTenant);
+        var user = await _userRepository.GetByEmailAsync(request.Email);
         if (user is null)
             return Result.Fail("User not found");
 
@@ -56,15 +43,22 @@ public class UserService(
         if (user.PasswordHash != inputPassword)
             return Result.Fail("Password is incorrect");
 
-        var accessToken = GenerateJwtToken(user);
-        return Result.Ok(accessToken);
+        var token = jwtOptions.GenerateToken(user);
+
+        // hide the name "cookies"
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append("cookies", token);
+
+        return Result.Ok(token);
     }
 
-    public Task<Result> Logout(LoginRequest request)
+    public async Task<Result> Logout()
     {
-        // delete cookie 
-        throw new NotImplementedException();
-        // return Result.Ok();
+        var context = _httpContextAccessor.HttpContext;
+
+        if (context is not null)
+            context.Response.Cookies.Delete("cookies");
+
+        return Result.Ok();
     }
 
     private string GeneratePasswordSalt()
@@ -72,33 +66,5 @@ public class UserService(
         byte[] saltBytes = new byte[32];
         RandomNumberGenerator.Create().GetBytes(saltBytes);
         return Convert.ToBase64String(saltBytes);
-    }
-
-    private string GenerateJwtToken(User user)
-    {
-        var issuer = _configuration["JwtConfig:Issue"];
-        var audience = _configuration["JwtConfig:Audience"];
-        var key = _configuration["JwtConfig:Key"];
-        var tokenValidityMinutes = _configuration.GetValue<int>("JwtConfig:TokenValidityMinutes");
-        var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(tokenValidityMinutes);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Name, user.Username),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            }),
-            Expires = tokenExpiryTimeStamp,
-            Issuer = issuer,
-            Audience = audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-
-        return tokenHandler.WriteToken(securityToken);
     }
 }

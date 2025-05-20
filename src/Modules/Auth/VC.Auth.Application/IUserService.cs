@@ -9,5 +9,5 @@ public interface IUserService
     
     Task<Result<string>> Login(LoginRequest request);
     
-    Task<Result> Logout(LoginRequest request);
+    Task<Result> Logout();
 }

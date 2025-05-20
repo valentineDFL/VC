@@ -1,4 +1,4 @@
-namespace VC.Auth;
+namespace VC.Auth.Interfaces;
 
 public interface IPasswordHashHandler
 {

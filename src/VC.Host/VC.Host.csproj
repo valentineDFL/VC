@@ -22,8 +22,9 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.11.0-beta.1" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.0" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.0.18" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.3.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+        <PackageReference Update="Mapster" Version="7.4.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -31,7 +32,6 @@
       <ProjectReference Include="..\Modules\Auth\VC.Auth.Api\VC.Auth.Api.csproj" />
       <ProjectReference Include="..\Modules\Auth\VC.Auth.Application\VC.Auth.Application.csproj" />
       <ProjectReference Include="..\Modules\Auth\VC.Auth.Di\VC.Auth.Di.csproj" />
-      <ProjectReference Include="..\Modules\Auth\VC.Auth.Integration\VC.Auth.Integration.csproj" />
       <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
       <ProjectReference Include="..\Modules\Tenants\VC.Tenants.Di\VC.Tenants.Di.csproj" />
       <ProjectReference Include="..\Modules\Services\VC.Services.Di\VC.Services.Di.csproj" />
