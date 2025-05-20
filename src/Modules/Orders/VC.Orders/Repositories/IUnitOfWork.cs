@@ -1,14 +1,20 @@
 ﻿namespace VC.Orders.Repositories;
 
-public interface IUnitOfWork : IAsyncDisposable, IDisposable
+public interface IUnitOfWork : IAsyncDisposable
 {
-    public IOrderRepository OrderRepository { get; }
+    public IOrdersRepository Orders { get; }
 
-    public IPaymentsRepository PaymentsRepository { get; }
+    public IPaymentsRepository Payments { get; }
 
-    public Task StartTransactionAsync();
+    public IOrdersStatusesRepository OrdersStatuses { get; }
 
-    public Task RollbackAsync();
+    public IPaymentsStatusesRepository PaymentsStatuses { get; }
 
-    public Task CommitAsync();
+    public IOutboxMessagesRepository OutboxMessages { get; }
+
+    public Task BeginTransactionAsync(CancellationToken cts = default);
+
+    public Task CommitAsync(CancellationToken cts = default);
+
+    public Task RollbackAsync(CancellationToken cts = default);
 }

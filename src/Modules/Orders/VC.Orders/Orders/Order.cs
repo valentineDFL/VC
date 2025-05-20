@@ -57,11 +57,16 @@ public class Order
 
     public Result ChangeState(OrderState newState)
     {
+        var errors = new List<IError>();
+
         if (State == OrderState.Canceled)
-            return Result.Fail("Canceled Order cannot change State");
+            errors.Add(new Error("Canceled Order cannot change State"));
 
         if (newState == State)
-            return Result.Fail("States cannot repeats");
+            errors.Add(new Error("States cannot repeats"));
+
+        if (errors.Count > 0)
+            return Result.Fail(errors);
 
         if(newState == OrderState.Accepted)
             FinishedOnUtc = DateTime.UtcNow;
@@ -71,8 +76,16 @@ public class Order
         return Result.Ok();
     }
 
-    public Result ChangeEmployee(Guid newEmployeeId, decimal newPrice)
+    public Result ChangeEmployee(Guid employeeId, decimal price)
     {
+        var errors = new List<IError>();
+
+        if (price < 0)
+            errors.Add(new Error("Price Cannot be non positive"));
+
+        if (employeeId == Guid.Empty)
+            errors.Add(new Error("EmployeeId cannot be empty"));
+
         return Result.Ok();
     }
 }

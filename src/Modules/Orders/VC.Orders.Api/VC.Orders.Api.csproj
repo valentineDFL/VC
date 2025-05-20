@@ -8,11 +8,11 @@
 
     <ItemGroup>
       <Folder Include="Dtos\Response\" />
-      <Folder Include="Dtos\Request\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\VC.Orders.Application\VC.Orders.Application.csproj" />
+      <ProjectReference Include="..\VC.Orders\VC.Orders.csproj" />
     </ItemGroup>
 
 </Project>

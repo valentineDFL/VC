@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VC.Orders.Api.Dtos.Request.Create;
 
 namespace VC.Orders.Api.Controllers;
 
@@ -13,8 +14,15 @@ public class OrdersController : ControllerBase
         return Ok();
     }
 
+    // TODO: Перенести этот метод в контроллер для Ордер статусов
+    [HttpGet("{orderId:guid}")]
+    public async Task<ActionResult> GetStatusesAsync([FromQuery] Guid orderId)
+    {
+        return Ok();
+    }
+
     [HttpPost]
-    public async Task<ActionResult> CreateAsync()
+    public async Task<ActionResult> CreateAsync(CreateOrderRequest orderRequest)
     {
         return Ok();
     }

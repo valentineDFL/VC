@@ -17,9 +17,11 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
+
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
 builder.Services.ConfigureCoreModule(builder.Configuration);
+builder.Services.ConfigureOrdersModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
@@ -30,8 +32,6 @@ builder.Host.UseSerilog((context, configuration) =>
 
 builder.Services.ConfigureHost();
 builder.Services.AddMapster();
-
-builder.Services.ConfigureOrdersModule(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -80,7 +80,7 @@ static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
             return;
 
             var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-
+        
         if (pendingMigrations.Any())
             await dbContext.Database.MigrateAsync();
     });

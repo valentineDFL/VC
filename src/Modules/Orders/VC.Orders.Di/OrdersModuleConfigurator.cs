@@ -9,6 +9,8 @@ public static class OrdersModuleConfigurator
     public static IServiceCollection ConfigureOrdersModule(this IServiceCollection services, IConfiguration configuration)
     {
         ApplicationConfiguration.Configure(services, configuration);
+        InfrastructureConfiguration.ConfigureInfrastructure(services, configuration);
+
         return services
             .ConfigureOpenApi(configuration);
     }

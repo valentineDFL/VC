@@ -7,9 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\Create\" />
-      <Folder Include="Dtos\Update\" />
-      <Folder Include="UseCases\" />
+      <Folder Include="Dtos\Application\Get\" />
+      <Folder Include="Dtos\Api\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VC.Orders\VC.Orders.csproj" />
     </ItemGroup>
 
 </Project>
