@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using VC.Auth.Api.OpenApi;
-using VC.Auth.Interfaces;
+using VC.Auth.Constants;
 
 namespace VC.Auth.Di;
 
@@ -26,25 +26,20 @@ public static class AuthModuleConfiguration
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["JwtOptions:SecretKey"])).ToString()
+                        Encoding.UTF8.GetBytes(configuration["Jwt:Secret"])).ToString()
                 };
 
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["cookies"];
+                        context.Token = context.Request.Cookies[AuthConstants.RememberMeCookieName];
 
                         return Task.CompletedTask;
                     }
                 };
             });
 
-        /*services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //options.DefaultChallengeScheme = ;
-        });*/
         services.AddAuthorization();
     }
 

@@ -49,7 +49,7 @@ app.MapScalarApiReference(opts =>
 
 app.UseRouting();
 
-app.UseCookiePolicy( new CookiePolicyOptions
+app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Strict,
     HttpOnly = HttpOnlyPolicy.Always,

@@ -22,8 +22,6 @@ public class AuthDatabaseContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        modelBuilder.Entity<User>()
-            .HasQueryFilter(u => u.TenantId == _tenantResolver.Resolve());
         
         modelBuilder.HasDefaultSchema(Schema);
     }

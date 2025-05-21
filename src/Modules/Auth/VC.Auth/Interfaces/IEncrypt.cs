@@ -1,6 +1,6 @@
 namespace VC.Auth.Interfaces;
 
-public interface IPasswordHashHandler
+public interface IEncrypt
 {
     string HashPassword(string password, string? salt);
 }

@@ -23,15 +23,16 @@ internal static class InfrastructureConfiguration
 
     private static void ConfigureInfrastructure(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IPasswordHashHandler, PasswordHashHandler>();
+        services.AddScoped<IEncrypt, Encrypt>();
 
         services.AddSingleton<JwtSettings>(_ => new JwtSettings
         {
-            SecretKey = configuration["JwtOptions:SecretKey"]!,
-            ExpiresTime = configuration.GetValue<int>("JwtOptions:ExpiresTime")
+            SecretKey = configuration["Jwt:Secret"]!,
+            ExpiresTime = configuration.GetValue<int>("Jwt:ExpiresTime")
         });
-        
+
         services.AddScoped<IJwtOptions, JwtOptions>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IWebCookie, WebCookie>();
     }
 }

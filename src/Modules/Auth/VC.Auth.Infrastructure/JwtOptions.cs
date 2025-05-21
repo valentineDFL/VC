@@ -12,7 +12,13 @@ public class JwtOptions(JwtSettings _jwtSettings) : IJwtOptions
 {
     public string GenerateToken(User user)
     {
-        Claim[] claims = [new("tenantId", user.TenantId.ToString())];
+        var claims = new List<Claim>
+        {
+            new("Id", user.Id.ToString()),
+            new("username", user.Username),
+            new(ClaimTypes.Role, "Client"),
+            new(ClaimTypes.Role, "Tenant")
+        };
 
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),

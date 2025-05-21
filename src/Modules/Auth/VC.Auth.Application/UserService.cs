@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using FluentResults;
-using Microsoft.AspNetCore.Http;
 using VC.Auth.Application.Models.Requests;
+using VC.Auth.Constants;
 using VC.Auth.Interfaces;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
@@ -10,21 +10,23 @@ namespace VC.Auth.Application;
 
 public class UserService(
     IUserRepository _userRepository,
-    IPasswordHashHandler _passwordHashHandler,
-    IHttpContextAccessor _httpContextAccessor,
-    IJwtOptions jwtOptions) : IUserService
+    IEncrypt _encrypt,
+    IJwtOptions jwtOptions,
+    IWebCookie _webCookie) : IUserService
 {
+    private IUserService _userServiceImplementation;
+
     public async Task<Result> Register(RegisterRequest request)
     {
+        var salt = GeneratePasswordSalt();
+
         var user = new User
         {
-            TenantId = Guid.CreateVersion7(),
-            Username = request.Username.Trim(),
-            Email = request.Email.Trim().ToLowerInvariant(),
-            PasswordHash = _passwordHashHandler.HashPassword(
-                request.Password,
-                GeneratePasswordSalt()
-            )
+            Id = Guid.CreateVersion7(),
+            Username = request.Username,
+            Email = request.Email,
+            PasswordHash = _encrypt.HashPassword(request.Password, salt),
+            Salt = salt
         };
 
         await _userRepository.CreateAsync(user);
@@ -35,31 +37,22 @@ public class UserService(
     public async Task<Result<string>> Login(LoginRequest request)
     {
         var user = await _userRepository.GetByEmailAsync(request.Email);
-        if (user is null)
-            return Result.Fail("User not found");
 
-        var inputPassword = _passwordHashHandler.HashPassword(request.Password, GeneratePasswordSalt());
+        bool verified = user.PasswordHash == _encrypt.HashPassword(request.Password, user.Salt);
 
-        if (user.PasswordHash != inputPassword)
-            return Result.Fail("Password is incorrect");
-
-        var token = jwtOptions.GenerateToken(user);
-
-        // hide the name "cookies"
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append("cookies", token);
-
-        return Result.Ok(token);
-    }
-
-    public async Task<Result> Logout()
-    {
-        var context = _httpContextAccessor.HttpContext;
-
-        if (context is not null)
-            context.Response.Cookies.Delete("cookies");
+        if (user is not null && verified)
+        {
+            _webCookie.AddSecure(
+                AuthConstants.RememberMeCookieName,
+                jwtOptions.GenerateToken(user),
+                AuthConstants.RememberMeDays);
+        }
 
         return Result.Ok();
     }
+
+    public async Task Logout()
+        => await _webCookie.Delete(AuthConstants.RememberMeCookieName);
 
     private string GeneratePasswordSalt()
     {

@@ -1,5 +1,4 @@
-﻿using FluentResults.Extensions.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VC.Auth.Api.Validations;
 using VC.Auth.Application;
@@ -30,7 +29,7 @@ public class AuthController(IUserService _userService) : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("login")] 
+    [HttpPost("login")]
     public async Task<ActionResult> Login(LoginRequest request)
     {
         var validator = new LoginValidation();
@@ -47,7 +46,7 @@ public class AuthController(IUserService _userService) : ControllerBase
     [Authorize]
     public async Task<ActionResult> Logout()
     {
-        var result = await _userService.Logout();
-        return result.ToActionResult();
+        var result = _userService.Logout();
+        return Ok(result);
     }
 }
