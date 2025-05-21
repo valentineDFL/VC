@@ -7,12 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\Application\Get\" />
-      <Folder Include="Dtos\Api\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\VC.Orders\VC.Orders.csproj" />
+
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>VC.Orders.Di</_Parameter1>
+		</AssemblyAttribute>
     </ItemGroup>
 
 </Project>

@@ -11,33 +11,22 @@ internal class UnitOfWork : IUnitOfWork
     private readonly IOrdersRepository _ordersRepository;
     private readonly IPaymentsRepository _paymentsRepository;
 
-    private readonly IOrdersStatusesRepository _ordersStatusesRepository;
-    private readonly IPaymentsStatusesRepository _paymentsStatusesRepository;
-
     private readonly IOutboxMessagesRepository _outboxMessagesRepository;
 
     public UnitOfWork(OrdersDbContext dbContext,
                       IOrdersRepository ordersRepository,
                       IPaymentsRepository paymentsRepository,
-                      IOrdersStatusesRepository ordersStatusesRepository,
-                      IPaymentsStatusesRepository paymentsStatusesRepository,
                       IOutboxMessagesRepository outboxMessagesRepository)
     {
         _dbContext = dbContext;
         _ordersRepository = ordersRepository;
         _paymentsRepository = paymentsRepository;
-        _ordersStatusesRepository = ordersStatusesRepository;
-        _paymentsStatusesRepository = paymentsStatusesRepository;
         _outboxMessagesRepository = outboxMessagesRepository;
     }
 
     public IOrdersRepository Orders => _ordersRepository;
 
     public IPaymentsRepository Payments => _paymentsRepository;
-
-    public IOrdersStatusesRepository OrdersStatuses => _ordersStatusesRepository;
-
-    public IPaymentsStatusesRepository PaymentsStatuses => _paymentsStatusesRepository;
 
     public IOutboxMessagesRepository OutboxMessages => _outboxMessagesRepository;
 

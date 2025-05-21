@@ -26,6 +26,7 @@ public static class InfrastructureConfiguration
     {
         serviceCollection.AddScoped<IOrdersRepository, OrdersRepository>();
         serviceCollection.AddScoped<IPaymentsRepository, PaymentsRepository>();
+        serviceCollection.AddScoped<IOutboxMessagesRepository, OutboxMessagesRepository>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

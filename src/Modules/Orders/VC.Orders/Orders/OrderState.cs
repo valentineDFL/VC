@@ -7,4 +7,5 @@ public enum OrderState
     Paused = 3,
     Canceled = 2,
     Paid = 4,
+    Refunded = 5,
 }

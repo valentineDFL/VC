@@ -13,7 +13,21 @@ internal class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.OrderId)
             .IsRequired();
 
-        builder.Property(p => p.Status)
+        builder.OwnsMany(p => p.PaymentStatuses, psBuilder =>
+        {
+            psBuilder.HasKey(ps => ps.Id);
+
+            psBuilder.Property(ps => ps.PaymentId)
+                .IsRequired();
+
+            psBuilder.Property(ps => ps.State)
+                .IsRequired();
+
+            psBuilder.Property(ps => ps.CreatedOnUtc)
+                .IsRequired();
+        });
+
+        builder.Property(p => p.State)
             .IsRequired();
 
         builder.Property(p => p.CreatedOnUtc)

@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using VC.Orders.Api.Dtos.Request.Create;
+using VC.Orders.Application.Dtos.Create;
+using VC.Orders.Application.UseCases.Orders.Interfaces;
 
 namespace VC.Orders.Api.Controllers;
 
@@ -14,21 +17,24 @@ public class OrdersController : ControllerBase
         return Ok();
     }
 
-    // TODO: Перенести этот метод в контроллер для Ордер статусов
-    [HttpGet("{orderId:guid}")]
-    public async Task<ActionResult> GetStatusesAsync([FromQuery] Guid orderId)
+    [HttpPost]
+    public async Task<ActionResult> CreateAsync([FromServices] ICreateOrderUseCase useCase, CreateOrderRequest orderRequest, CancellationToken cts)
     {
-        return Ok();
+        var dto = orderRequest.Adapt<CreateOrderParams>();
+
+        var result = await useCase.ExecuteAsync(dto, cts);
+
+        return Ok(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(CreateOrderRequest orderRequest)
+    public async Task<ActionResult> PayOrderAsync()
     {
         return Ok();
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult> ChangeStateAsync([FromQuery] Guid id)
+    public async Task<ActionResult> UpdateAsync([FromQuery] Guid id)
     {
         return Ok();
     }

@@ -17,7 +17,8 @@ internal class OrdersRepository : IOrdersRepository
 
     public async Task<Order> GetByIdAsync(Guid id)
     {
-        return await _orders.FirstOrDefaultAsync(o => o.Id == id);
+        return await _orders
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 
     public async Task CreateAsync(Order order)

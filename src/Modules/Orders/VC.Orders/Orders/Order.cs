@@ -6,6 +6,8 @@ namespace VC.Orders.Orders;
 
 public class Order
 {
+    private List<OrderStatus> _orderStatuses;
+
     public Order(Guid id, decimal price, Guid serviceId, Guid employeeId, Payment payment)
     {
         var errors = new StringBuilder();
@@ -22,9 +24,6 @@ public class Order
         if (employeeId == Guid.Empty)
             errors.AppendLine("EmployeeId cannot be empty");
 
-        if (payment is null)
-            errors.AppendLine("Payment cannot be null");
-
         if (errors.Length > 0)
             throw new ArgumentException(errors.ToString());
 
@@ -35,6 +34,9 @@ public class Order
         Payment = payment!;
         State = OrderState.Created;
         CreatedOnUtc = DateTime.UtcNow;
+
+        _orderStatuses = new List<OrderStatus>();
+        _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
     }
 
     protected Order() { }
@@ -49,42 +51,37 @@ public class Order
 
     public Payment Payment { get; private set; }
 
+    public IReadOnlyList<OrderStatus> OrderStatuses => _orderStatuses;
+
     public OrderState State { get; private set; }
 
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime? FinishedOnUtc { get; private set; }
 
-    public Result ChangeState(OrderState newState)
+    public Result Update(OrderState state, Guid employeeId, decimal price)
     {
         var errors = new List<IError>();
 
-        if (State == OrderState.Canceled)
+        if (state != State && State == OrderState.Canceled)
             errors.Add(new Error("Canceled Order cannot change State"));
-
-        if (newState == State)
-            errors.Add(new Error("States cannot repeats"));
 
         if (errors.Count > 0)
             return Result.Fail(errors);
 
-        if(newState == OrderState.Accepted)
+        if(state == OrderState.Accepted)
             FinishedOnUtc = DateTime.UtcNow;
 
-        State = newState;
+        if(state != State)
+            State = state;
 
-        return Result.Ok();
-    }
+        if(EmployeeId != employeeId)
+            EmployeeId = employeeId;
 
-    public Result ChangeEmployee(Guid employeeId, decimal price)
-    {
-        var errors = new List<IError>();
+        if(Price != price)
+            Price = price;
 
-        if (price < 0)
-            errors.Add(new Error("Price Cannot be non positive"));
-
-        if (employeeId == Guid.Empty)
-            errors.Add(new Error("EmployeeId cannot be empty"));
+        _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
 
         return Result.Ok();
     }

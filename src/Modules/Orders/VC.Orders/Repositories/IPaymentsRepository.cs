@@ -6,7 +6,7 @@ public interface IPaymentsRepository
 {
     public Task<Payment> GetByOrderIdAsync(Guid orderId);
 
-    public Task CreatePaymentAsync(Payment payment);
+    public Task CreateAsync(Payment payment);
 
-    public Task UpdatePaymentAsync(Payment payment);
+    public Task UpdateAsync(Payment payment);
 }

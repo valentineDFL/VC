@@ -6,10 +6,6 @@ public interface IUnitOfWork : IAsyncDisposable
 
     public IPaymentsRepository Payments { get; }
 
-    public IOrdersStatusesRepository OrdersStatuses { get; }
-
-    public IPaymentsStatusesRepository PaymentsStatuses { get; }
-
     public IOutboxMessagesRepository OutboxMessages { get; }
 
     public Task BeginTransactionAsync(CancellationToken cts = default);

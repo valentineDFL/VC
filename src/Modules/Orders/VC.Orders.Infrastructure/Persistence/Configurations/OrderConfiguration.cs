@@ -19,6 +19,20 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.EmployeeId)
             .IsRequired();
 
+        builder.OwnsMany(o => o.OrderStatuses, osBuilder =>
+        {
+            osBuilder.HasKey(os => os.Id);
+
+            osBuilder.Property(os => os.OrderId)
+                .IsRequired();
+
+            osBuilder.Property(os => os.State)
+                .IsRequired();
+
+            osBuilder.Property(os => os.CreatedOnUtc)
+                .IsRequired();
+        });
+
         builder.Property(o => o.State)
             .IsRequired();
 

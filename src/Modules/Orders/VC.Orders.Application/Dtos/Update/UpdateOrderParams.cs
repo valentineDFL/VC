@@ -2,4 +2,4 @@
 
 namespace VC.Orders.Application.Dtos.Update;
 
-public record UpdateOrderParams(OrderState State);
+public record UpdateOrderParams(Guid OrderId, OrderState State, Guid EmployeeId);

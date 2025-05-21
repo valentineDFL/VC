@@ -20,12 +20,12 @@ internal class PaymentsRepository : IPaymentsRepository
         return await _payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
     }
 
-    public async Task CreatePaymentAsync(Payment payment)
+    public async Task CreateAsync(Payment payment)
     {
         await _payments.AddAsync(payment);
     }
 
-    public Task UpdatePaymentAsync(Payment payment)
+    public Task UpdateAsync(Payment payment)
     {
         _payments.Update(payment);
 
