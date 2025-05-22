@@ -11,7 +11,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\vc.tenants\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
+    <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
 	  <ProjectReference Include="..\VC.Core.Application\VC.Core.Application.csproj" />
   </ItemGroup>
 
