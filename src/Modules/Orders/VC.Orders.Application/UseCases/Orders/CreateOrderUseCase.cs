@@ -1,21 +1,27 @@
 ﻿using FluentResults;
-using System.Text.Json;
+using Microsoft.Extensions.Options;
 using VC.Orders.Application.Dtos.Create;
 using VC.Orders.Application.Dtos.OtherModules;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Orders;
 using VC.Orders.Payments;
 using VC.Orders.Repositories;
+using VC.Shared.Utilities;
+using VC.Shared.Utilities.Options.Uris;
 
 namespace VC.Orders.Application.UseCases.Orders;
 
 internal class CreateOrderUseCase : ICreateOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly CoreModuleControllers _coreModuleControllers;
+    private readonly HttpApiClient _httpApiClient;
 
-    public CreateOrderUseCase(IUnitOfWork unitOfWork)
+    public CreateOrderUseCase(IUnitOfWork unitOfWork, IOptions<CoreModuleControllers> options, HttpApiClient httpApiClient)
     {
         _unitOfWork = unitOfWork;
+        _coreModuleControllers = options.Value;
+        _httpApiClient = httpApiClient;
     }
 
     public async Task<Result<Guid>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts)
@@ -24,18 +30,18 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
 
         var payment = new Payment(Guid.CreateVersion7(), orderId, null);
 
-        var serviceData = await GetServiceData("http://localhost:5056/api/v1/services/", @params.ServiceId, cts);
+        var serviceResult = await GetServiceData(@params.ServiceId, cts);
 
-        if (!serviceData.IsSuccess)
-            return Result.Fail(serviceData.Errors);
+        if (!serviceResult.IsSuccess)
+            return Result.Fail(serviceResult.Errors);
 
-        var options = new JsonSerializerOptions();
-        options.PropertyNameCaseInsensitive = true;
+        var serviceData = serviceResult.Value;
+        var employee = serviceData.EmployeeAssignments.FirstOrDefault(e => e.EmployeeId == @params.EmployeeId);
 
-        var dto = JsonSerializer.Deserialize<ServiceDetailsDto>(serviceData.Value, options);
-        var orderPrice = CalculateOrderPrice(dto.BasePrice, dto.EmployeeAssignments);
+        if (employee is null)
+            throw new NullReferenceException("Employee does not exists");
 
-        var order = new Order(orderId, orderPrice, @params.ServiceId, @params.EmployeeId, null);
+        var order = new Order(orderId, @params.ServiceTime, employee.Price, @params.ServiceId, @params.EmployeeId, null);
 
         await _unitOfWork.BeginTransactionAsync(cts);
 
@@ -47,22 +53,15 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
         return Result.Ok(orderId);
     }
 
-    private async Task<Result<string>> GetServiceData(string serviceUrl, Guid serviceId, CancellationToken cts)
+    private async Task<Result<ServiceDetailsDto>> GetServiceData(Guid serviceId, CancellationToken cts)
     {
-        var client = new HttpClient();
+        var uri = _coreModuleControllers.Service.ParametrizedGetRequestUri(serviceId);
 
-        var uri = $"{serviceUrl}{serviceId}";
+        var result = await _httpApiClient.GetAsEntityAsync<ServiceDetailsDto>(uri, cts);
 
-        using var response = await client.GetAsync(uri, cts);
+        if(!result.IsSuccess)
+            return Result.Fail(result.Errors);
 
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            return Result.Fail("Service Not Found");
-
-        var json = await response.Content.ReadAsStringAsync();
-
-        return Result.Ok(json);
+        return Result.Ok(result.Value);
     }
-
-    private decimal CalculateOrderPrice(decimal servicePrice, List<EmployeeAssignmentDto> employees)
-        => employees.Sum(e => e.Price) + servicePrice;
 }

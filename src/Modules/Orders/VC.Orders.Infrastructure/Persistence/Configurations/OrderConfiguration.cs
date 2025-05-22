@@ -16,6 +16,10 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.ServiceId)
             .IsRequired();
 
+        builder.Property(o => o.ServiceTime)
+            .HasColumnType("timestamp without time zone")
+            .IsRequired();
+
         builder.Property(o => o.EmployeeId)
             .IsRequired();
 

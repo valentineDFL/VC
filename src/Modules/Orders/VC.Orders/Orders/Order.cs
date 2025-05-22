@@ -8,7 +8,7 @@ public class Order
 {
     private List<OrderStatus> _orderStatuses;
 
-    public Order(Guid id, decimal price, Guid serviceId, Guid employeeId, Payment payment)
+    public Order(Guid id, DateTime serviceTime, decimal price, Guid serviceId, Guid employeeId, Payment payment)
     {
         var errors = new StringBuilder();
 
@@ -17,6 +17,9 @@ public class Order
 
         if (id == Guid.Empty)
             errors.AppendLine("Id cannot be empty");
+
+        if (serviceTime < DateTime.UtcNow)
+            errors.AppendLine("Service time cannot be in the past");
 
         if (serviceId == Guid.Empty)
             errors.AppendLine("ServiceId cannot be empty");
@@ -29,6 +32,7 @@ public class Order
 
         Id = id;
         Price = price;
+        ServiceTime = serviceTime;
         ServiceId = serviceId;
         EmployeeId = employeeId;
         Payment = payment!;
@@ -45,6 +49,8 @@ public class Order
 
     public decimal Price { get; private set; }
 
+    public DateTime ServiceTime { get; private set; }
+
     public Guid ServiceId { get; private set; }
 
     public Guid EmployeeId { get; private set; }
@@ -59,27 +65,23 @@ public class Order
 
     public DateTime? FinishedOnUtc { get; private set; }
 
-    public Result Update(OrderState state, Guid employeeId, decimal price)
+    public Result CancelOrder()
     {
         var errors = new List<IError>();
 
-        if (state != State && State == OrderState.Canceled)
+        if (State == OrderState.Paid)
+            errors.Add(new Error("Paid Order cannot change State"));
+
+        if(State == OrderState.Canceled)
             errors.Add(new Error("Canceled Order cannot change State"));
+
+        if(State == OrderState.Refunded)
+            errors.Add(new Error("Refunded Order cannot change State"));
 
         if (errors.Count > 0)
             return Result.Fail(errors);
 
-        if(state == OrderState.Accepted)
-            FinishedOnUtc = DateTime.UtcNow;
-
-        if(state != State)
-            State = state;
-
-        if(EmployeeId != employeeId)
-            EmployeeId = employeeId;
-
-        if(Price != price)
-            Price = price;
+        State = OrderState.Canceled;
 
         _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VC.Orders.Api.Dtos.Request.Create;
 using VC.Orders.Application.Dtos.Create;
+using VC.Orders.Application.Dtos.Get;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 
 namespace VC.Orders.Api.Controllers;
@@ -12,30 +13,48 @@ namespace VC.Orders.Api.Controllers;
 public class OrdersController : ControllerBase
 {
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult> GetAsync([FromQuery] Guid id)
+    public async Task<ActionResult<ServiceDetailDto>> GetAsync([FromServices] IGetOrderUseCase useCase,
+                                             Guid id,
+                                             CancellationToken cts)
     {
-        return Ok();
+        var order = await useCase.ExecuteAsync(id);
+
+        if(!order.IsSuccess)
+            return NotFound();
+
+        return Ok(order);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync([FromServices] ICreateOrderUseCase useCase, CreateOrderRequest orderRequest, CancellationToken cts)
+    public async Task<ActionResult> CreateAsync([FromServices] ICreateOrderUseCase useCase,
+                                                [FromBody] CreateOrderRequest orderRequest, 
+                                                CancellationToken cts)
     {
         var dto = orderRequest.Adapt<CreateOrderParams>();
 
         var result = await useCase.ExecuteAsync(dto, cts);
 
+        if (!result.IsSuccess)
+            return NotFound();
+
         return Ok(result);
     }
 
-    [HttpPost]
-    public async Task<ActionResult> PayOrderAsync()
+    [HttpPost("{id:guid}/payment")]
+    public async Task<ActionResult> PayOrderAsync(Guid id)
     {
         return Ok();
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult> UpdateAsync([FromQuery] Guid id)
+    [HttpPost("{id:guid}/cancel")]
+    public async Task<ActionResult> CancelAsync([FromServices] ICancelOrderUseCase useCase,
+                                                Guid id)
     {
-        return Ok();
+        var result = await useCase.ExecuteAsync(id);
+
+        if(!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
     }
 }
