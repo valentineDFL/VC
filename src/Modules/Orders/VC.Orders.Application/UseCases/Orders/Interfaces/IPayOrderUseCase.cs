@@ -1,6 +1,8 @@
-﻿namespace VC.Orders.Application.UseCases.Orders.Interfaces;
+﻿using FluentResults;
+
+namespace VC.Orders.Application.UseCases.Orders.Interfaces;
 
 public interface IPayOrderUseCase
 {
-    public Task ExecuteAsync();
+    public Task<Result> ExecuteAsync(Guid orderId);
 }

@@ -1,27 +1,23 @@
 ﻿using FluentResults;
-using Microsoft.Extensions.Options;
 using VC.Orders.Application.Dtos.Create;
-using VC.Orders.Application.Dtos.OtherModules;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Orders;
 using VC.Orders.Payments;
 using VC.Orders.Repositories;
-using VC.Shared.Utilities;
-using VC.Shared.Utilities.Options.Uris;
+using VC.Shared.Utilities.ApiClient;
+using VC.Shared.Utilities.CoreModuleDtos;
 
 namespace VC.Orders.Application.UseCases.Orders;
 
 internal class CreateOrderUseCase : ICreateOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly CoreModuleControllers _coreModuleControllers;
-    private readonly HttpApiClient _httpApiClient;
+    private readonly ICoreServiceApiClient _serviceApiClient;
 
-    public CreateOrderUseCase(IUnitOfWork unitOfWork, IOptions<CoreModuleControllers> options, HttpApiClient httpApiClient)
+    public CreateOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient)
     {
         _unitOfWork = unitOfWork;
-        _coreModuleControllers = options.Value;
-        _httpApiClient = httpApiClient;
+        _serviceApiClient = serviceClient;
     }
 
     public async Task<Result<Guid>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts)
@@ -55,13 +51,11 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
 
     private async Task<Result<ServiceDetailsDto>> GetServiceData(Guid serviceId, CancellationToken cts)
     {
-        var uri = _coreModuleControllers.Service.ParametrizedGetRequestUri(serviceId);
-
-        var result = await _httpApiClient.GetAsEntityAsync<ServiceDetailsDto>(uri, cts);
+        var result = await _serviceApiClient.GetServiceAsync(serviceId, cts);
 
         if(!result.IsSuccess)
             return Result.Fail(result.Errors);
 
-        return Result.Ok(result.Value);
+        return result;
     }
 }

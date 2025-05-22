@@ -40,12 +40,6 @@ public class OrdersController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("{id:guid}/payment")]
-    public async Task<ActionResult> PayOrderAsync(Guid id)
-    {
-        return Ok();
-    }
-
     [HttpPost("{id:guid}/cancel")]
     public async Task<ActionResult> CancelAsync([FromServices] ICancelOrderUseCase useCase,
                                                 Guid id)

@@ -1,10 +1,9 @@
 ﻿using FluentResults;
-using Microsoft.Extensions.Options;
+using Mapster;
 using VC.Orders.Application.Dtos.Get;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Repositories;
-using VC.Shared.Utilities;
-using VC.Shared.Utilities.Options.Uris;
+using VC.Shared.Utilities.ApiClient;
 
 namespace VC.Orders.Application.UseCases.Orders;
 
@@ -12,14 +11,12 @@ internal class GetOrderUseCase : IGetOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly CoreModuleControllers _coreModuleControllers;
-    private readonly HttpApiClient _httpApiClient;
+    private readonly ICoreServiceApiClient _serviceClient;
 
-    public GetOrderUseCase(IUnitOfWork unitOfWork, IOptions<CoreModuleControllers> options, HttpApiClient httpApiClient)
+    public GetOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient)
     {
         _unitOfWork = unitOfWork;
-        _httpApiClient = httpApiClient;
-        _coreModuleControllers = options.Value;
+        _serviceClient = serviceClient;
     }
 
     public async Task<Result<OrderDetailsDto>> ExecuteAsync(Guid orderId, CancellationToken cts = default)
@@ -41,13 +38,13 @@ internal class GetOrderUseCase : IGetOrderUseCase
 
     private async Task<Result<ServiceDetailDto>> GetServiceDataAsync(Guid serviceId, CancellationToken cts = default)
     {
-        var uri = _coreModuleControllers.Service.ParametrizedGetRequestUri(serviceId);
-
-        var response = await _httpApiClient.GetAsEntityAsync<ServiceDetailDto>(uri, cts);
+        var response = await _serviceClient.GetServiceAsync(serviceId, cts);
 
         if (!response.IsSuccess)
             return Result.Fail(response.Errors);
 
-        return Result.Ok(response.Value);
+        var serviceDto = response.Value.Adapt<ServiceDetailDto>();
+
+        return Result.Ok(serviceDto);
     }
 }
