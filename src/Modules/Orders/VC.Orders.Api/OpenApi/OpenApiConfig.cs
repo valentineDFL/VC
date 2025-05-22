@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.OpenApi;
 using VC.Shared.Utilities;
 
-namespace VC.Core.Api.OpenApi;
+namespace VC.Orders.Api.OpenApi;
 
 public class OpenApiConfig
 {
-    public const string GroupName = "Services Module";
-    public const string DocumentName = "services";
+    public const string GroupName = "Orders Module";
+    public const string DocumentName = "orders";
 
     public static OpenApiOptions ConfigureOpenApi(OpenApiOptions opts)
     {
@@ -16,7 +16,7 @@ public class OpenApiConfig
             document.Info = new()
             {
                 Version = "v1",
-                Title = "Управление услугами"
+                Title = "Управление заказами"
             };
 
             return Task.CompletedTask;
