@@ -1,10 +1,12 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using VC.Auth.Api.OpenApi;
 using VC.Auth.Constants;
+using VC.Auth.Infrastructure.Persistence;
 
 namespace VC.Auth.Di;
 
@@ -34,13 +36,17 @@ public static class AuthModuleConfiguration
                     OnMessageReceived = context =>
                     {
                         context.Token = context.Request.Cookies[AuthConstants.RememberMeCookieName];
-
                         return Task.CompletedTask;
                     }
                 };
             });
-
-        services.AddAuthorization();
+        
+        services.AddAuthorization(x =>
+            x.AddPolicy(Permissions.User, builder =>
+                builder.Requirements
+                    .Add(new PermissionRequirements(Permissions.User, Permissions.Tenant))));
+        
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }
 
     private static IServiceCollection ConfigureServicesOpenApi(this IServiceCollection services)

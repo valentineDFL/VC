@@ -1,9 +1,9 @@
 using FluentResults;
 using VC.Auth.Application.Models.Requests;
 
-namespace VC.Auth.Application;
+namespace VC.Auth.Application.Abstractions;
 
-public interface IUserService
+public interface IAuthService
 {
     Task<Result> Register(RegisterRequest request);
     

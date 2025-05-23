@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using VC.Auth.Interfaces;
 
-namespace VC.Auth.Api.Handlers;
+namespace VC.Auth.Api.Helpers;
 
 public class Encrypt : IEncrypt
 {

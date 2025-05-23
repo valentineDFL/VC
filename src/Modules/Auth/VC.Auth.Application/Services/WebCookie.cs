@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
+using VC.Auth.Application.Abstractions;
 
-namespace VC.Auth.Application;
+namespace VC.Auth.Application.Services;
 
 public class WebCookie(IHttpContextAccessor httpContextAccessor) : IWebCookie
 {

@@ -1,21 +1,20 @@
 using System.Security.Cryptography;
 using FluentResults;
+using VC.Auth.Application.Abstractions;
 using VC.Auth.Application.Models.Requests;
 using VC.Auth.Constants;
 using VC.Auth.Interfaces;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
 
-namespace VC.Auth.Application;
+namespace VC.Auth.Application.Services;
 
-public class UserService(
+public class AuthService(
     IUserRepository _userRepository,
     IEncrypt _encrypt,
     IJwtOptions jwtOptions,
-    IWebCookie _webCookie) : IUserService
+    IWebCookie _webCookie) : IAuthService
 {
-    private IUserService _userServiceImplementation;
-
     public async Task<Result> Register(RegisterRequest request)
     {
         var salt = GeneratePasswordSalt();
@@ -26,7 +25,14 @@ public class UserService(
             Username = request.Username,
             Email = request.Email,
             PasswordHash = _encrypt.HashPassword(request.Password, salt),
-            Salt = salt
+            Salt = salt,
+            Permissions = new List<Permission>()
+            {
+                new Permission()
+                {
+                    Name = Permissions.User
+                }
+            }
         };
 
         await _userRepository.CreateAsync(user);

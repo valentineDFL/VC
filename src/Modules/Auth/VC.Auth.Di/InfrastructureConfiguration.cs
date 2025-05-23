@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using VC.Auth.Api.Handlers;
+using VC.Auth.Api.Helpers;
 using VC.Auth.Application;
+using VC.Auth.Application.Abstractions;
+using VC.Auth.Application.Services;
 using VC.Auth.Infrastructure;
 using VC.Auth.Infrastructure.Persistence;
+using VC.Auth.Infrastructure.Persistence.DataContext;
 using VC.Auth.Infrastructure.Persistence.Models;
 using VC.Auth.Interfaces;
 
@@ -16,7 +19,7 @@ internal static class InfrastructureConfiguration
     {
         string connectionString = configuration.GetConnectionString("PostgresSQL");
 
-        services.AddDbContext<AuthDatabaseContext>(options => options.UseNpgsql(connectionString));
+        services.AddDbContext<AuthDbContext>(options => options.UseNpgsql(connectionString));
 
         ConfigureInfrastructure(services, configuration);
     }
@@ -32,7 +35,11 @@ internal static class InfrastructureConfiguration
         });
 
         services.AddScoped<IJwtOptions, JwtOptions>();
-        services.AddScoped<IUserService, UserService>();
+
         services.AddScoped<IWebCookie, WebCookie>();
+
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IUserOrderService, UserOrderService>();
     }
 }

@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VC.Auth.Infrastructure.Persistence;
+using VC.Auth.Infrastructure.Persistence.DataContext;
 
 #nullable disable
 
 namespace VC.Auth.Infrastructure.Migrations
 {
-    [DbContext(typeof(AuthDatabaseContext))]
+    [DbContext(typeof(AuthDbContext))]
     partial class AuthDatabaseContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -22,6 +23,26 @@ namespace VC.Auth.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("VC.Auth.Models.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Permissions", "auth");
+                });
 
             modelBuilder.Entity("VC.Auth.Models.User", b =>
                 {
@@ -48,6 +69,18 @@ namespace VC.Auth.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", "auth");
+                });
+
+            modelBuilder.Entity("VC.Auth.Models.Permission", b =>
+                {
+                    b.HasOne("VC.Auth.Models.User", null)
+                        .WithMany("Permissions")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("VC.Auth.Models.User", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

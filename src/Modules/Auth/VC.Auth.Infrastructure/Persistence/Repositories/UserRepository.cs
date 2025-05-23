@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using VC.Auth.Infrastructure.Persistence.DataContext;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
 
 namespace VC.Auth.Infrastructure.Persistence.Repositories;
 
-public class UserRepository(AuthDatabaseContext _dbContext) : IUserRepository
+public class UserRepository(AuthDbContext _dbContext) : IUserRepository
 {
     public async Task<User> GetByEmailAsync(string email)
         => await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -21,4 +22,13 @@ public class UserRepository(AuthDatabaseContext _dbContext) : IUserRepository
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task GetByUsernameAsync(string username)
+        => await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username)!;
+
+    public ICollection<Permission> GetPermissionByUsername(string username)
+        => _dbContext.Users
+            .Where(u => u.Username == username)
+            .SelectMany(u => u.Permissions)
+            .ToList();
 }

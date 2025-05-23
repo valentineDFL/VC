@@ -13,8 +13,8 @@ using VC.Auth.Infrastructure.Persistence.DataContext;
 namespace VC.Auth.Infrastructure.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250521075914_NewId")]
-    partial class NewId
+    [Migration("20250522134522_AddPermission")]
+    partial class AddPermission
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,6 +26,26 @@ namespace VC.Auth.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("VC.Auth.Models.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Permissions", "auth");
+                });
 
             modelBuilder.Entity("VC.Auth.Models.User", b =>
                 {
@@ -41,6 +61,10 @@ namespace VC.Auth.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
@@ -48,6 +72,18 @@ namespace VC.Auth.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", "auth");
+                });
+
+            modelBuilder.Entity("VC.Auth.Models.Permission", b =>
+                {
+                    b.HasOne("VC.Auth.Models.User", null)
+                        .WithMany("Permissions")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("VC.Auth.Models.User", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

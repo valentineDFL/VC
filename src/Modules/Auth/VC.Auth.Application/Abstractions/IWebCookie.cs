@@ -1,4 +1,4 @@
-namespace VC.Auth.Application;
+namespace VC.Auth.Application.Abstractions;
 
 public interface IWebCookie
 {

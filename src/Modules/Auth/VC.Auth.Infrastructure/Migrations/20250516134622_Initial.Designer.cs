@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VC.Auth.Infrastructure.Persistence;
+using VC.Auth.Infrastructure.Persistence.DataContext;
 
 #nullable disable
 
 namespace VC.Auth.Infrastructure.Migrations
 {
-    [DbContext(typeof(AuthDatabaseContext))]
+    [DbContext(typeof(AuthDbContext))]
     [Migration("20250516134622_Initial")]
     partial class Initial
     {

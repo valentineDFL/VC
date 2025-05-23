@@ -14,10 +14,10 @@ public class JwtOptions(JwtSettings _jwtSettings) : IJwtOptions
     {
         var claims = new List<Claim>
         {
-            new("Id", user.Id.ToString()),
-            new("username", user.Username),
-            new(ClaimTypes.Role, "Client"),
-            new(ClaimTypes.Role, "Tenant")
+            new Claim("Id", user.Id.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.Role, "User"),
+            new Claim(ClaimTypes.Role, "Tenant")
         };
 
         var signingCredentials = new SigningCredentials(
