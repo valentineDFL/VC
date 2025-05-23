@@ -1,0 +1,238 @@
+@page "/employees/{employeeId:guid}/work-schedule"
+@using VC.WebUi.Services
+@using VC.WebUi.Shared
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<PageHeader Title="График работы для сотрудника"
+            Subtitle="@EmployeeId.ToString()"
+            PrimaryColor="#006400"
+            SecondaryColor="#2E8B57"
+            OnBack="() => NavigationManager.NavigateTo(_backUrl)" />
+
+<div class="container mt-5">
+    <!-- Таблица графика -->
+    @if (_loading)
+    {
+        <div class="text-center my-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+    }
+    else if (_schedule == null || !_schedule.Items.Any())
+    {
+        <div class="alert alert-warning">График не найден или пуст.</div>
+    }
+    else
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Текущий график</h5>
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>День недели</th>
+                            <th>Начало</th>
+                            <th>Конец</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in _schedule.Items)
+                        {
+                            <tr>
+                                <td>@GetDayOfWeekName(item.DayOfWeek)</td>
+                                <td><span class="badge bg-info">@item.StartTime</span></td>
+                                <td><span class="badge bg-success">@item.EndTime</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Форма добавления графика -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Настройте расписание на неделю</h5>
+
+            <!-- Исключения -->
+            <div class="form-check mb-3">
+                <InputCheckbox @bind-Value="_addException" class="form-check-input" />
+                <label class="form-check-label">Добавить исключение (например, выходной или отдельный день)</label>
+            </div>
+
+            @if (_addException)
+            {
+                <div class="row g-3 mb-4 p-3 border rounded bg-light">
+                    <div class="col-md-4">
+                        <label class="form-label">Дата</label>
+                        <InputDate @bind-Value="_exception.Date" class="form-control" />
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="form-check">
+                            <InputCheckbox @bind-Value="_exception.IsDayOff" class="form-check-input" />
+                            <label class="form-check-label">Выходной</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Время начала</label>
+                        <InputText @bind-Value="_exception.StartTime" class="form-control" placeholder="09:00" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Время окончания</label>
+                        <InputText @bind-Value="_exception.EndTime" class="form-control" placeholder="18:00" />
+                    </div>
+                </div>
+            }
+
+            <!-- Расписание на неделю -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Расписание на неделю</label>
+                @for (int i = 0; i < _workScheduleRequest.Items.Count; i++)
+                {
+                    var item = _workScheduleRequest.Items[i];
+                    <div class="row g-3 align-items-center mb-2">
+                        <div class="col-md-4">
+                            <InputSelect @bind-Value="item.DayOfWeek" class="form-select">
+                                @for (int day = 1; day <= 7; day++)
+                                {
+                                    <option value="@day">@GetDayOfWeekName(day)</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-md-3">
+                            <InputText @bind-Value="item.StartTime" class="form-control" placeholder="09:00" />
+                        </div>
+                        <div class="col-md-3">
+                            <InputText @bind-Value="item.EndTime" class="form-control" placeholder="18:00" />
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-danger btn-sm w-100" @onclick="() => RemoveItem(i)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+                <button class="btn btn-outline-secondary btn-sm mt-2" @onclick="AddNewItem">
+                    <i class="bi bi-plus-circle me-1"></i> Добавить день
+                </button>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success" @onclick="SaveWorkSchedule">
+                    <i class="bi bi-save me-1"></i> Сохранить график
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="ResetForm">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Сбросить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .form-select {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .badge {
+        font-size: 1rem;
+        padding: 0.5em 0.75em;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Guid EmployeeId { get; set; }
+
+    private bool _loading = true;
+    private string _backUrl = "/employees";
+    private WorkScheduleDetailsDto? _schedule;
+
+    private CreateWorkScheduleRequest _workScheduleRequest = new();
+    private AddWorkingHourExceptionRequest _exception = new();
+    private bool _addException = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSchedule();
+        ResetForm();
+    }
+
+    private async Task LoadSchedule()
+    {
+        _schedule = await ApiService.GetEmployeeWorkSchedule(EmployeeId);
+        _loading = false;
+    }
+
+    private async Task SaveWorkSchedule()
+    {
+        if (_addException)
+        {
+            var resultException = await ApiService.AddWorkScheduleExceptionAsync(EmployeeId, _exception);
+            if (!resultException.IsSuccess)
+            {
+                foreach (var error in resultException.Errors ?? new List<IError>())
+                {
+                    Console.WriteLine($"Ошибка исключения: {error.Message}");
+                }
+            }
+        }
+
+        var response = await ApiService.CreateWorkScheduleAsync(EmployeeId, _workScheduleRequest);
+        if (response.IsSuccess)
+        {
+            await LoadSchedule();
+        }
+        else
+        {
+            foreach (var error in response.Errors ?? new List<IError>())
+            {
+                Console.WriteLine($"Ошибка сохранения графика: {error.Message}");
+            }
+        }
+    }
+
+    private void ResetForm()
+    {
+        _workScheduleRequest = new CreateWorkScheduleRequest
+        {
+            Items = new List<WorkScheduleItemDto>()
+        };
+        _exception = new AddWorkingHourExceptionRequest();
+        _addException = false;
+    }
+
+    private void AddNewItem()
+    {
+        _workScheduleRequest.Items.Add(new WorkScheduleItemDto());
+    }
+
+    private void RemoveItem(int index)
+    {
+        if (index >= 0 && index < _workScheduleRequest.Items.Count)
+        {
+            _workScheduleRequest.Items.RemoveAt(index);
+        }
+    }
+
+    private string GetDayOfWeekName(int dayOfWeek) =>
+        dayOfWeek switch
+        {
+            1 => "Понедельник",
+            2 => "Вторник",
+            3 => "Среда",
+            4 => "Четверг",
+            5 => "Пятница",
+            6 => "Суббота",
+            7 => "Воскресенье",
+            _ => "Неизвестный день"
+        };
+}

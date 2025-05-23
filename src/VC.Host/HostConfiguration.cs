@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using OpenTelemetry.Metrics;
 
 namespace VC.Host;
@@ -34,7 +34,7 @@ internal static class HostConfiguration
                                 </p>
                                 <p>
                                   <h3><a href="http://localhost:5056/scalar/services"
-                                    title="click">Управление ресурсами</a></h3>
+                                    title="click">Управление услугами</a></h3>
                                 </p><br/>
                                 <p>
                                   <h2><a href="http://localhost:5056/scalar/auth"

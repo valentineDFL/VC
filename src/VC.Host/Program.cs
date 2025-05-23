@@ -1,5 +1,6 @@
 using Mapster;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Auth.Api.Middleware;
@@ -9,6 +10,10 @@ using VC.Integrations.Di;
 using VC.Services.Di;
 using VC.Tenants.Di;
 using VC.Utilities;
+using VC.Host.Common;
+using VC.Core.Di;
+using VC.Shared.Utilities;
+using VC.Shared.Integrations.Di;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,11 +22,17 @@ builder.Services.AddControllers()
     .AddApplicationPart(typeof(VC.Services.Api.Entry).Assembly)
     .AddApplicationPart(typeof(VC.Auth.Api.Entry).Assembly);
 builder.Services.ConfigureTenantsModule(builder.Configuration);
+    .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly)
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
 builder.Services.ConfigureServicesModule(builder.Configuration);
 builder.Services.ConfigureAuthModule(builder.Configuration);
 
+builder.Services.ConfigureCoreModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
@@ -35,8 +46,20 @@ builder.Services.AddMapster();
 
 VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
 
-var app = builder.Build();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
+var app = builder.Build();
+await ApplyUnAplliedMigrationsAsync(app);
+
+app.UseCors("AllowAll");
 app.MapPrometheusScrapingEndpoint();
 app.MapHealthChecks("/health");
 app.MapOpenApi();
@@ -61,8 +84,31 @@ app.UseAuthorization();
 
 app.UseMiddleware<TenantMiddleware>();
 
+app.UseHttpLogging();
 app.MapControllers();
 
-app.UseHttpLogging();
-
 app.Run();
+
+static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
+{
+    var scope = app.Services.CreateScope();
+
+    var dbContextsTypes = AppDomain.CurrentDomain
+        .GetAssemblies()
+        .Where(asm => asm.FullName.Contains("Infrastructure"))
+        .SelectMany(asm => asm.GetTypes())
+        .Where(t => t.IsSubclassOf(typeof(DbContext)));
+
+    await Parallel.ForEachAsync(dbContextsTypes, async (dbContextType, task) =>
+    {
+        var dbContextInstance = scope.ServiceProvider.GetRequiredService(dbContextType);
+
+        if (dbContextInstance is not DbContext dbContext)
+            return;
+
+            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+
+        if (pendingMigrations.Any())
+            await dbContext.Database.MigrateAsync();
+    });
+}
