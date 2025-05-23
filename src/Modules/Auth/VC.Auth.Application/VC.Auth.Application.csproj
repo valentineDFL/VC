@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0"/>
+      <ProjectReference Include="..\VC.Auth.Infrastructure\VC.Auth.Infrastructure.csproj" />
+      <ProjectReference Include="..\VC.Auth\VC.Auth.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj"/>
-        <ProjectReference Include="..\VC.Core.Application\VC.Core.Application.csproj"/>
+      <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     </ItemGroup>
 
 </Project>

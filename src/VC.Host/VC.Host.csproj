@@ -8,29 +8,34 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+        <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.1" />
-        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.11.0-beta.1" />
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.0" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.11.0-beta.1" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.0" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.11.0-beta.1" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.0" />
-        <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.0.18" />
-        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.1"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.11.0-beta.1"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.0"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.11.0-beta.1"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.0"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.11.0-beta.1"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.0"/>
+        <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.3.1"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
+        <PackageReference Update="Mapster" Version="7.4.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\vc.tenants\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.Integrations.Di\VC.Shared.Integrations.Di.csproj" />
-      <ProjectReference Include="..\..\..\vc.tenants\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
-      <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj" />
-      <ProjectReference Include="..\Modules\Core\VC.Core.Di\VC.Core.Di.csproj" />
+        <ProjectReference Include="..\..\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.Integrations.Di\VC.Shared.Integrations.Di.csproj" />
+        <ProjectReference Include="..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
+        <ProjectReference Include="..\Infrastructure\VC.Integrations.Di\VC.Integrations.Di.csproj"/>
+        <ProjectReference Include="..\Modules\Auth\VC.Auth.Api\VC.Auth.Api.csproj"/>
+        <ProjectReference Include="..\Modules\Auth\VC.Auth.Application\VC.Auth.Application.csproj"/>
+        <ProjectReference Include="..\Modules\Auth\VC.Auth.Di\VC.Auth.Di.csproj"/>
+        <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj"/>
+        <ProjectReference Include="..\Modules\Core\VC.Core.Di\VC.Core.Di.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using OpenTelemetry.Metrics;
 
 namespace VC.Host;
@@ -37,9 +37,15 @@ internal static class HostConfiguration
                                     title="click">Управление услугами</a></h3>
                                 </p><br/>
                                 <p>
+                                  <h2><a href="http://localhost:5056/scalar/auth"
+                                    title="click">Регистрация</a></h3>
+                                </p><br/>
+                                
+                                <p>
                                   <a href="https://gitlab.com/tech-power-partners/vclients/vc 
                                     title="click"">GitLab - vclients</a>
                                 </p>
+                              
                               """
                 };
 
