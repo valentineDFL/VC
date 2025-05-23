@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using VC.Auth.Models;
+using VC.Shared.Utilities.Resolvers;
 
 namespace VC.Auth.Infrastructure.Persistence.DataContext;
 

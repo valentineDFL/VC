@@ -12,7 +12,7 @@ namespace VC.Auth.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = OpenApi.OpenApiConfig.GroupName)]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthsController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegisterRequest request)

@@ -35,11 +35,7 @@ internal static class InfrastructureConfiguration
         });
 
         services.AddScoped<IJwtOptions, JwtOptions>();
-
         services.AddScoped<IWebCookie, WebCookie>();
-
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<ITenantService, TenantService>();
-        services.AddScoped<IUserOrderService, UserOrderService>();
     }
 }

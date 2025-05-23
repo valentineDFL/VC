@@ -28,12 +28,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.Integrations.Di\VC.Shared.Integrations.Di.csproj" />
+        <ProjectReference Include="..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
         <ProjectReference Include="..\Infrastructure\VC.Integrations.Di\VC.Integrations.Di.csproj"/>
         <ProjectReference Include="..\Modules\Auth\VC.Auth.Api\VC.Auth.Api.csproj"/>
         <ProjectReference Include="..\Modules\Auth\VC.Auth.Application\VC.Auth.Application.csproj"/>
         <ProjectReference Include="..\Modules\Auth\VC.Auth.Di\VC.Auth.Di.csproj"/>
-        <ProjectReference Include="..\..\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.Integrations.Di\VC.Shared.Integrations.Di.csproj"/>
-        <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj"/>
         <ProjectReference Include="..\Modules\Bookings\VC.Bookings.Di\VC.Bookings.Di.csproj"/>
         <ProjectReference Include="..\Modules\Core\VC.Core.Di\VC.Core.Di.csproj"/>
     </ItemGroup>
