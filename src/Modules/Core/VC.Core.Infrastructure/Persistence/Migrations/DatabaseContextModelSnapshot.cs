@@ -25,30 +25,6 @@ namespace VC.Core.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VC.Core.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ParentCategoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentCategoryId");
-
-                    b.ToTable("Categories", "core");
-                });
-
             modelBuilder.Entity("VC.Core.Employees.Employee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -97,7 +73,31 @@ namespace VC.Core.Infrastructure.Persistence.Migrations
                     b.ToTable("WorkSchedules", "core");
                 });
 
-            modelBuilder.Entity("VC.Core.Resource", b =>
+            modelBuilder.Entity("VC.Core.Services.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentCategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId");
+
+                    b.ToTable("Categories", "core");
+                });
+
+            modelBuilder.Entity("VC.Core.Services.Resource", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -123,7 +123,7 @@ namespace VC.Core.Infrastructure.Persistence.Migrations
                     b.ToTable("Resources", "core");
                 });
 
-            modelBuilder.Entity("VC.Core.Service", b =>
+            modelBuilder.Entity("VC.Core.Services.Service", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -166,15 +166,6 @@ namespace VC.Core.Infrastructure.Persistence.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Services", "core");
-                });
-
-            modelBuilder.Entity("VC.Core.Category", b =>
-                {
-                    b.HasOne("VC.Core.Category", "ParentCategory")
-                        .WithMany()
-                        .HasForeignKey("ParentCategoryId");
-
-                    b.Navigation("ParentCategory");
                 });
 
             modelBuilder.Entity("VC.Core.Employees.WorkSchedule", b =>
@@ -232,9 +223,18 @@ namespace VC.Core.Infrastructure.Persistence.Migrations
                     b.Navigation("Exceptions");
                 });
 
-            modelBuilder.Entity("VC.Core.Service", b =>
+            modelBuilder.Entity("VC.Core.Services.Category", b =>
                 {
-                    b.OwnsMany("VC.Core.Employees.EmployeeAssignment", "EmployeeAssignments", b1 =>
+                    b.HasOne("VC.Core.Services.Category", "ParentCategory")
+                        .WithMany()
+                        .HasForeignKey("ParentCategoryId");
+
+                    b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("VC.Core.Services.Service", b =>
+                {
+                    b.OwnsMany("VC.Core.Services.EmployeeAssignment", "EmployeeAssignments", b1 =>
                         {
                             b1.Property<Guid>("ServiceId")
                                 .HasColumnType("uuid");
