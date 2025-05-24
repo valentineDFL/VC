@@ -1,0 +1,45 @@
+<div class="d-flex align-items-center justify-content-between px-4 py-3 mb-4 text-white shadow-sm" 
+     style="@($"background: linear-gradient(to right, {PrimaryColor}, {SecondaryColor});")">
+    <div>
+        <h2 class="mb-0">@Title</h2>
+        @if (!string.IsNullOrEmpty(Subtitle))
+        {
+            <p class="mb-0 small">@Subtitle</p>
+        }
+    </div>
+    @if (ShowBackButton)
+    {
+        <button class="btn btn-light d-flex align-items-center" @onclick="OnBack">
+            <i class="bi bi-arrow-left me-2"></i> Назад
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string Subtitle { get; set; } = "";
+
+    [Parameter]
+    public string PrimaryColor { get; set; } = "#4e54c8";
+
+    [Parameter]
+    public string SecondaryColor { get; set; } = "#8f94fb";
+
+    [Parameter]
+    public bool ShowBackButton { get; set; } = true;
+
+    [Parameter]
+    public EventCallback OnBack { get; set; }
+
+    private async Task DefaultBackAction()
+    {
+        // По умолчанию можно вернуться назад через NavigationManager
+        NavigationManager.NavigateTo("/");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
