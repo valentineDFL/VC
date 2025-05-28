@@ -16,14 +16,10 @@ internal class PaymentsRepository : IPaymentsRepository
     }
 
     public async Task<Payment> GetByOrderIdAsync(Guid orderId)
-    {
-        return await _payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
-    }
+        => await _payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
 
     public async Task CreateAsync(Payment payment)
-    {
-        await _payments.AddAsync(payment);
-    }
+        => await _payments.AddAsync(payment);
 
     public Task UpdateAsync(Payment payment)
     {

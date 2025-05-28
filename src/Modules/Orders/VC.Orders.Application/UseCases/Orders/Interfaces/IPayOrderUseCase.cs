@@ -1,8 +1,9 @@
 ﻿using FluentResults;
+using VC.Orders.Application.Dtos;
 
 namespace VC.Orders.Application.UseCases.Orders.Interfaces;
 
 public interface IPayOrderUseCase
 {
-    public Task<Result> ExecuteAsync(Guid orderId);
+    public Task<Result> ExecuteAsync(Guid orderId, PayOrderParams @params);
 }

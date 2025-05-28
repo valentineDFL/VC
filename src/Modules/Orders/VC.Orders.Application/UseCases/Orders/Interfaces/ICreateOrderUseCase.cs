@@ -5,5 +5,5 @@ namespace VC.Orders.Application.UseCases.Orders.Interfaces;
 
 public interface ICreateOrderUseCase
 {
-    public Task<Result<Guid>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts);
+    public Task<Result<CreateOrderResponseParams>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts);
 }

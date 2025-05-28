@@ -10,7 +10,7 @@ public class PaymentStatus
         CreatedOnUtc = DateTime.UtcNow;
     }
 
-    private PaymentStatus() { }
+    protected PaymentStatus() { }
 
     public Guid Id { get; private set; }
 

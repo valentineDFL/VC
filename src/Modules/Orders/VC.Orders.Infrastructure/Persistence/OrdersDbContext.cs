@@ -10,10 +10,7 @@ internal class OrdersDbContext : DbContext
     public const string Schema = "orders";
 
     public OrdersDbContext(DbContextOptions<OrdersDbContext> options)
-        : base(options)
-    {
-        
-    }
+        : base(options) { }
 
     public DbSet<Order> Orders { get; set; }
 
@@ -22,6 +19,8 @@ internal class OrdersDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
 
     public DbSet<PaymentStatus> PaymentsStatuses { get; set; }
+
+    public DbSet<OrderIdempotency> OrdersIdempotencies { get; set; }
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 

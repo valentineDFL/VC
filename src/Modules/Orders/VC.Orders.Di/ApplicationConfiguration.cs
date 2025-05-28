@@ -14,6 +14,6 @@ public static class ApplicationConfiguration
         services.AddScoped<IGetOrderUseCase, GetOrderUseCase>();
         services.AddScoped<ICancelOrderUseCase, CancelOrderUseCase>();
 
-        services.AddKeyedScoped<IPayOrderUseCase, PaypalPayOrderUseCase>(PayOrderUseCaseKeys.MockPayKey);
+        services.AddKeyedScoped<IPayOrderUseCase, MockPayOrderUseCase>(PayOrderUseCaseKeys.MockPayKey);
     }
 }

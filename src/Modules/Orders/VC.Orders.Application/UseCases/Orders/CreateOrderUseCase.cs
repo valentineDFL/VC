@@ -13,14 +13,16 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICoreServiceApiClient _serviceApiClient;
+    private readonly IIdempodencyKeyGenerator _keyGenerator;
 
-    public CreateOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient)
+    public CreateOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient, IIdempodencyKeyGenerator keyGenerator)
     {
         _unitOfWork = unitOfWork;
         _serviceApiClient = serviceClient;
+        _keyGenerator = keyGenerator;
     }
 
-    public async Task<Result<Guid>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts)
+    public async Task<Result<CreateOrderResponseParams>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts)
     {
         var orderId = Guid.CreateVersion7();
 
@@ -39,14 +41,22 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
 
         var order = new Order(orderId, @params.ServiceTime, employee.Price, @params.ServiceId, @params.EmployeeId, null);
 
+        var idempodency = new OrderIdempotency(Guid.CreateVersion7(), orderId, _keyGenerator.Generate());
+
+        Console.WriteLine(idempodency.Key.ToString().Length);
+
         await _unitOfWork.BeginTransactionAsync(cts);
 
         await _unitOfWork.Orders.CreateAsync(order);
         await _unitOfWork.Payments.CreateAsync(payment);
 
+        await _unitOfWork.OrdersIdempotencies.AddAsync(idempodency);
+
         await _unitOfWork.CommitAsync(cts);
 
-        return Result.Ok(orderId);
+        var result = new CreateOrderResponseParams(orderId, idempodency.Key);
+
+        return Result.Ok(result);
     }
 
     private async Task<Result<ServiceDetailsDto>> GetServiceData(Guid serviceId, CancellationToken cts)

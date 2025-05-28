@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using VC.Orders.Repositories;
 
 namespace VC.Orders.Infrastructure.Persistence.Repositories;
@@ -11,17 +12,24 @@ internal class UnitOfWork : IUnitOfWork
     private readonly IOrdersRepository _ordersRepository;
     private readonly IPaymentsRepository _paymentsRepository;
 
+    private readonly IOrdersIdempotenciesRepository _orderIdempotencyRepository;
+    private readonly IOrdersIdempotenciesRepository _orderIdempotencyCacheRepository;
+
     private readonly IOutboxMessagesRepository _outboxMessagesRepository;
 
     public UnitOfWork(OrdersDbContext dbContext,
                       IOrdersRepository ordersRepository,
                       IPaymentsRepository paymentsRepository,
-                      IOutboxMessagesRepository outboxMessagesRepository)
+                      IOutboxMessagesRepository outboxMessagesRepository,
+                      [FromKeyedServices(IUnitOfWork.PostgresOrdersKey)] IOrdersIdempotenciesRepository orderIdempotencyRepository,
+                      [FromKeyedServices(IUnitOfWork.RedisCacheOrdersKey)] IOrdersIdempotenciesRepository orderIdempotencyCacheRepository)
     {
         _dbContext = dbContext;
         _ordersRepository = ordersRepository;
         _paymentsRepository = paymentsRepository;
         _outboxMessagesRepository = outboxMessagesRepository;
+        _orderIdempotencyRepository = orderIdempotencyRepository;
+        _orderIdempotencyCacheRepository = orderIdempotencyCacheRepository;
     }
 
     public IOrdersRepository Orders => _ordersRepository;
@@ -29,6 +37,10 @@ internal class UnitOfWork : IUnitOfWork
     public IPaymentsRepository Payments => _paymentsRepository;
 
     public IOutboxMessagesRepository OutboxMessages => _outboxMessagesRepository;
+
+    public IOrdersIdempotenciesRepository OrdersIdempotencies => _orderIdempotencyRepository;
+
+    public IOrdersIdempotenciesRepository OrdersIdempotenciesCache => _orderIdempotencyCacheRepository;
 
     public async Task BeginTransactionAsync(CancellationToken cts = default)
     {

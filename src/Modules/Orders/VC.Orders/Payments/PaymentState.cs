@@ -7,6 +7,6 @@ public enum PaymentState
     Processing = 2,
     Succeeded = 3,
     Refunded = 4,
-    Failde = 5,
+    Failed = 5,
     PendingRetry = 6
 }

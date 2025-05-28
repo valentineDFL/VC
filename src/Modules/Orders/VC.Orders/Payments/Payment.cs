@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using System.Text;
+﻿using System.Text;
 using VC.Orders.Orders;
 
 namespace VC.Orders.Payments;
@@ -45,14 +44,18 @@ public class Payment
 
     public DateTime CreatedOnUtc { get; private set; }
 
-    public Result ChangePaymentState(PaymentState state)
+    public void ChangeState(PaymentState state)
     {
-        if (state == PaymentState.Refunded || state == PaymentState.Canceled)
-            return Result.Fail($"State cannot be changed because he is {state}");
+        if (State == PaymentState.Canceled)
+            throw new InvalidOperationException("State is cancel now");
 
-        if(State != state)
-            State = state;
+        if (State == PaymentState.Refunded)
+            throw new InvalidOperationException("State is refunded now");
 
-        return Result.Ok();
+        if (state == PaymentState.Initialed)
+            throw new ArgumentException("State cannot be Initialed");
+
+        State = state;
+        _paymentStatuses.Add(new PaymentStatus(Guid.CreateVersion7(), Id, State));
     }
 }
