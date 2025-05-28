@@ -1,15 +1,12 @@
 using FluentValidation;
-using VC.Auth.Application.Models.Requests;
+using VC.Auth.Application.Models;
 
 namespace VC.Auth.Application.Validators;
 
-public class LoginValidation : AbstractValidator<LoginRequest>
+public class LoginValidation : AbstractValidator<LoginAuthParams>
 {
     public LoginValidation()
     {
-        RuleFor(x => x.Username)
-            .NotEmpty().WithMessage("Username is required");
-
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required")
             .EmailAddress();

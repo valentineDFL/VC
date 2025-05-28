@@ -1,23 +1,30 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using VC.Auth.Constants;
 using VC.Auth.Infrastructure.Persistence.Models;
 using VC.Auth.Interfaces;
 using VC.Auth.Models;
 
 namespace VC.Auth.Infrastructure;
 
-public class JwtOptions(JwtSettings _jwtSettings) : IJwtOptions
+public class JwtOptions : IJwtOptions
 {
+    private readonly JwtSettings _jwtSettings;
+
+    public JwtOptions(IOptions<JwtSettings> jwtOptions)
+        => _jwtSettings = jwtOptions.Value;
+
     public string GenerateToken(User user)
     {
         var claims = new List<Claim>
         {
-            new Claim("Id", user.Id.ToString()),
+            new Claim(JwtClaimTypes.Id, user.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Username),
-            new Claim(ClaimTypes.Role, "User"),
-            new Claim(ClaimTypes.Role, "Tenant")
+            new Claim(ClaimTypes.Role, JwtClaimTypes.User),
+            new Claim(ClaimTypes.Role, JwtClaimTypes.Tenant)
         };
 
         var signingCredentials = new SigningCredentials(

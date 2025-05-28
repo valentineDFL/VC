@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using VC.Auth.Api.OpenApi;
-using VC.Auth.Constants;
 using VC.Auth.Infrastructure.Persistence;
+using VC.Auth.Infrastructure.Persistence.Models;
 
 namespace VC.Auth.Di;
 
@@ -18,6 +18,17 @@ public static class AuthModuleConfiguration
         services.ConfigureServicesApplication();
         services.ConfigureServicesOpenApi();
 
+        var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>();
+        var cookiesSettings = configuration.GetSection("Cookies").Get<CookiesSettings>();
+
+        if (jwtSettings == null)
+            throw new Exception("Jwt settings not found in configuration");
+        
+        if (string.IsNullOrWhiteSpace(jwtSettings.SecretKey))
+            throw new Exception("Jwt SecretKey is null or empty. Check appsettings.json");
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -27,25 +38,26 @@ public static class AuthModuleConfiguration
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = securityKey,
                     ValidIssuer = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["Jwt:Secret"])).ToString()
+                        Encoding.UTF8.GetBytes(securityKey.ToString())).ToString()
                 };
 
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies[AuthConstants.RememberMeCookieName];
+                        context.Token = context.Request.Cookies[cookiesSettings.RememberMeCookieName];
                         return Task.CompletedTask;
                     }
                 };
             });
-        
+
         services.AddAuthorization(x =>
             x.AddPolicy(Permissions.User, builder =>
                 builder.Requirements
                     .Add(new PermissionRequirements(Permissions.User, Permissions.Tenant))));
-        
+
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }
 

@@ -12,23 +12,19 @@ public class UserRepository(AuthDbContext _dbContext) : IUserRepository
 
     public async Task CreateAsync(User user)
     {
-        if (string.IsNullOrWhiteSpace(user.Username) ||
-            string.IsNullOrWhiteSpace(user.Email) ||
-            string.IsNullOrWhiteSpace(user.PasswordHash))
-        {
-            throw new Exception("Some fields are empty");
-        }
-
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task GetByUsernameAsync(string username)
-        => await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username)!;
+    public async Task<ICollection<Permission>> GetPermissionsByUsernameAsync(string username)
+    {
+        var user = await _dbContext.Users
+            .Include(p => p.Permissions)
+            .FirstOrDefaultAsync(u => u.Username == username);
 
-    public ICollection<Permission> GetPermissionByUsername(string username)
-        => _dbContext.Users
-            .Where(u => u.Username == username)
-            .SelectMany(u => u.Permissions)
-            .ToList();
+        if (user is null)
+            return [];
+
+        return user.Permissions;
+    }
 }

@@ -6,9 +6,7 @@ public interface IUserRepository
 {
     Task<User> GetByEmailAsync(string email);
 
-    Task CreateAsync(User? user);
+    Task CreateAsync(User user);
 
-   Task GetByUsernameAsync(string username);
-
-    ICollection<Permission> GetPermissionByUsername(string username);
+    Task<ICollection<Permission>> GetPermissionsByUsernameAsync(string username);
 }

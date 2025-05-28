@@ -1,13 +1,13 @@
 using FluentResults;
-using VC.Auth.Application.Models.Requests;
+using VC.Auth.Application.Models;
 
 namespace VC.Auth.Application.Abstractions;
 
 public interface IAuthService
 {
-    Task<Result> Register(RegisterRequest request);
+    Task<Result> SignUpAsync(RegisterAuthParams authParams);
     
-    Task<Result<string>> Login(LoginRequest request);
+    Task<Result> LoginAsync(LoginAuthParams authParams);
     
-    Task Logout();
+    Task<Result>  LogoutAsync();
 }

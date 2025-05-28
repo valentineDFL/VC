@@ -1,6 +1,6 @@
-namespace VC.Auth.Api.Models.Requests;
+namespace VC.Auth.Application.Models;
 
-public class LoginRequest
+public class LoginAuthParams
 {
     public string Email { get; set; }
 

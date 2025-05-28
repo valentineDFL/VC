@@ -1,6 +1,6 @@
-namespace VC.Auth.Application.Models.Requests;
+namespace VC.Auth.Application.Models;
 
-public class RegisterRequest
+public class RegisterAuthParams
 {
     public string Username { get; set; }
     

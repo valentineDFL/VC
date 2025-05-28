@@ -1,39 +1,58 @@
+using FluentResults;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using VC.Auth.Application.Abstractions;
+using VC.Auth.Infrastructure.Persistence.Models;
 
 namespace VC.Auth.Application.Services;
 
-public class WebCookie(IHttpContextAccessor httpContextAccessor) : IWebCookie
+public class WebCookie : IWebCookie
 {
-    public void AddSecure(string cookieName, string value, int days = 0)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly CookiesSettings _cookiesSettings;
+
+    public WebCookie(IHttpContextAccessor httpContextAccessor, IOptions<CookiesSettings> cookiesSettings)
+    {
+        _httpContextAccessor = httpContextAccessor;
+        _cookiesSettings = cookiesSettings.Value;
+    }
+
+    public void AddSecure(string cookieName, string value)
     {
         CookieOptions options = new CookieOptions();
         options.Path = "/";
         options.HttpOnly = true;
         options.Secure = true;
 
-        if (days > 0)
-        {
-            options.Expires = DateTimeOffset.UtcNow.AddDays(days);
-        }
+        var days = _cookiesSettings.RememberMeDays;
 
-        httpContextAccessor.HttpContext?.Response.Cookies.Append(cookieName, value, options);
+        options.Expires = DateTimeOffset.UtcNow.AddDays(days);
+
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append(cookieName, value, options);
     }
 
-    public async Task Delete(string cookieName)
-        => httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookieName);
-
-
-    public string? Get(string cookieName)
+    public async Task<Result> DeleteAsync(string cookieName)
     {
+        if (cookieName is null)
+            return Result.Fail("Cookie name is null");
+
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookieName);
+
+        return Result.Ok();
+    }
+
+    public async Task<Result<string>> Get(string cookieName)
+    {
+        if (cookieName is null)
+            return Result.Fail("Cookie name is null");
+
         var cookie =
-            httpContextAccessor.HttpContext?.Request.Cookies.FirstOrDefault(m => m.Key == cookieName);
+            _httpContextAccessor.HttpContext?.Request.Cookies
+                .FirstOrDefault(m => m.Key == cookieName);
 
-        if (cookie is not null && cookie.Value.Value is not null)
-        {
-            return cookie.Value.Value;
-        }
+        if (cookie is null && cookie.Value.Value is null)
+            return Result.Fail("Cookie not found");
 
-        return null;
+        return Result.Ok(cookie.Value.Value);
     }
 }

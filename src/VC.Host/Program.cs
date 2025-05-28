@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
-using VC.Auth.Api.Middleware;
 using VC.Host;
 using VC.Auth.Di;
 using VC.Core.Di;
@@ -67,8 +66,6 @@ app.UseCookiePolicy(new CookiePolicyOptions
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseMiddleware<TenantMiddleware>();
 
 app.UseHttpLogging();
 app.MapControllers();

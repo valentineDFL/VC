@@ -10,7 +10,19 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(x => x.Id);
 
+        builder.HasMany(u => u.Permissions)
+            .WithOne(p => p.User)
+            .HasForeignKey(p => p.UserId);
+
+        builder.Property(x => x.Username)
+            .IsRequired()
+            .HasMaxLength(50);
+
         builder.Property(x => x.Email)
+            .IsRequired()
+            .HasMaxLength(256);
+
+        builder.Property(x => x.PasswordHash)
             .IsRequired();
     }
 }

@@ -1,6 +1,6 @@
 namespace VC.Auth.Api.Models.Requests;
 
-public class RegisterRequest
+public class SignUpRequest
 {
     public string Username { get; set; }
     

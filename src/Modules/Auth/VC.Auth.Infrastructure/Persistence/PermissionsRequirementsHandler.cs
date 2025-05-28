@@ -8,21 +8,20 @@ namespace VC.Auth.Infrastructure.Persistence;
 public class PermissionAuthorizationHandler(IServiceScopeFactory _serviceScopeFactory)
     : AuthorizationHandler<PermissionRequirements>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         PermissionRequirements requirement)
     {
         var username = context.User.Claims.FirstOrDefault(
-            c => c.Type == ClaimTypes.Name)!.ToString();
+            c => c.Type == ClaimTypes.Name)!.Value;
 
         using var scope = _serviceScopeFactory.CreateScope();
 
         var userRepository = scope.ServiceProvider.GetService<IUserRepository>();
-        var permissions = userRepository.GetPermissionByUsername(username);
+        var permissions = await userRepository.GetPermissionsByUsernameAsync(username);
+        
         if (permissions.Any(x => x.Name == requirement.Permission))
         {
             context.Succeed(requirement);
         }
-
-        return Task.CompletedTask;
     }
 }

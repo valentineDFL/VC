@@ -1,20 +1,16 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using VC.Auth.Models;
-using VC.Shared.Utilities.Resolvers;
 
 namespace VC.Auth.Infrastructure.Persistence.DataContext;
 
 public class AuthDbContext : DbContext
 {
     public const string Schema = "auth";
-
-    private readonly ITenantResolver _tenantResolver;
-
-    public AuthDbContext(DbContextOptions<AuthDbContext> options, ITenantResolver tenantResolver)
+    
+    public AuthDbContext(DbContextOptions<AuthDbContext> options) 
         : base(options)
     {
-        _tenantResolver = tenantResolver;
     }
 
     public DbSet<User> Users { get; set; }

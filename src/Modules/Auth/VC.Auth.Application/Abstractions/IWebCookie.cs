@@ -1,10 +1,12 @@
+using FluentResults;
+
 namespace VC.Auth.Application.Abstractions;
 
 public interface IWebCookie
 {
-    void AddSecure(string cookieName, string token, int days = 0);
+    void AddSecure(string cookieName, string token);
 
-    Task Delete(string cookieName);
+    Task<Result> DeleteAsync(string cookieName);
 
-    string? Get(string cookieName);
+    Task<Result<string>> Get(string cookieName);
 }

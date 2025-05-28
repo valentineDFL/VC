@@ -1,11 +1,11 @@
 using FluentValidation;
-using VC.Auth.Application.Models.Requests;
+using VC.Auth.Application.Models;
 
 namespace VC.Auth.Application.Validators;
 
-public class RegistrationValidation : AbstractValidator<RegisterRequest>
+public class SignUpValidation : AbstractValidator<RegisterAuthParams>
 {
-    public RegistrationValidation()
+    public SignUpValidation()
     {
         RuleFor(x => x.Username)
             .NotEmpty().WithMessage("Username is required");

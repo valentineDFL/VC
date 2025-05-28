@@ -10,8 +10,4 @@ public class PermissionRequirements : IAuthorizationRequirement
     {
         Permission = permission;
     }
-
-    public PermissionRequirements()
-    {
-    }
 }
