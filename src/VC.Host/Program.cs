@@ -6,6 +6,7 @@ using Serilog;
 using VC.Host;
 using VC.Auth.Di;
 using VC.Core.Di;
+using VC.Host.Common;
 using VC.Orders.Di;
 using VC.Shared.Utilities;
 using VC.Shared.Integrations.Di;
@@ -13,7 +14,7 @@ using VC.Shared.Integrations.Di;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
-    .AddApplicationPart(typeof(VC.Auth.Api.Entry).Assembly);
+    .AddApplicationPart(typeof(VC.Auth.Api.Entry).Assembly)
     .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly)
     .AddApplicationPart(typeof(VC.Orders.Api.Entry).Assembly)
     .AddJsonOptions(options =>
@@ -22,11 +23,12 @@ builder.Services.AddControllers()
     });
 
 builder.Services.ConfigureUtilities(builder.Configuration);
+
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
 builder.Services.ConfigureAuthModule(builder.Configuration);
-
 builder.Services.ConfigureCoreModule(builder.Configuration);
 builder.Services.ConfigureOrdersModule(builder.Configuration);
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();

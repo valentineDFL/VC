@@ -9,5 +9,5 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
     </ItemGroup>
-
+    
 </Project>

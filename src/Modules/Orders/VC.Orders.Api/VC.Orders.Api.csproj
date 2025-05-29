@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\Response\" />
+        <Folder Include="Dtos\Response\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\VC.Orders.Application\VC.Orders.Application.csproj" />
-      <ProjectReference Include="..\VC.Orders\VC.Orders.csproj" />
+        <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj"/>
+        <ProjectReference Include="..\VC.Orders.Application\VC.Orders.Application.csproj"/>
+        <ProjectReference Include="..\VC.Orders\VC.Orders.csproj"/>
     </ItemGroup>
 
 </Project>
