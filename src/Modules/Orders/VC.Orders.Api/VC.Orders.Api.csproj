@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Dtos\Response\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VC.Orders.Application\VC.Orders.Application.csproj" />
+      <ProjectReference Include="..\VC.Orders\VC.Orders.csproj" />
+    </ItemGroup>
+
+</Project>

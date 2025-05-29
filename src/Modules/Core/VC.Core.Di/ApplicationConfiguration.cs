@@ -18,6 +18,7 @@ internal static class ApplicationConfiguration
     {
         services.AddScoped<IResourcesService, ResourcesService>();
         services.AddScoped<ICreateServiceUseCase, CreateServiceUseCase>();
+        services.AddScoped<IUpdateServiceUseCase, UpdateServiceUseCase>();
 
         services.AddScoped<IGetEmployeesUseCase, GetEmployeesUseCase>();
         services.AddScoped<ICreateEmployeeUseCase, CreateEmployeeUseCase>();

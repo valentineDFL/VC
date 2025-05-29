@@ -25,12 +25,8 @@ internal static class HostConfiguration
                     Title = "Универсальная платформа для управления услугами и онлайн-бронирования с поддержкой мультитенантности",
                     Description = """
                                 <p>
-                                  <h3><a href="http://localhost:5056/scalar/tenants"
-                                    title="click">Управление арендаторами</a></h3>
-                                </p>
-                                <p>
-                                  <h3><a href="http://localhost:5056/scalar/bookings"
-                                    title="click">Управление бронированиями</a></h3>
+                                  <h3><a href="http://localhost:5056/scalar/orders"
+                                    title="click">Управление Заказами</a></h3>
                                 </p>
                                 <p>
                                   <h3><a href="http://localhost:5056/scalar/services"

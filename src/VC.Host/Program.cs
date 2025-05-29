@@ -6,6 +6,7 @@ using Serilog;
 using VC.Host;
 using VC.Auth.Di;
 using VC.Core.Di;
+using VC.Orders.Di;
 using VC.Shared.Utilities;
 using VC.Shared.Integrations.Di;
 
@@ -13,11 +14,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(VC.Auth.Api.Entry).Assembly);
+    .AddApplicationPart(typeof(VC.Core.Api.Entry).Assembly)
+    .AddApplicationPart(typeof(VC.Orders.Api.Entry).Assembly)
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
+
 builder.Services.ConfigureUtilities(builder.Configuration);
 builder.Services.ConfigureIntegrationsModule(builder.Configuration);
 builder.Services.ConfigureAuthModule(builder.Configuration);
 
 builder.Services.ConfigureCoreModule(builder.Configuration);
+builder.Services.ConfigureOrdersModule(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpLogging();
@@ -28,8 +37,6 @@ builder.Host.UseSerilog((context, configuration) =>
 
 builder.Services.ConfigureHost();
 builder.Services.AddMapster();
-
-VC.Bookings.Di.ModuleConfiguration.Configure(builder.Services, builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -90,7 +97,7 @@ static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
             return;
 
             var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-
+        
         if (pendingMigrations.Any())
             await dbContext.Database.MigrateAsync();
     });

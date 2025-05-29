@@ -1,15 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  
+  <ItemGroup>    
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj"/>
-        <ProjectReference Include="..\VC.Core\VC.Core.csproj"/>
-    </ItemGroup>
+    <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />    
+    <ProjectReference Include="..\VC.Core\VC.Core.csproj" />
+  </ItemGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
