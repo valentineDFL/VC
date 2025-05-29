@@ -67,19 +67,10 @@ public class Order
 
     public Result CancelOrder()
     {
-        var errors = new List<IError>();
-
-        if (State == OrderState.Paid)
-            errors.Add(new Error($"Paid Order cannot change State to {OrderState.Canceled}"));
-
-        if(State == OrderState.Canceled)
-            errors.Add(new Error($"Canceled Order cannot change State {OrderState.Canceled}"));
-
-        if(State == OrderState.Refunded)
-            errors.Add(new Error($"Refunded Order cannot change State {OrderState.Canceled}"));
-
-        if (errors.Count > 0)
-            return Result.Fail(errors);
+        if (State is OrderState.Paid ||
+            State is OrderState.Canceled ||
+            State is OrderState.Refunded)
+            return Result.Fail(new Error($"{State} Order cannot change State to {OrderState.Canceled}"));
 
         State = OrderState.Canceled;
 
@@ -88,15 +79,17 @@ public class Order
         return Result.Ok();
     }
 
-    public Result PayForOrder()
+    public Result ApplyOrderPayment()
     {
-        if (State == OrderState.Paid ||
-            State == OrderState.Refunded ||
-            State == OrderState.Canceled ||
-            State == OrderState.Paused)
+        if (State is OrderState.Paid ||
+            State is OrderState.Refunded ||
+            State is OrderState.Canceled ||
+            State is OrderState.Paused)
             return Result.Fail($"Order with {State} state cannot be paid");
 
         State = OrderState.Paid;
+
+        _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
 
         return Result.Ok();
     }

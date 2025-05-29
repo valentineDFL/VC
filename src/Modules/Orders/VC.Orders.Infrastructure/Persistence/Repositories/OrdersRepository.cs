@@ -21,7 +21,7 @@ internal class OrdersRepository : IOrdersRepository
             .FirstOrDefaultAsync(o => o.Id == id);
     }
 
-    public async Task CreateAsync(Order order)
+    public async Task AddAsync(Order order)
     {
         await _orders.AddAsync(order);
     }

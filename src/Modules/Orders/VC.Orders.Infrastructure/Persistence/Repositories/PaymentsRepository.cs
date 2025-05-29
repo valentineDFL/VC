@@ -18,7 +18,7 @@ internal class PaymentsRepository : IPaymentsRepository
     public async Task<Payment> GetByOrderIdAsync(Guid orderId)
         => await _payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
 
-    public async Task CreateAsync(Payment payment)
+    public async Task AddAsync(Payment payment)
         => await _payments.AddAsync(payment);
 
     public Task UpdateAsync(Payment payment)

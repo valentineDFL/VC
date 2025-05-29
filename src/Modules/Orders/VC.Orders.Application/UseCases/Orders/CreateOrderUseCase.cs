@@ -37,18 +37,16 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
         var employee = serviceData.EmployeeAssignments.FirstOrDefault(e => e.EmployeeId == @params.EmployeeId);
 
         if (employee is null)
-            throw new NullReferenceException("Employee does not exists");
+            return Result.Fail("Employee Not Found");
 
         var order = new Order(orderId, @params.ServiceTime, employee.Price, @params.ServiceId, @params.EmployeeId, null);
 
         var idempodency = new OrderIdempotency(Guid.CreateVersion7(), orderId, _keyGenerator.Generate());
 
-        Console.WriteLine(idempodency.Key.ToString().Length);
-
         await _unitOfWork.BeginTransactionAsync(cts);
 
-        await _unitOfWork.Orders.CreateAsync(order);
-        await _unitOfWork.Payments.CreateAsync(payment);
+        await _unitOfWork.Orders.AddAsync(order);
+        await _unitOfWork.Payments.AddAsync(payment);
 
         await _unitOfWork.OrdersIdempotencies.AddAsync(idempodency);
 
@@ -59,7 +57,7 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
         return Result.Ok(result);
     }
 
-    private async Task<Result<ServiceDetailsDto>> GetServiceData(Guid serviceId, CancellationToken cts)
+    private async Task<Result<ServiceDetailsDto>> GetServiceData(Guid serviceId, CancellationToken cts = default)
     {
         var result = await _serviceApiClient.GetServiceAsync(serviceId, cts);
 

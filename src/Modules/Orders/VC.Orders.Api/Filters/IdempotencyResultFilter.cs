@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using VC.Orders.Application;
@@ -42,7 +43,7 @@ internal class IdempotencyResultFilter : Attribute, IAsyncResultFilter
         if(context.Result is ObjectResult contentResult)
         {
             if (contentResult.StatusCode == (int)HttpStatusCode.OK)
-                context.Result = new ObjectResult(key) { StatusCode = 200 };
+                context.Result = new ObjectResult(key) { StatusCode = StatusCodes.Status200OK };
         }
 
         await next.Invoke();

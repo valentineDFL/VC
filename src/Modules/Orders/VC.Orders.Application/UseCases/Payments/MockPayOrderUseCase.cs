@@ -3,7 +3,7 @@ using VC.Orders.Application.Dtos;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Repositories;
 
-namespace VC.Orders.Application.UseCases.Orders;
+namespace VC.Orders.Application.UseCases.Payments;
 
 internal class MockPayOrderUseCase : IPayOrderUseCase
 {
@@ -23,10 +23,13 @@ internal class MockPayOrderUseCase : IPayOrderUseCase
 
         await _unitOfWork.BeginTransactionAsync();
 
-        var result = order.PayForOrder();
+        var result = order.ApplyOrderPayment();
 
         if (!result.IsSuccess)
+        {
+            await _unitOfWork.RollbackAsync();
             return Result.Fail(result.Errors);
+        }
 
         await _unitOfWork.CommitAsync();
 

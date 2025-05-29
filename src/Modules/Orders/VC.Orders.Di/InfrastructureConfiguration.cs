@@ -26,7 +26,7 @@ public static class InfrastructureConfiguration
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = connectionStrings.Redis;
-            options.InstanceName = "cacheSalt:";
+            options.InstanceName = "ordersSalt:";
         });
 
         ConfigureRepositories(services);
@@ -48,6 +48,6 @@ public static class InfrastructureConfiguration
 
     private static void ConfigureImplementations(IServiceCollection services)
     {
-        services.AddSingleton<IIdempodencyKeyGenerator, GuidIdempodencyKeyGenerator>();
+        services.AddSingleton<IIdempodencyKeyGenerator, GuidIdempotencyKeyGenerator>();
     }
 }

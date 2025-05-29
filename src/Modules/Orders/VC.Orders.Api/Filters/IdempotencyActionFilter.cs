@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using VC.Orders.Repositories;
 using VC.Shared.Utilities;
@@ -26,7 +27,7 @@ internal class IdempotencyActionFilter : Attribute, IAsyncActionFilter
 
         if(cacheIdempotency is not null)
         {
-            context.Result = new ContentResult { StatusCode = 409, Content = "Operation is Running" };
+            context.Result = new ContentResult { StatusCode = StatusCodes.Status409Conflict, Content = "Operation is Running" };
             return;
         }
 
@@ -34,13 +35,13 @@ internal class IdempotencyActionFilter : Attribute, IAsyncActionFilter
 
         if(idempotency is null)
         {
-            context.Result = new ContentResult { StatusCode = 404, Content = "Idempotency Not Found" };
+            context.Result = new ContentResult { StatusCode = StatusCodes.Status404NotFound, Content = "Idempotency Not Found" };
             return;
         }
 
         if(idempotency.Status == IdempotencyStatus.Used)
         {
-            context.Result = new ContentResult { StatusCode = 409, Content = $"Idempotency Key is {IdempotencyStatus.Used}" };
+            context.Result = new ContentResult { StatusCode = StatusCodes.Status409Conflict, Content = $"Idempotency Key is {IdempotencyStatus.Used}" };
             return;
         }
 
