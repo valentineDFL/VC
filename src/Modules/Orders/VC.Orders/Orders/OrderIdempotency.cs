@@ -31,6 +31,7 @@ public class OrderIdempotency
         OrderId = orderId;
         Key = key;
         Status = IdempotencyStatus.Available;
+        CreatedOnUtc = DateTime.UtcNow;
     }
 
     public Guid Id { get; private set; }
@@ -40,6 +41,8 @@ public class OrderIdempotency
     public string Key { get; private set; }
 
     public IdempotencyStatus Status { get; private set; }
+
+    public DateTime CreatedOnUtc { get; private set; }
 
     public Result ChangeStateToUsed()
     {

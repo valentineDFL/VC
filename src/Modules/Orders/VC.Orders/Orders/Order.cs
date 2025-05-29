@@ -74,7 +74,7 @@ public class Order
 
         State = OrderState.Canceled;
 
-        _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
+        _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, OrderState.Canceled));
 
         return Result.Ok();
     }
@@ -88,6 +88,7 @@ public class Order
             return Result.Fail($"Order with {State} state cannot be paid");
 
         State = OrderState.Paid;
+        FinishedOnUtc = DateTime.UtcNow;
 
         _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
 

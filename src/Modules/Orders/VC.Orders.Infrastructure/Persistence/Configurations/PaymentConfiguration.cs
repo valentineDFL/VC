@@ -17,6 +17,9 @@ internal class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         {
             psBuilder.HasKey(ps => ps.Id);
 
+            psBuilder.Property(ps => ps.Id)
+                .ValueGeneratedNever();
+
             psBuilder.Property(ps => ps.PaymentId)
                 .IsRequired();
 

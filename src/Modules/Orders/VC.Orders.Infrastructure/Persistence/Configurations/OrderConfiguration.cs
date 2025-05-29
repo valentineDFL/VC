@@ -27,6 +27,9 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
         {
             osBuilder.HasKey(os => os.Id);
 
+            osBuilder.Property(os => os.Id)
+                .ValueGeneratedNever();
+
             osBuilder.Property(os => os.OrderId)
                 .IsRequired();
 

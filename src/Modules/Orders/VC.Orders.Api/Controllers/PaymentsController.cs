@@ -42,6 +42,6 @@ public class PaymentsController : ControllerBase
         if(!result.IsSuccess)
             return BadRequest(result);
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 }

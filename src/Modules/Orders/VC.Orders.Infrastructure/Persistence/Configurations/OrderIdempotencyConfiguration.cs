@@ -19,5 +19,8 @@ internal class OrderIdempotencyConfiguration : IEntityTypeConfiguration<OrderIde
 
         builder.Property(oi => oi.Status)
             .IsRequired();
+
+        builder.Property(oi => oi.CreatedOnUtc)
+            .IsRequired();
     }
 }

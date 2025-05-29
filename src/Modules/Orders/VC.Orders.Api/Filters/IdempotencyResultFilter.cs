@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
 using VC.Orders.Application;
 using VC.Orders.Orders;
 using VC.Orders.Repositories;
+using VC.Shared.Utilities;
 
 namespace VC.Orders.Api.Filters;
 
 internal class IdempotencyResultFilter : Attribute, IAsyncResultFilter
 {
-    public const string OrderId = "orderId";
-
     private readonly IUnitOfWork _unitOfWork;
     private readonly IIdempodencyKeyGenerator _keyGenerator;
 
@@ -25,7 +22,7 @@ internal class IdempotencyResultFilter : Attribute, IAsyncResultFilter
     {
         var httpContext = context.HttpContext;
 
-        var orderIdString = (string)httpContext.Request.RouteValues[OrderId];
+        var orderIdString = (string)httpContext.Request.RouteValues[IdempotencyActionFilter.OrderId];
 
         var orderId = Guid.Parse(orderIdString);
 
@@ -38,13 +35,7 @@ internal class IdempotencyResultFilter : Attribute, IAsyncResultFilter
         await _unitOfWork.OrdersIdempotencies.AddAsync(idempotency);
         await _unitOfWork.CommitAsync();
 
-        var resultType = context.Result.GetType();
-
-        if(context.Result is ObjectResult contentResult)
-        {
-            if (contentResult.StatusCode == (int)HttpStatusCode.OK)
-                context.Result = new ObjectResult(key) { StatusCode = StatusCodes.Status200OK };
-        }
+        httpContext.Response.Headers.Add(IdempotencyKey.Key, key);
 
         await next.Invoke();
     }

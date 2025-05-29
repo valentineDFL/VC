@@ -22,7 +22,15 @@ internal class CancelOrderUseCase : ICancelOrderUseCase
 
         await _unitOfWork.BeginTransactionAsync();
 
-        order.CancelOrder();
+        int fff = 0;
+
+        var result = order.CancelOrder();
+        if (!result.IsSuccess)
+        {
+            await _unitOfWork.RollbackAsync();
+            return Result.Fail(result.Errors);
+        }
+
         await _unitOfWork.CommitAsync();
 
         return Result.Ok();
