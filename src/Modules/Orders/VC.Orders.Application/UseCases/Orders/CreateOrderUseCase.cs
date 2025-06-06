@@ -4,8 +4,10 @@ using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Orders;
 using VC.Orders.Payments;
 using VC.Orders.Repositories;
+using VC.Shared.RabbitMQIntegration.Publishers.Interfaces;
 using VC.Shared.Utilities.ApiClient;
 using VC.Shared.Utilities.CoreModuleDtos;
+using VC.Shared.Utilities.RabbitEnums;
 
 namespace VC.Orders.Application.UseCases.Orders;
 
@@ -15,11 +17,17 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
     private readonly ICoreServiceApiClient _serviceApiClient;
     private readonly IIdempodencyKeyGenerator _keyGenerator;
 
-    public CreateOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient, IIdempodencyKeyGenerator keyGenerator)
+    private readonly IPublisher _publisher;
+
+    public CreateOrderUseCase(IUnitOfWork unitOfWork, 
+                              ICoreServiceApiClient serviceClient, 
+                              IIdempodencyKeyGenerator keyGenerator,
+                              IPublisher publisher)
     {
         _unitOfWork = unitOfWork;
         _serviceApiClient = serviceClient;
         _keyGenerator = keyGenerator;
+        _publisher = publisher;
     }
 
     public async Task<Result<CreateOrderResponseParams>> ExecuteAsync(CreateOrderParams @params, CancellationToken cts)
@@ -51,6 +59,8 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
         await _unitOfWork.OrdersIdempotencies.AddAsync(idempodency);
 
         await _unitOfWork.CommitAsync(cts);
+
+        await _publisher.PublishAsync(order, Exchanges.OrdersDirect, RoutingKeys.OrdersKey, Queues.Orders);
 
         var result = new CreateOrderResponseParams(orderId, idempodency.Key);
 

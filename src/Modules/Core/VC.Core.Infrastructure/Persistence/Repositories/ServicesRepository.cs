@@ -10,6 +10,9 @@ internal class ServicesRepository : BaseRepository<Service, Guid>, IServicesRepo
     {
     }
 
-    public Task<bool> ExistsAsync(string title, CancellationToken cancellationToken = default)
-        => DbSet.AnyAsync(s => s.Title == title, cancellationToken);
+    public async Task<bool> ExistsAsync(string title, CancellationToken cancellationToken = default)
+        => await DbSet.AnyAsync(s => s.Title == title, cancellationToken);
+
+    public async Task<Service?> GetByAssignedEmployeeIdAsync(Guid employeeId)
+        => await DbSet.FirstOrDefaultAsync(s => s.EmployeeAssignments.Any(e => e.EmployeeId == employeeId));
 }

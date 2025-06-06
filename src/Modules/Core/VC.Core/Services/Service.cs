@@ -5,6 +5,8 @@ namespace VC.Core.Services;
 
 public class Service : AggregateRoot<Guid>, IHasTenantId
 {
+    public const int WindowForRecordingInCaseOfCancellationInMinutes = 30;
+
     private List<EmployeeAssignment> _employeeAssignments = [];
     private List<Guid> _requiredResources = [];
     

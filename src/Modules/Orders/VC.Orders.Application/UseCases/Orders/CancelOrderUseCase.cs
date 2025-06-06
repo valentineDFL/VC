@@ -1,16 +1,20 @@
 ﻿using FluentResults;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Repositories;
+using VC.Shared.RabbitMQIntegration.Publishers.Interfaces;
+using VC.Shared.Utilities.RabbitEnums;
 
 namespace VC.Orders.Application.UseCases.Orders;
 
 internal class CancelOrderUseCase : ICancelOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPublisher _publisher;
 
-    public CancelOrderUseCase(IUnitOfWork unitOfWork)
+    public CancelOrderUseCase(IUnitOfWork unitOfWork, IPublisher publisher)
     {
         _unitOfWork = unitOfWork;
+        _publisher = publisher;
     }
 
     public async Task<Result> ExecuteAsync(Guid orderId, CancellationToken cts = default)
@@ -22,8 +26,6 @@ internal class CancelOrderUseCase : ICancelOrderUseCase
 
         await _unitOfWork.BeginTransactionAsync();
 
-        int fff = 0;
-
         var result = order.CancelOrder();
         if (!result.IsSuccess)
         {
@@ -32,6 +34,8 @@ internal class CancelOrderUseCase : ICancelOrderUseCase
         }
 
         await _unitOfWork.CommitAsync();
+
+        await _publisher.PublishAsync(order, Exchanges.ChangedOrdersDirect, RoutingKeys.ChangedOrdersKey, Queues.ChangedOrders, cts);
 
         return Result.Ok();
     }
