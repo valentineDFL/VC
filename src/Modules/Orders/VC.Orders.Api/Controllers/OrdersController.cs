@@ -17,7 +17,7 @@ public class OrdersController : ControllerBase
                                              Guid id,
                                              CancellationToken cts)
     {
-        var order = await useCase.ExecuteAsync(id);
+        var order = await useCase.ExecuteAsync(id, cts);
 
         if(!order.IsSuccess)
             return NotFound();

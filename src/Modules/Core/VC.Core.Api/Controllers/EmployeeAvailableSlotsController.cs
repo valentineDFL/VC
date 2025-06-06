@@ -12,6 +12,11 @@ public class EmployeeAvailableSlotsController : ApiController
         DateOnly date,
         IGetEmployeeAvailableSlotsUseCase useCase)
     {
-        return Ok(await useCase.ExecuteAsync(new GetEmployeeAvailableSlotsParams(employeeId, date)));
+        var availableSlots = await useCase.ExecuteAsync(new GetEmployeeAvailableSlotsParams(employeeId, date));
+
+        if(!availableSlots.IsSuccess)
+            return NotFound(availableSlots);
+
+        return Ok(availableSlots.Value);
     }
 }

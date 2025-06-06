@@ -23,6 +23,7 @@ internal class CreatedOrdersConsumer : IConsumer
     {
         _rabbitClient = rabbitClient;
         _serviceScopeFactory = scopeFactory;
+        _historyFactory = historyFactory;
     }
 
     public async Task OnConsumeAsync(object sender, BasicDeliverEventArgs eventArgs)
