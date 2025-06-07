@@ -1,14 +1,15 @@
 ﻿using FluentResults;
 using System.Text;
+using VC.Orders.Common;
 using VC.Orders.Orders;
 
 namespace VC.Orders.Payments;
 
-public class Payment
+public class Payment : AggregateRoot<Guid>
 {
     private List<PaymentStatus> _paymentStatuses;
 
-    public Payment(Guid id, Guid orderId, Order order)
+    public Payment(Guid id, Guid orderId, Order order) : base(id)
     {
         var errors = new StringBuilder();
 
@@ -21,7 +22,6 @@ public class Payment
         if (errors.Length > 0)
             throw new ArgumentException(errors.ToString());
 
-        Id = id;
         OrderId = orderId;
         Order = order!;
         State = PaymentState.Initialed;
@@ -31,9 +31,8 @@ public class Payment
         _paymentStatuses.Add(new PaymentStatus(Guid.CreateVersion7(), Id, State));
     }
 
-    protected Payment() { }
-
-    public Guid Id { get; private set; }
+    private Payment(Guid id) : base(id)
+    { }
 
     public Guid OrderId { get; private set; }
 

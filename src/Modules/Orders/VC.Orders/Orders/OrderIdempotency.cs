@@ -1,14 +1,15 @@
 ﻿using FluentResults;
 using System.Text;
+using VC.Orders.Common;
 using VC.Shared.Utilities;
 
 namespace VC.Orders.Orders;
 
-public class OrderIdempotency
+public class OrderIdempotency : AggregateRoot<Guid>
 {
     public const int KeyLength = 32;
 
-    public OrderIdempotency(Guid id, Guid orderId, string key)
+    public OrderIdempotency(Guid id, Guid orderId, string key) : base(id)
     {
         var errors = new StringBuilder();
 
@@ -27,14 +28,11 @@ public class OrderIdempotency
         if (errors.Length > 0)
             throw new ArgumentException(errors.ToString());
 
-        Id = id;
         OrderId = orderId;
         Key = key;
         Status = IdempotencyStatus.Available;
         CreatedOnUtc = DateTime.UtcNow;
     }
-
-    public Guid Id { get; private set; }
 
     public Guid OrderId { get; private set; }
 

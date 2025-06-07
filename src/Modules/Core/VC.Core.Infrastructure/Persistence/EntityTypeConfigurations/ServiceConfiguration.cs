@@ -28,7 +28,8 @@ internal class ServiceConfiguration : IEntityTypeConfiguration<Service>
         builder.Property(s => s.CategoryId)
             .HasColumnName("CategoryId");
 
-        builder.Property(s => s.RequiredResources).HasColumnType("uuid[]");
+        builder.Property(s => s.RequiredResources)
+            .HasColumnType("uuid[]");
 
         builder.OwnsMany(
             s => s.EmployeeAssignments, 

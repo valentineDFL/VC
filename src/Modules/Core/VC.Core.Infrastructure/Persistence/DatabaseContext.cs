@@ -15,10 +15,16 @@ public class DatabaseContext : DbContext
     { }
 
     public DbSet<Resource> Resources { get; set; }
+
     public DbSet<Service> Services { get; set; }
+
     public DbSet<Category> Categories { get; set; }
+
     public DbSet<Employee> Employees { get; set; }
+
     public DbSet<WorkSchedule> WorkSchedules { get; set; }
+
+    public DbSet<OrderSnapshot> OrdersHistory { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
