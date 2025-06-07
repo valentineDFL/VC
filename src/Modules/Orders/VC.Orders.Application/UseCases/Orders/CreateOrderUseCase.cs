@@ -79,7 +79,7 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
         if (availableSlots.Any(avs => avs.From == serviceTime))
             return Result.Ok();
 
-        return Result.Fail("Slot Alredy Taken");
+        return Result.Fail("Slot non available");
     }
 
     private async Task AddOrderThingsToDbAsync(Order order, Payment payment, OrderIdempotency idempotency, CancellationToken cts = default)
