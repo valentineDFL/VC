@@ -27,6 +27,10 @@ public class AddWorkingHourExceptionUseCase(
         if (workSchedule is null)
             return Result.Fail("График работы не найден для указанной даты");
 
+        var resolveResult = await _tenantResolver.ResolveAsync();
+        if (!resolveResult.IsSuccess)
+            return Result.Fail(resolveResult.Errors);
+
         var workingHourException = new WorkingHourException(
             Guid.CreateVersion7(),
             parameters.EmployeeId,
@@ -34,7 +38,7 @@ public class AddWorkingHourExceptionUseCase(
             parameters.IsDayOff,
             parameters.StartTime,
             parameters.EndTime,
-            _tenantResolver.Resolve());
+            resolveResult.Value);
 
         workSchedule.AddException(workingHourException);
         await _unitOfWork.CommitAsync(cancellationToken);

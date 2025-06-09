@@ -12,6 +12,6 @@ internal static class ApplicationConfiguration
     {
         services.AddScoped<IUserRepository, UserRepository>();
         
-        services.AddValidatorsFromAssemblyContaining<SignUpValidation>(includeInternalTypes: true);
+        services.AddValidatorsFromAssemblyContaining<SignUpValidator>(includeInternalTypes: true);
     }
 }

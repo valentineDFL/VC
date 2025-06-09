@@ -6,7 +6,6 @@ using VC.Auth.Application.Abstractions;
 using VC.Auth.Application.Services;
 using VC.Auth.Infrastructure;
 using VC.Auth.Infrastructure.Persistence.DataContext;
-using VC.Auth.Infrastructure.Persistence.Models;
 using VC.Auth.Interfaces;
 
 namespace VC.Auth.Di;
@@ -28,11 +27,8 @@ internal static class InfrastructureConfiguration
         services.AddScoped<IEncrypt, Encrypt>();
         services.AddScoped<IPasswordSaltGenerator, PasswordSaltGenerator>();
 
-        services.AddScoped<IJwtOptions, JwtOptions>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IWebCookie, WebCookie>();
         services.AddScoped<IAuthService, AuthService>();
-
-        services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
-        services.Configure<CookiesSettings>(configuration.GetSection("Cookies"));
     }
 }

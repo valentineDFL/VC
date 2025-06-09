@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VC.Auth.Api.Validations;
-using VC.Auth.Application;
 using VC.Auth.Application.Abstractions;
 using VC.Auth.Application.Models;
 using VC.Auth.Application.Validators;
@@ -14,23 +13,23 @@ namespace VC.Auth.Api.Controllers;
 public class AuthsController(IAuthService authService) : ControllerBase
 {
     [HttpPost("sign-up")]
-    public async Task<ActionResult> SignUp(RegisterAuthParams authParams)
+    public async Task<ActionResult> SignUpAsync(RegisterAuthParams authParams)
     {
-        var validator = new SignUpValidation();
+        var validator = new SignUpValidator();
         var result = await validator.ValidateAsync(authParams);
         if (!result.IsValid)
-            return result.ToErrorActionResult();
+            return BadRequest(result);
 
-        var response = await authService.SignUpAsync(authParams);
+        var registrationResult = await authService.SignUpAsync(authParams);
 
-        if (response is null)
-            return BadRequest("Sign up failed");
+        if (!registrationResult.IsSuccess)
+            return BadRequest(registrationResult);
 
         return Ok(result);
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(LoginAuthParams authParams)
+    public async Task<ActionResult> LoginAsync(LoginAuthParams authParams)
     {
         var validator = new LoginValidation();
         var result = await validator.ValidateAsync(authParams);
@@ -44,9 +43,13 @@ public class AuthsController(IAuthService authService) : ControllerBase
 
     [HttpPost("logout")]
     [Authorize]
-    public async Task<ActionResult> Logout()
+    public async Task<ActionResult> LogoutAsync()
     {
-        var result = authService.LogoutAsync();
+        var result = await authService.LogoutAsync();
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
         return Ok(result);
     }
 }

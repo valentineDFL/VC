@@ -2,7 +2,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using VC.Auth.Application.Abstractions;
-using VC.Auth.Infrastructure.Persistence.Models;
+using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Application.Services;
 

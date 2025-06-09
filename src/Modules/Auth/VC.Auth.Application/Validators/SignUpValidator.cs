@@ -3,9 +3,9 @@ using VC.Auth.Application.Models;
 
 namespace VC.Auth.Application.Validators;
 
-public class SignUpValidation : AbstractValidator<RegisterAuthParams>
+public class SignUpValidator : AbstractValidator<RegisterAuthParams>
 {
-    public SignUpValidation()
+    public SignUpValidator()
     {
         RuleFor(x => x.Username)
             .NotEmpty().WithMessage("Username is required");

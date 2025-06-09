@@ -2,10 +2,11 @@ using FluentResults;
 using Microsoft.Extensions.Options;
 using VC.Auth.Application.Abstractions;
 using VC.Auth.Application.Models;
-using VC.Auth.Infrastructure.Persistence.Models;
 using VC.Auth.Interfaces;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
+using VC.Shared.Utilities.Constants;
+using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Application.Services;
 
@@ -13,7 +14,7 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IEncrypt _encrypt;
-    private readonly IJwtOptions _jwtOptions;
+    private readonly IJwtTokenGenerator _jwtOptions;
     private readonly IWebCookie _webCookie;
     private readonly IPasswordSaltGenerator _passwordSaltGenerator;
     private readonly CookiesSettings _cookiesSettings;
@@ -21,7 +22,7 @@ public class AuthService : IAuthService
     public AuthService(
         IUserRepository userRepository,
         IEncrypt encrypt,
-        IJwtOptions jwtOptions,
+        IJwtTokenGenerator jwtOptions,
         IWebCookie webCookie,
         IPasswordSaltGenerator passwordSaltGenerator,
         IOptions<CookiesSettings> cookiesSettings)
@@ -63,24 +64,32 @@ public class AuthService : IAuthService
     {
         var user = await _userRepository.GetByEmailAsync(authParams.Email);
         if (user is null)
-            return Result.Fail("Invalid username or password");
+            return Result.Fail("Not Found");
 
         bool verified = user.PasswordHash == _encrypt.HashPassword(authParams.Password, user.Salt);
 
         if (!verified)
             return Result.Fail("Invalid password");
 
-        _webCookie.AddSecure(_cookiesSettings.RememberMeCookieName, _jwtOptions.GenerateToken(user));
+        var jwtTokenDatas = new Dictionary<string, string>()
+        {
+            [JwtClaimTypes.UserId] = user.Id.ToString(),
+            [JwtClaimTypes.TenantId] = user.Id.ToString(),
+        };
+
+        var jwtToken = _jwtOptions.GenerateToken(jwtTokenDatas);
+
+        _webCookie.AddSecure(_cookiesSettings.RememberMeCookieName, jwtToken);
 
         return Result.Ok();
     }
 
     public async Task<Result> LogoutAsync()
     {
-        var result = _webCookie.DeleteAsync(_cookiesSettings.RememberMeCookieName);
+        var result = await _webCookie.DeleteAsync(_cookiesSettings.RememberMeCookieName);
 
-        if (!result.IsCompletedSuccessfully)
-            return Result.Fail("Logout failed");
+        if (!result.IsSuccess)
+            return Result.Fail(result.Errors);
 
         return Result.Ok();
     }

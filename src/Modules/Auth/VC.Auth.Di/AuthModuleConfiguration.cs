@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using VC.Auth.Api.OpenApi;
 using VC.Auth.Infrastructure.Persistence;
-using VC.Auth.Infrastructure.Persistence.Models;
+using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Di;
 
@@ -18,8 +18,8 @@ public static class AuthModuleConfiguration
         services.ConfigureServicesApplication();
         services.ConfigureServicesOpenApi();
 
-        var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>();
-        var cookiesSettings = configuration.GetSection("Cookies").Get<CookiesSettings>();
+        var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+        var cookiesSettings = configuration.GetSection(nameof(CookiesSettings)).Get<CookiesSettings>();
 
         if (jwtSettings == null)
             throw new Exception("Jwt settings not found in configuration");
@@ -56,7 +56,7 @@ public static class AuthModuleConfiguration
         services.AddAuthorization(x =>
             x.AddPolicy(Permissions.User, builder =>
                 builder.Requirements
-                    .Add(new PermissionRequirements(Permissions.User, Permissions.Tenant))));
+                    .Add(new PermissionRequirement(Permissions.User, Permissions.Tenant))));
 
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }

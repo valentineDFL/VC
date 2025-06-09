@@ -1,31 +1,29 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using VC.Auth.Constants;
-using VC.Auth.Infrastructure.Persistence.Models;
 using VC.Auth.Interfaces;
 using VC.Auth.Models;
+using VC.Shared.Utilities.Constants;
+using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Infrastructure;
 
-public class JwtOptions : IJwtOptions
+public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
 
-    public JwtOptions(IOptions<JwtSettings> jwtOptions)
+    public JwtTokenGenerator(IOptions<JwtSettings> jwtOptions)
         => _jwtSettings = jwtOptions.Value;
 
-    public string GenerateToken(User user)
+    public string GenerateToken(Dictionary<string, string> datas)
     {
-        var claims = new List<Claim>
-        {
-            new Claim(JwtClaimTypes.Id, user.Id.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
-            new Claim(ClaimTypes.Role, JwtClaimTypes.User),
-            new Claim(ClaimTypes.Role, JwtClaimTypes.Tenant)
-        };
+        var claims = new List<Claim>();
+
+        foreach(var item in datas)
+            claims.Add(new Claim(item.Key, item.Value));
 
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
