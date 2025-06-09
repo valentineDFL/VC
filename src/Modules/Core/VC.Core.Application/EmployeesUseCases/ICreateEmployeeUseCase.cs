@@ -12,13 +12,9 @@ public class CreateEmployeeUseCase(IUnitOfWork _unitOfWork, ITenantResolver _ten
 {
     public async Task<Result> ExecuteAsync(CreateEmployeeParams parameters, CancellationToken cancellationToken = default)
     {
-        var resolveResult = await _tenantResolver.ResolveAsync();
-        if (!resolveResult.IsSuccess)
-            return Result.Fail(resolveResult.Errors);
-
         var employee = new Employee(
             Guid.CreateVersion7(),
-            resolveResult.Value,
+            _tenantResolver.Resolve(),
             parameters.FullName)
         {
             Specialisation = parameters.Specialisation

@@ -3,7 +3,7 @@ using Mapster;
 using VC.Orders.Application.Dtos.Get;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Repositories;
-using VC.Shared.Utilities.ApiClient;
+using VC.Shared.Utilities.ApiClients.CoreModule.Interfaces;
 
 namespace VC.Orders.Application.UseCases.Orders;
 
@@ -11,9 +11,9 @@ internal class GetOrderUseCase : IGetOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly ICoreServiceApiClient _serviceClient;
+    private readonly ICoreServicesApiClient _serviceClient;
 
-    public GetOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient)
+    public GetOrderUseCase(IUnitOfWork unitOfWork, ICoreServicesApiClient serviceClient)
     {
         _unitOfWork = unitOfWork;
         _serviceClient = serviceClient;

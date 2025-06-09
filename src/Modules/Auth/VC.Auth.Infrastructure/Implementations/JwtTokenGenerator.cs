@@ -1,15 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using VC.Auth.Interfaces;
-using VC.Auth.Models;
-using VC.Shared.Utilities.Constants;
 using VC.Shared.Utilities.Options.Jwt;
 
-namespace VC.Auth.Infrastructure;
+namespace VC.Auth.Infrastructure.Implementations;
 
 public class JwtTokenGenerator : IJwtTokenGenerator
 {

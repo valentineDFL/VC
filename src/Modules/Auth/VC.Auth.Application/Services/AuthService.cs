@@ -5,7 +5,6 @@ using VC.Auth.Application.Models;
 using VC.Auth.Interfaces;
 using VC.Auth.Models;
 using VC.Auth.Repositories;
-using VC.Shared.Utilities.Constants;
 using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Application.Services;
@@ -13,25 +12,34 @@ namespace VC.Auth.Application.Services;
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IEncrypt _encrypt;
-    private readonly IJwtTokenGenerator _jwtOptions;
+
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IJwtClaimsGenerator _jwtClaimsGenerator;
+
     private readonly IWebCookie _webCookie;
-    private readonly IPasswordSaltGenerator _passwordSaltGenerator;
     private readonly CookiesSettings _cookiesSettings;
+
+    private readonly IEncrypter _encrypter;
+    private readonly IPasswordSaltGenerator _passwordSaltGenerator;
 
     public AuthService(
         IUserRepository userRepository,
-        IEncrypt encrypt,
-        IJwtTokenGenerator jwtOptions,
+        IEncrypter encrypter,
+        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtClaimsGenerator claimsGenerator,
         IWebCookie webCookie,
         IPasswordSaltGenerator passwordSaltGenerator,
         IOptions<CookiesSettings> cookiesSettings)
     {
         _userRepository = userRepository;
-        _encrypt = encrypt;
-        _jwtOptions = jwtOptions;
-        _webCookie = webCookie;
+
+        _encrypter = encrypter;
         _passwordSaltGenerator = passwordSaltGenerator;
+
+        _jwtTokenGenerator = jwtTokenGenerator;
+        _jwtClaimsGenerator = claimsGenerator;
+
+        _webCookie = webCookie;
         _cookiesSettings = cookiesSettings.Value;
     }
 
@@ -44,7 +52,7 @@ public class AuthService : IAuthService
             Id = Guid.CreateVersion7(),
             Username = authParams.Username,
             Email = authParams.Email,
-            PasswordHash = _encrypt.HashPassword(authParams.Password, salt),
+            PasswordHash = _encrypter.HashPassword(authParams.Password, salt),
             Salt = salt,
             Permissions = new List<Permission>()
             {
@@ -66,18 +74,13 @@ public class AuthService : IAuthService
         if (user is null)
             return Result.Fail("Not Found");
 
-        bool verified = user.PasswordHash == _encrypt.HashPassword(authParams.Password, user.Salt);
+        bool verified = user.PasswordHash == _encrypter.HashPassword(authParams.Password, user.Salt);
 
         if (!verified)
             return Result.Fail("Invalid password");
 
-        var jwtTokenDatas = new Dictionary<string, string>()
-        {
-            [JwtClaimTypes.UserId] = user.Id.ToString(),
-            [JwtClaimTypes.TenantId] = user.Id.ToString(),
-        };
-
-        var jwtToken = _jwtOptions.GenerateToken(jwtTokenDatas);
+        var jwtTokenClaims = await _jwtClaimsGenerator.GenerateClaimsByUserAsync(user);
+        var jwtToken = _jwtTokenGenerator.GenerateToken(jwtTokenClaims);
 
         _webCookie.AddSecure(_cookiesSettings.RememberMeCookieName, jwtToken);
 

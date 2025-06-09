@@ -4,7 +4,7 @@ using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Orders;
 using VC.Orders.Payments;
 using VC.Orders.Repositories;
-using VC.Shared.Utilities.ApiClient;
+using VC.Shared.Utilities.ApiClients.CoreModule.Interfaces;
 using VC.Shared.Utilities.CoreModuleDtos;
 
 namespace VC.Orders.Application.UseCases.Orders;
@@ -12,10 +12,10 @@ namespace VC.Orders.Application.UseCases.Orders;
 internal class CreateOrderUseCase : ICreateOrderUseCase
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ICoreServiceApiClient _serviceApiClient;
+    private readonly ICoreServicesApiClient _serviceApiClient;
     private readonly IIdempodencyKeyGenerator _keyGenerator;
 
-    public CreateOrderUseCase(IUnitOfWork unitOfWork, ICoreServiceApiClient serviceClient, IIdempodencyKeyGenerator keyGenerator)
+    public CreateOrderUseCase(IUnitOfWork unitOfWork, ICoreServicesApiClient serviceClient, IIdempodencyKeyGenerator keyGenerator)
     {
         _unitOfWork = unitOfWork;
         _serviceApiClient = serviceClient;

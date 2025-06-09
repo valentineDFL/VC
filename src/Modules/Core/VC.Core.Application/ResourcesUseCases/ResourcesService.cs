@@ -17,13 +17,9 @@ public class ResourcesService(
 
     public async Task<Result> CreateAsync(CreateResourceParams parameters)
     {
-        var resolveResult = await _tenantResolver.ResolveAsync();
-        if (!resolveResult.IsSuccess)
-            return Result.Fail(resolveResult.Errors);
-
         var resource = new Resource(
             Guid.CreateVersion7(),
-            resolveResult.Value,
+            _tenantResolver.Resolve(),
             parameters.Title,
             parameters.Count)
         {

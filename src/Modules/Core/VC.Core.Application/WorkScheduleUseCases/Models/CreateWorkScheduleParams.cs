@@ -27,14 +27,10 @@ public class CreateWorkScheduleUseCase(
         if(workSchedule is not null)
             return Result.Fail("У сотрудника уже есть график работы");
 
-        var resolveResult = await _tenantResolver.ResolveAsync();
-        if (!resolveResult.IsSuccess)
-            return Result.Fail(resolveResult.Errors);
-
         workSchedule = new WorkSchedule(
             Guid.CreateVersion7(),
             employeeId: parameters.EmployeeId,
-            resolveResult.Value);
+            _tenantResolver.Resolve());
         
         foreach(var item in parameters.Items.Select(i => new WorkScheduleItem(i.DayOfWeek, i.StartTime, i.EndTime)))
             workSchedule.SetItem(item);

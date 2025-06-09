@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VC.Auth.Api.Helpers;
 using VC.Auth.Application.Abstractions;
 using VC.Auth.Application.Services;
-using VC.Auth.Infrastructure;
+using VC.Auth.Infrastructure.Implementations;
 using VC.Auth.Infrastructure.Persistence.DataContext;
 using VC.Auth.Interfaces;
 
@@ -24,7 +24,7 @@ internal static class InfrastructureConfiguration
 
     private static void ConfigureInfrastructure(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IEncrypt, Encrypt>();
+        services.AddScoped<IEncrypter, Encrypt>();
         services.AddScoped<IPasswordSaltGenerator, PasswordSaltGenerator>();
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();

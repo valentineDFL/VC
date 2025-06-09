@@ -3,7 +3,7 @@ using VC.Auth.Interfaces;
 
 namespace VC.Auth.Api.Helpers;
 
-public class Encrypt : IEncrypt
+public class Encrypt : IEncrypter
 {
     public string HashPassword(string password, string? salt)
         => Convert.ToBase64String(KeyDerivation.Pbkdf2(

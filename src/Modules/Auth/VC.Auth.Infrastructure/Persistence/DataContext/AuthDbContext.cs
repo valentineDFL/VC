@@ -22,4 +22,9 @@ public class AuthDbContext : DbContext
 
         modelBuilder.HasDefaultSchema(Schema);
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+
+    }
 }

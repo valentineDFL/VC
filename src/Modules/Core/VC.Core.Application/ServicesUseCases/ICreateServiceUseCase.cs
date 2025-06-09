@@ -25,13 +25,9 @@ public class CreateServiceUseCase(
         if (resources.Count != (parameters.RequiredResources?.Count ?? 0))
             return Result.Fail<Guid>("One or more resources do not exist.");
 
-        var resolveResult = await _tenantResolver.ResolveAsync();
-        if (!resolveResult.IsSuccess)
-            return Result.Fail(resolveResult.Errors);
-
         var service = new Service(
             Guid.CreateVersion7(),
-            resolveResult.Value,
+            _tenantResolver.Resolve(),
             parameters.Title,
             parameters.BasePrice,
             parameters.BaseDuration) { Description = parameters.Description, CategoryId = parameters.CategoryId };
