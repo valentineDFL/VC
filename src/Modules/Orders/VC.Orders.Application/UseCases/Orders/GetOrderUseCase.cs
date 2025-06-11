@@ -3,7 +3,7 @@ using Mapster;
 using VC.Orders.Application.Dtos.Get;
 using VC.Orders.Application.UseCases.Orders.Interfaces;
 using VC.Orders.Repositories;
-using VC.Shared.Utilities.ApiClient.CoreModule.Interfaces;
+using VC.Shared.Utilities.ApiClients.CoreModule.Interfaces;
 
 namespace VC.Orders.Application.UseCases.Orders;
 

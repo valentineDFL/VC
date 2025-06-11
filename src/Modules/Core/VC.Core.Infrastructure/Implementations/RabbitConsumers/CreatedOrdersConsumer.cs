@@ -51,12 +51,12 @@ internal class CreatedOrdersConsumer : IConsumer
         var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += OnConsumeAsync;
 
-        var queue = Queues.Orders.ToString();
+        var queue = Queues.CreatedOrders.ToString();
 
         await _channel.QueueDeclareAsync(queue, true, false, false, null);
         await _channel.QueueBindAsync(queue, 
-                                      Exchanges.OrdersDirect.ToString(), 
-                                      RoutingKeys.OrdersKey.ToString(), 
+                                      Exchanges.CreatedOrdersDirect.ToString(), 
+                                      RoutingKeys.CreatedOrdersKey.ToString(), 
                                       cancellationToken: cts);
 
         await _channel.BasicConsumeAsync(queue, false, consumer);

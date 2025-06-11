@@ -35,7 +35,7 @@ internal class CancelOrderUseCase : ICancelOrderUseCase
 
         await _unitOfWork.CommitAsync();
 
-        await _publisher.PublishAsync(order, Exchanges.ChangedOrdersDirect, RoutingKeys.ChangedOrdersKey, Queues.ChangedOrders, cts);
+        await _publisher.PublishAsync(order, Exchanges.ChangedOrdersDirect, RoutingKeys.ChangedOrdersKey, cts);
 
         return Result.Ok();
     }

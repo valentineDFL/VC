@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VC.Auth.Api.Validations;
-using VC.Auth.Application;
 using VC.Auth.Application.Abstractions;
 using VC.Auth.Application.Models;
 using VC.Auth.Application.Validators;

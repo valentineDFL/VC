@@ -5,7 +5,7 @@ using VC.Orders.Orders;
 using VC.Orders.Payments;
 using VC.Orders.Repositories;
 using VC.Shared.RabbitMQIntegration.Publishers.Interfaces;
-using VC.Shared.Utilities.ApiClient.CoreModule.Interfaces;
+using VC.Shared.Utilities.ApiClients.CoreModule.Interfaces;
 using VC.Shared.Utilities.RabbitEnums;
 
 namespace VC.Orders.Application.UseCases.Orders;
@@ -61,7 +61,7 @@ internal class CreateOrderUseCase : ICreateOrderUseCase
 
         await AddOrderThingsToDbAsync(order, payment, idempotency, cts);
 
-        await _publisher.PublishAsync(order, Exchanges.OrdersDirect, RoutingKeys.OrdersKey, Queues.Orders);
+        await _publisher.PublishAsync(order, Exchanges.CreatedOrdersDirect, RoutingKeys.CreatedOrdersKey);
 
         var result = new CreateOrderResponseParams(orderId, idempotency.Key);
 

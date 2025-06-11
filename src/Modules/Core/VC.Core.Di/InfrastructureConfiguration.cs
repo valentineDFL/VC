@@ -11,7 +11,6 @@ using VC.Core.Infrastructure.Persistence.Repositories;
 using VC.Shared.RabbitMQIntegration.Consumers.Interfaces;
 using VC.Core.Infrastructure.Implementations.RabbitConsumers;
 using VC.Core.Infrastructure.BackgroundServices;
-using RabbitMQ.Client.Events;
 
 namespace VC.Core.Di;
 
