@@ -12,5 +12,5 @@ public class User
 
     public string Salt { get; set; }
 
-    public ICollection<Permission> Permissions { get; set; }
+    public List<Permission> Permissions { get; set; }
 }

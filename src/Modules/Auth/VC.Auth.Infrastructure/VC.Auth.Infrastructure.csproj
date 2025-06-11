@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.RabbitMQIntegration\VC.Shared.RabbitMQIntegration.csproj" />
         <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
         <ProjectReference Include="..\VC.Auth\VC.Auth.csproj" />
     </ItemGroup>
@@ -17,5 +18,11 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
     </ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>VC.Auth.Di</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Infrastructure.Implementations;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+internal class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
 

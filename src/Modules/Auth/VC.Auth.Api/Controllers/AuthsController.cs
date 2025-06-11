@@ -25,7 +25,7 @@ public class AuthsController(IAuthService authService) : ControllerBase
         if (!registrationResult.IsSuccess)
             return BadRequest(registrationResult);
 
-        return Ok(result);
+        return Ok(registrationResult);
     }
 
     [HttpPost("login")]

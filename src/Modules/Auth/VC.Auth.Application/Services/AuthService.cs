@@ -58,6 +58,7 @@ public class AuthService : IAuthService
             {
                 new Permission()
                 {
+                    Id = Guid.CreateVersion7(),
                     Name = Permissions.User
                 }
             }

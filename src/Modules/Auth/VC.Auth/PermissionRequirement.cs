@@ -4,9 +4,9 @@ namespace VC.Auth;
 
 public class PermissionRequirement : IAuthorizationRequirement
 {
-    public string Permission { get; }
+    public string Permission { get; private set; }
 
-    public PermissionRequirement(string user, string permission)
+    public PermissionRequirement(string permission)
     {
         Permission = permission;
     }

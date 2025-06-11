@@ -12,14 +12,14 @@ public class PermissionAuthorizationHandler(IServiceScopeFactory _serviceScopeFa
         PermissionRequirement requirement)
     {
         var username = context.User.Claims.FirstOrDefault(
-            c => c.Type == ClaimTypes.Name)!.Value;
+            c => c.Type is ClaimTypes.Name)!.Value;
 
         using var scope = _serviceScopeFactory.CreateScope();
-        var userRepository = scope.ServiceProvider.GetService<IUserRepository>();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
 
         var permissions = await userRepository.GetPermissionsByUsernameAsync(username);
-        
+
         if (permissions.Any(x => x.Name == requirement.Permission))
             context.Succeed(requirement);
     }
-}
+}   

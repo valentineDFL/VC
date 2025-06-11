@@ -56,7 +56,7 @@ public static class AuthModuleConfiguration
         services.AddAuthorization(x =>
             x.AddPolicy(Permissions.User, builder =>
                 builder.Requirements
-                    .Add(new PermissionRequirement(Permissions.User, Permissions.Tenant))));
+                    .Add(new PermissionRequirement(Permissions.User))));
 
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }
