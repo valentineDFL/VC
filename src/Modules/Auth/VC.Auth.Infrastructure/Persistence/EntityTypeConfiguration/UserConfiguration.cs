@@ -14,6 +14,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId);
 
+        builder.Property(u => u.TenantId)
+            .IsRequired(false);
+
         builder.Property(x => x.Username)
             .IsRequired()
             .HasMaxLength(50);

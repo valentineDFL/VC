@@ -9,11 +9,16 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\Infrastructure\VC.Shared.RabbitMQIntegration\VC.Shared.RabbitMQIntegration.csproj" />
         <ProjectReference Include="..\..\..\..\vc.shared\VC.Shared\src\VC.Shared.Utilities\VC.Shared.Utilities.csproj" />
+        <ProjectReference Include="..\VC.Auth.Application\VC.Auth.Application.csproj" />
         <ProjectReference Include="..\VC.Auth\VC.Auth.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />

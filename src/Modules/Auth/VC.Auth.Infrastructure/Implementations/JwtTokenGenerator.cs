@@ -15,8 +15,11 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
     public JwtTokenGenerator(IOptions<JwtSettings> jwtOptions)
         => _jwtSettings = jwtOptions.Value;
 
-    public string GenerateToken(Dictionary<string, string> datas)
+    public string GenerateToken(Dictionary<string, string> datas, DateTime expireTime)
     {
+        if (expireTime < DateTime.UtcNow)
+            throw new ArgumentException("Expire time cannot be in the past");
+
         var claims = new List<Claim>();
 
         foreach(var item in datas)
@@ -29,7 +32,7 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
         var token = new JwtSecurityToken(
             claims: claims,
             signingCredentials: signingCredentials,
-            expires: DateTime.UtcNow.AddHours(_jwtSettings.ExpiresTime)
+            expires: expireTime
         );
 
         var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);

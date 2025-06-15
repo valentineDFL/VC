@@ -8,6 +8,8 @@ public interface IAuthService
     Task<Result> SignUpAsync(RegisterAuthParams authParams);
     
     Task<Result> LoginAsync(LoginAuthParams authParams);
-    
-    Task<Result>  LogoutAsync();
+
+    Task<Result> RefreshTokenAsync();
+
+    Task<Result> LogoutAsync();
 }

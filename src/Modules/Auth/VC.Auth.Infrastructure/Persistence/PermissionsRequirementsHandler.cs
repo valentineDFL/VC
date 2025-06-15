@@ -1,7 +1,7 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using VC.Auth.Repositories;
+using VC.Shared.Utilities.Constants;
 
 namespace VC.Auth.Infrastructure.Persistence;
 
@@ -11,8 +11,13 @@ public class PermissionAuthorizationHandler(IServiceScopeFactory _serviceScopeFa
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-        var username = context.User.Claims.FirstOrDefault(
-            c => c.Type is ClaimTypes.Name)!.Value;
+        // В случае если IsAuthenticated false будет возвращен 401 код.
+        if (!context.User.Identity.IsAuthenticated)
+            return;
+
+        var claims = context.User.Claims;
+
+        var username = claims.FirstOrDefault(c => c.Type is JwtClaimTypes.Username)!.Value;
 
         using var scope = _serviceScopeFactory.CreateScope();
         var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
@@ -22,4 +27,4 @@ public class PermissionAuthorizationHandler(IServiceScopeFactory _serviceScopeFa
         if (permissions.Any(x => x.Name == requirement.Permission))
             context.Succeed(requirement);
     }
-}   
+}

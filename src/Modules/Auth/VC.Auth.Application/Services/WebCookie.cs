@@ -24,7 +24,7 @@ public class WebCookie : IWebCookie
         options.HttpOnly = true;
         options.Secure = true;
 
-        var days = _cookiesSettings.RememberMeDays;
+        var days = _cookiesSettings.CookieLifeTimeInDays;
 
         options.Expires = DateTimeOffset.UtcNow.AddDays(days);
 
@@ -33,7 +33,7 @@ public class WebCookie : IWebCookie
 
     public async Task<Result> DeleteAsync(string cookieName)
     {
-        if (cookieName is null)
+        if (string.IsNullOrEmpty(cookieName) || string.IsNullOrWhiteSpace(cookieName))
             return Result.Fail("Cookie name is null");
 
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookieName);
@@ -41,7 +41,7 @@ public class WebCookie : IWebCookie
         return Result.Ok();
     }
 
-    public async Task<Result<string>> Get(string cookieName)
+    public async Task<Result<string>> GetAsync(string cookieName)
     {
         if (cookieName is null)
             return Result.Fail("Cookie name is null");
@@ -50,7 +50,7 @@ public class WebCookie : IWebCookie
             _httpContextAccessor.HttpContext?.Request.Cookies
                 .FirstOrDefault(m => m.Key == cookieName);
 
-        if (cookie is null && cookie.Value.Value is null)
+        if (cookie is null || cookie.Value.Value is null)
             return Result.Fail("Cookie not found");
 
         return Result.Ok(cookie.Value.Value);

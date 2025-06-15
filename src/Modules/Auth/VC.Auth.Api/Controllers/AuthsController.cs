@@ -41,8 +41,18 @@ public class AuthsController(IAuthService authService) : ControllerBase
         return response.IsSuccess ? Ok(response) : BadRequest(response);
     }
 
-    [HttpPost("logout")]
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult> RefreshTokenAsync()
+    {
+        var reloginResult = await authService.RefreshTokenAsync();
+        if (!reloginResult.IsSuccess)
+            return BadRequest(reloginResult);
+
+        return Ok(reloginResult);
+    }
+
     [Authorize]
+    [HttpPost("logout")]
     public async Task<ActionResult> LogoutAsync()
     {
         var result = await authService.LogoutAsync();

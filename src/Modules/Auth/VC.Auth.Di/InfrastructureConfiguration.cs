@@ -35,11 +35,12 @@ internal static class InfrastructureConfiguration
         services.AddScoped<IEncrypter, Encrypt>();
         services.AddScoped<IPasswordSaltGenerator, PasswordSaltGenerator>();
 
-        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IWebCookie, WebCookie>();
         services.AddScoped<IUserRepository, UserRepository>();
 
-        services.AddScoped<IJwtClaimsGenerator, JwtClaimsGenerator>();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IJwtClaimsGenerator, JwtClaimsGenerator>();
+        services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
 
         services.AddSingleton<IConsumer, CreatedTenantsConsumer>();
     }

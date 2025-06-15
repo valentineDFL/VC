@@ -47,16 +47,22 @@ public static class AuthModuleConfiguration
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies[cookiesSettings.RememberMeCookieName];
+                        context.Token = context.Request.Cookies[cookiesSettings.AuthCookieName];
                         return Task.CompletedTask;
                     }
                 };
             });
 
         services.AddAuthorization(x =>
+        {
             x.AddPolicy(Permissions.User, builder =>
                 builder.Requirements
-                    .Add(new PermissionRequirement(Permissions.User))));
+                    .Add(new PermissionRequirement(Permissions.User)));
+
+            x.AddPolicy(Permissions.Tenant, builder =>
+                builder.Requirements
+                    .Add(new PermissionRequirement(Permissions.Tenant)));
+        });
 
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }

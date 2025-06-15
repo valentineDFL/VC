@@ -4,9 +4,9 @@ using VC.Auth.Models;
 using VC.Auth.Repositories;
 using VC.Shared.RabbitMQIntegration;
 using VC.Shared.RabbitMQIntegration.Consumers.Interfaces;
-using VC.Shared.RabbitMQIntegration.Publishers.Interfaces;
 using VC.Shared.Utilities.RabbitEnums;
 using VC.Shared.Utilities.TenantServiceDtos;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace VC.Auth.Infrastructure.Implementations.Rabbit;
 
@@ -15,17 +15,13 @@ internal class CreatedTenantsConsumer : IConsumer
     private readonly RabbitClient _rabbitClient;
     private IChannel _channel;
 
-    private readonly IPublisher _publisher;
-
-    private readonly IUserRepository _userRepository;
+    private readonly IServiceScopeFactory _scopeFactory;
     
-    public CreatedTenantsConsumer(RabbitClient rabbitClient, 
-                                  IUserRepository userRepository,
-                                  IPublisher publisher)
+    public CreatedTenantsConsumer(RabbitClient rabbitClient,
+                                  IServiceScopeFactory scopeFactory)
     {
         _rabbitClient = rabbitClient;
-        _userRepository = userRepository;
-        _publisher = publisher;
+        _scopeFactory = scopeFactory;
     }
 
     public async Task OnConsumeAsync(object sender, BasicDeliverEventArgs eventArgs)
@@ -35,17 +31,21 @@ internal class CreatedTenantsConsumer : IConsumer
         var body = eventArgs.Body.ToArray();
         var decodedTenant = RabbitCoder.DeserializeUTF8<TenantDto>(body);
 
-        var user = await _userRepository.GetByIdAsync(decodedTenant.Id);
+        var scope = _scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+        var user = await userRepository.GetByIdAsync(decodedTenant.UserId);
         if (user is null)
             throw new NullReferenceException("Tenant have invalid user Id");
 
+        user.TenantId = decodedTenant.Id;
         user.Permissions.Add(new Permission
         { 
             Id = Guid.CreateVersion7(),
             Name = Permissions.Tenant
         });
 
-        await _userRepository.UpdateAsync(user);
+        await userRepository.UpdateAsync(user);
 
         await consumer.Channel.BasicAckAsync(eventArgs.DeliveryTag, false);
     }
