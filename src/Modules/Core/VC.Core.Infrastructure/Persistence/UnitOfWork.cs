@@ -12,14 +12,22 @@ internal class UnitOfWork(
     IResourcesRepository resourcesRepository,
     ICategoriesRepository categoriesRepository,
     IEmployeesRepository employeesRepository,
-    IWorkSchedulesRepository workSchedulesRepository) : IUnitOfWork
+    IWorkSchedulesRepository workSchedulesRepository,
+    IOrdersHistoryRepository ordersHistoryRepository) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
+
     public IServicesRepository Services => servicesRepository;
+
     public IResourcesRepository Resources => resourcesRepository;
+
     public ICategoriesRepository Categories => categoriesRepository;
+
     public IEmployeesRepository Employees => employeesRepository;
+
     public IWorkSchedulesRepository WorkSchedules => workSchedulesRepository;
+
+    public IOrdersHistoryRepository OrdersHistory => ordersHistoryRepository;
 
     public void Dispose() => dbContext.Dispose();
 

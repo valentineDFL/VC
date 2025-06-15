@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using VC.Orders.Common;
 using VC.Orders.Orders;
 using VC.Orders.Payments;
 
@@ -26,6 +27,8 @@ internal class OrdersDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<DomainEvent>();
+
         modelBuilder.HasDefaultSchema(Schema);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

@@ -18,4 +18,8 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="OrdersHistoryUseCases\Models\" />
+    </ItemGroup>
+
 </Project>

@@ -13,11 +13,11 @@ namespace VC.Orders.Api.Controllers;
 public class OrdersController : ControllerBase
 {
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ServiceDetailDto>> GetAsync([FromServices] IGetOrderUseCase useCase,
+    public async Task<ActionResult<OrderDetailsDto>> GetByIdAsync([FromServices] IGetOrderUseCase useCase,
                                              Guid id,
                                              CancellationToken cts)
     {
-        var order = await useCase.ExecuteAsync(id);
+        var order = await useCase.ExecuteAsync(id, cts);
 
         if(!order.IsSuccess)
             return NotFound();

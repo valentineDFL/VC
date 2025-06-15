@@ -1,10 +1,11 @@
 ﻿using System.Text;
+using VC.Orders.Common;
 
 namespace VC.Orders.Orders;
 
-public class OrderStatus
+public class OrderStatus : Entity<Guid>
 {
-    public OrderStatus(Guid id, Guid orderId, OrderState state)
+    public OrderStatus(Guid id, Guid orderId, OrderState state) : base(id)
     {
         var errors = new StringBuilder();
 
@@ -17,15 +18,10 @@ public class OrderStatus
         if (errors.Length > 0)
             throw new ArgumentException(errors.ToString());
 
-        Id = id;
         OrderId = orderId;
         State = state;
         CreatedOnUtc = DateTime.UtcNow;
     }
-
-    protected OrderStatus() { }
-
-    public Guid Id { get; private set; }
 
     public Guid OrderId { get; private set; }
 
