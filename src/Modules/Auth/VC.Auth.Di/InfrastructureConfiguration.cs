@@ -38,7 +38,7 @@ internal static class InfrastructureConfiguration
         services.AddScoped<IWebCookie, WebCookie>();
         services.AddScoped<IUserRepository, UserRepository>();
 
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IJwtTokenGenerator, HmacSha256JwtTokenGenerator>();
         services.AddSingleton<IJwtClaimsGenerator, JwtClaimsGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
 

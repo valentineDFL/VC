@@ -8,11 +8,11 @@ using VC.Shared.Utilities.Options.Jwt;
 
 namespace VC.Auth.Infrastructure.Implementations;
 
-internal class JwtTokenGenerator : IJwtTokenGenerator
+internal class HmacSha256JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
 
-    public JwtTokenGenerator(IOptions<JwtSettings> jwtOptions)
+    public HmacSha256JwtTokenGenerator(IOptions<JwtSettings> jwtOptions)
         => _jwtSettings = jwtOptions.Value;
 
     public string GenerateToken(Dictionary<string, string> datas, DateTime expireTime)
@@ -27,7 +27,7 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
 
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
-            SecurityAlgorithms.HmacSha256Signature);
+            SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             claims: claims,
