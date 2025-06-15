@@ -1,14 +1,15 @@
 using FluentResults;
 using System.Text;
+using VC.Orders.Common;
 using VC.Orders.Payments;
 
 namespace VC.Orders.Orders;
 
-public class Order
+public class Order : AggregateRoot<Guid>
 {
     private List<OrderStatus> _orderStatuses;
 
-    public Order(Guid id, DateTime serviceTime, decimal price, Guid serviceId, Guid employeeId, Payment payment)
+    public Order(Guid id, DateTime serviceTime, decimal price, Guid serviceId, Guid employeeId, Payment payment) : base(id)
     {
         var errors = new StringBuilder();
 
@@ -30,7 +31,6 @@ public class Order
         if (errors.Length > 0)
             throw new ArgumentException(errors.ToString());
 
-        Id = id;
         Price = price;
         ServiceTime = serviceTime;
         ServiceId = serviceId;
@@ -43,9 +43,8 @@ public class Order
         _orderStatuses.Add(new OrderStatus(Guid.CreateVersion7(), Id, State));
     }
 
-    protected Order() { }
-
-    public Guid Id { get; private set; }
+    private Order(Guid id) : base(id)
+    { }
 
     public decimal Price { get; private set; }
 

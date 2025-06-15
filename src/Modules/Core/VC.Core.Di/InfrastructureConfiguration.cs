@@ -8,6 +8,9 @@ using VC.Core.Infrastructure.Implementations;
 using VC.Core.Infrastructure.Persistence;
 using VC.Core.Infrastructure.Persistence.Queries;
 using VC.Core.Infrastructure.Persistence.Repositories;
+using VC.Shared.RabbitMQIntegration.Consumers.Interfaces;
+using VC.Core.Infrastructure.Implementations.RabbitConsumers;
+using VC.Core.Infrastructure.BackgroundServices;
 
 namespace VC.Core.Di;
 
@@ -16,6 +19,8 @@ internal static class InfrastructureConfiguration
     public static void ConfigureCoreInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
+        ConfigureBrokers(services);
+
         services
             .ConfigureEvents()
             .ConfigurePersistence(configuration);
@@ -47,12 +52,22 @@ internal static class InfrastructureConfiguration
         services.AddScoped<ICategoriesRepository, CategoriesRepository>();
         services.AddScoped<IEmployeesRepository, EmployeesRepository>();
         services.AddScoped<IWorkSchedulesRepository, WorkSchedulesRepository>();
-        
+
+        services.AddScoped<IOrdersHistoryRepository, OrdersHistoryRepository>();
+
         services.AddScoped<IGetServiceDetailsUseCase, GetServiceDetailsUseCase>();
         services.AddScoped<IGetAllServicesUseCase, GetAllServicesUseCase>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+        services.AddHostedService<RabbitConsumersBackgroundService>();
+
         return services;
+    }
+
+    private static void ConfigureBrokers(IServiceCollection services)
+    {
+        services.AddSingleton<IConsumer, CreatedOrdersConsumer>();
+        services.AddSingleton<IConsumer, OrdersWithChangedStateConsumer>();
     }
 }

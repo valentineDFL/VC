@@ -56,7 +56,7 @@ public class WorkSchedule : AggregateRoot<Guid>, IHasTenantId
     public EffectiveWorkTime GetEffectiveWorkTime(DateOnly date)
     {
         var dayOfWeek = date.ToDateTime(TimeOnly.MinValue).DayOfWeek;
-
+        
         var item = _items.FirstOrDefault(i => i.DayOfWeek == dayOfWeek);
         if (item is null)
             return new DayOff();

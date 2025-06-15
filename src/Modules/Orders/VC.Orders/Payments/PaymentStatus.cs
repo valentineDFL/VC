@@ -1,18 +1,15 @@
-﻿namespace VC.Orders.Payments;
+﻿using VC.Orders.Common;
 
-public class PaymentStatus
+namespace VC.Orders.Payments;
+
+public class PaymentStatus : Entity<Guid>
 {
-    public PaymentStatus(Guid id, Guid paymentId, PaymentState state)
+    public PaymentStatus(Guid id, Guid paymentId, PaymentState state) : base(id)
     {
-        Id = id;
         PaymentId = paymentId;
         State = state;
         CreatedOnUtc = DateTime.UtcNow;
     }
-
-    protected PaymentStatus() { }
-
-    public Guid Id { get; private set; }
 
     public Guid PaymentId { get; private set; }
 

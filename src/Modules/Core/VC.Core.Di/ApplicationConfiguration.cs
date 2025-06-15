@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using VC.Core.Application;
 using VC.Core.Application.EmployeeAvailableSlotsUseCases;
 using VC.Core.Application.EmployeesUseCases;
 using VC.Core.Application.Events;
@@ -29,6 +30,8 @@ internal static class ApplicationConfiguration
             ServiceCreatedEventHandler>();
         
         services.AddValidatorsFromAssemblyContaining<CreateResourceDtoValidator>(includeInternalTypes: true);
+
+        services.AddSingleton<OrderSnapshotFactory>();
     }
     
     public static void ConfigureWorkScheduleApplication(this IServiceCollection services)

@@ -7,7 +7,7 @@ public interface IUnitOfWork : IDisposable
     ICategoriesRepository Categories { get; }
     IEmployeesRepository Employees { get; }
     IWorkSchedulesRepository WorkSchedules { get; }
-
+    IOrdersHistoryRepository OrdersHistory { get; }
     
     
     Task BeginTransactionAsync();

@@ -1,6 +1,5 @@
 using Mapster;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using VC.Host;
@@ -10,6 +9,7 @@ using VC.Host.Common;
 using VC.Orders.Di;
 using VC.Shared.Utilities;
 using VC.Shared.Integrations.Di;
+using VC.Shared.Utilities.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
+
+builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)));
 
 builder.Services.ConfigureUtilities(builder.Configuration);
 
@@ -51,7 +53,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-await ApplyUnAplliedMigrationsAsync(app);
+await EFCoreAutoMigrator.ApplyUnAplliedMigrationsAsync(app);
 
 app.UseCors("AllowAll");
 app.MapPrometheusScrapingEndpoint();
@@ -80,27 +82,3 @@ app.UseHttpLogging();
 app.MapControllers();
 
 app.Run();
-
-static async Task ApplyUnAplliedMigrationsAsync(WebApplication app)
-{
-    var scope = app.Services.CreateScope();
-
-    var dbContextsTypes = AppDomain.CurrentDomain
-        .GetAssemblies()
-        .Where(asm => asm.FullName.Contains("Infrastructure"))
-        .SelectMany(asm => asm.GetTypes())
-        .Where(t => t.IsSubclassOf(typeof(DbContext)));
-
-    await Parallel.ForEachAsync(dbContextsTypes, async (dbContextType, task) =>
-    {
-        var dbContextInstance = scope.ServiceProvider.GetRequiredService(dbContextType);
-
-        if (dbContextInstance is not DbContext dbContext)
-            return;
-
-            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-        
-        if (pendingMigrations.Any())
-            await dbContext.Database.MigrateAsync();
-    });
-}
